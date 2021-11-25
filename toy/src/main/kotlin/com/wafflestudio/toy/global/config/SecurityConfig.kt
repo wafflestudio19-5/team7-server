@@ -23,7 +23,7 @@ class SecurityConfig() : WebSecurityConfigurerAdapter() {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/ping/").anonymous()  // SignUp user
+            .antMatchers(HttpMethod.GET, "/ping/").permitAll() // SignUp user
             .anyRequest().authenticated()
     }
 }

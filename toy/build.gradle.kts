@@ -27,6 +27,7 @@ dependencies {
     runtimeOnly("mysql:mysql-connector-java")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.apache.httpcomponents:httpclient")
 }
 
 tasks.withType<KotlinCompile> {

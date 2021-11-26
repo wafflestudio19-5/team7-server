@@ -19,3 +19,16 @@ spring:
       ddl-auto: create
       show-sql: true
 ---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://waffle-team7-velog.chkd27eval6m.ap-northeast-2.rds.amazonaws.com
+:3306/toyproject?serverTimezone=UTC
+    username: team7-server
+    password: velog
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update

@@ -24,8 +24,7 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:mysql://waffle-team7-velog.chkd27eval6m.ap-northeast-2.rds.amazonaws.com
-:3306/toyproject?serverTimezone=UTC
+    url: jdbc:mysql://waffle-team7-velog.chkd27eval6m.ap-northeast-2.rds.amazonaws.com:3306/toyproject?serverTimezone=UTC
     username: team7-server
     password: velog
   jpa:

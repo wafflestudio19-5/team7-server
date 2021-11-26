@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/toyproject?serverTimezone=UTC
+    username: team7-server
+    password: velog
+  sql:
+    init:
+      mode: always
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      show-sql: true
+---

@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
-@CrossOrigin("http://velog-toyproject-team7-web.s3-website.ap-northeast-2.amazonaws.com:3000")
 @RestController
 class PingController {
+
     @GetMapping("/ping/")
     fun getPong(): PingDto.Response {
         return PingDto.Response();

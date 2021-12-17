@@ -1,0 +1,70 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches: [ master ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./toy
+
+    environment: prod
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Build with Gradle
+      run: ./gradlew build -x test 
+
+    - name: Make directory for zip
+      run: mkdir deploy
+
+    - name: Copy jar files
+      run: cp ./build/libs/*.jar ./deploy/
+
+    - name: Copy appspec.yml
+      run: cp appspec.yml ./deploy/
+
+    - name: Copy deploy scripts
+      run: cp -r ./scripts/deploy/ ./deploy/
+
+    - name: Zip deploy directory
+      run: zip -r -qq -j ./waffle-team7-backend.zip ./deploy
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::843555210329:role/waffle-team7-toyproject
+        role-session-name: waffle-team7
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Copy zip file to AWS S3
+      run: |
+        aws s3 cp \
+        --region ${{ secrets.AWS_REGION }} \
+        --acl private \
+        ./waffle-team7-backend.zip s3://${{ secrets.AWS_BUCKET }}/
+
+    - name: Deploy to EC2
+      run: |
+        aws deploy create-deployment \
+        --application-name waffle-team7 \
+        --deployment-group-name waffle-team7-deploy-group \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=${{ secrets.AWS_BUCKET }},bundleType=zip,key=waffle-team7-backend.zip \
+        --region ${{ secrets.AWS_REGION }}
+

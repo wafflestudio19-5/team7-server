@@ -2,6 +2,7 @@ package com.wafflestudio.toy.domain.post.model
 
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import com.wafflestudio.toy.domain.user.model.User
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
@@ -21,6 +22,7 @@ class Comment (
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     val post: Post,
 
+    @Column(name = "root_comment")
     val rootComment: Long,
     val lft: Long,
     val rgt: Long,

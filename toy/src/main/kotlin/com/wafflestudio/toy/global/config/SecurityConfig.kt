@@ -29,7 +29,8 @@ class SecurityConfig() : WebSecurityConfigurerAdapter() {
             .and()
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/ping/").permitAll() // SignUp user
-            .anyRequest().permitAll()   // Because signin api doesn't exist yet, so to test permit all request
+            .antMatchers(HttpMethod.GET, "/api/v1/post/recent/").permitAll()
+            .anyRequest().authenticated()   // Because signin api doesn't exist yet, so to test permit all request
     }
 
     @Bean

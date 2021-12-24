@@ -3,16 +3,13 @@ package com.wafflestudio.toy.domain.post.model
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import com.wafflestudio.toy.domain.user.model.Series
 import com.wafflestudio.toy.domain.user.model.User
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Entity
-class Post (
+class Post(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -41,4 +38,6 @@ class Post (
     @JoinColumn(name = "series_id", referencedColumnName = "id")
     val series: Series?,
 
-    ): BaseTimeEntity()
+    @OneToMany(mappedBy = "post")
+    var comments: MutableList<Comment>
+) : BaseTimeEntity()

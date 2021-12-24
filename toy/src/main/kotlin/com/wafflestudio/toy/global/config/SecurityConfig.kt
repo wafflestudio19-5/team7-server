@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-class SecurityConfig() : WebSecurityConfigurerAdapter(){
+class SecurityConfig() : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .cors().configurationSource(corsConfigurationSource())
@@ -29,11 +29,12 @@ class SecurityConfig() : WebSecurityConfigurerAdapter(){
             .and()
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/ping/").permitAll() // SignUp user
-            .anyRequest().authenticated()
+            .antMatchers(HttpMethod.GET, "/api/v1/post/recent/").permitAll()
+            .anyRequest().authenticated()   // Because signin api doesn't exist yet, so to test permit all request
     }
 
     @Bean
-    fun corsConfigurationSource():CorsConfigurationSource{
+    fun corsConfigurationSource(): CorsConfigurationSource {
         var corsConfiguration = CorsConfiguration()
         corsConfiguration.addAllowedOrigin("*")
         corsConfiguration.addAllowedHeader("*")

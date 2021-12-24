@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service
 class PostService(
     private val postRepository: PostRepository
 ) {
-    fun getRecentPosts(): List<PostDto.MainPageResponse> {
+    fun getRecentPosts(pageable : Pageable): List<PostDto.MainPageResponse> {
         val posts: List<Post> =
-            postRepository.findAllByPrivateIsFalse(pageable = PageRequest.of(0, 30, Sort.Direction.DESC, "createdAt"))
+            postRepository.findAllByPrivateIsFalse(pageable)
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 }

@@ -2,14 +2,9 @@ package com.wafflestudio.toy.domain.post.model
 
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import com.wafflestudio.toy.domain.user.model.User
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 @Entity
 class Comment (
@@ -23,12 +18,12 @@ class Comment (
     val post: Post,
 
     @Column(name = "root_comment")
-    val rootComment: Long,
-    val lft: Long,
-    val rgt: Long,
+    val rootComment: Long = 0,
+    val lft: Long = 1,
+    val rgt: Long = 2,
 
     @field:Min(0)
-    val depth: Int,
+    val depth: Int = 0,
 
     @field:NotBlank
     val content: String,

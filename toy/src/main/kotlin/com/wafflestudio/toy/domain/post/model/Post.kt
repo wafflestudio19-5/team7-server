@@ -3,6 +3,7 @@ package com.wafflestudio.toy.domain.post.model
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import com.wafflestudio.toy.domain.user.model.Series
 import com.wafflestudio.toy.domain.user.model.User
+import org.hibernate.annotations.Formula
 import javax.persistence.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
@@ -23,13 +24,19 @@ class Post(
     val content: String,
 
     @field:Min(0)
-    val likes: Int,
+    val views: Int = 0,
+
+    @field:Min(0)
+    val likes: Int = 0,
 
     val thumbnail: String, // thumbnail image file url
 
     val summary: String,
 
     val private: Boolean,
+
+    @Formula(value = "10 * views + 7 * likes + 3 * (SELECT count(1) FROM comment c WHERE c.post_id = id)")
+    val trending: Int = 0,
 
     @field:NotBlank
     val url: String,

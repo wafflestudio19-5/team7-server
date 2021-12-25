@@ -18,4 +18,13 @@ class PostController(
     fun getRecentPost(@PageableDefault(size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable : Pageable): List<PostDto.MainPageResponse> {
         return postService.getRecentPosts(pageable)
     }
+
+    @GetMapping("/trend/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTrendingPost(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
+                        @RequestParam("date", required = false, defaultValue = "7") date: Int
+    ):
+            List<PostDto.MainPageResponse>{
+        return postService.getTrendingPosts(pageable, date)
+    }
 }

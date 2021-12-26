@@ -4,10 +4,12 @@ import com.wafflestudio.toy.domain.user.model.User
 
 class UserDto {
     data class SimpleResponse(
+        val id: Long,
         val username: String,
         val image: String
     ) {
         constructor(user: User) : this(
+            id = user.id,
             username = user.username,
             image = user.image
         )

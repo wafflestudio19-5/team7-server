@@ -1,8 +1,10 @@
 package com.wafflestudio.toy.domain.user.model
 
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
+import com.wafflestudio.toy.domain.post.model.Post
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -52,4 +54,7 @@ class User (
 
     @Column(name = "update_noti")
     val updateNotification: Boolean,
-        ): BaseTimeEntity()
+
+    @OneToMany(mappedBy = "user")
+    var posts: MutableList<Post>
+    ): BaseTimeEntity()

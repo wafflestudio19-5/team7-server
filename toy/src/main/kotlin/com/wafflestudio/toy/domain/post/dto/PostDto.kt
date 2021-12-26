@@ -1,6 +1,7 @@
 package com.wafflestudio.toy.domain.post.dto
 
 import com.wafflestudio.toy.domain.post.model.Post
+import com.wafflestudio.toy.domain.tag.dto.TagDto
 import com.wafflestudio.toy.domain.user.dto.UserDto
 import java.time.LocalDateTime
 
@@ -24,6 +25,43 @@ class PostDto {
             createAt = post.createdAt,
             likes = post.likes,
             comments = post.comments.size
+        )
+    }
+
+    data class PageDetailResponse(
+        val id: Long,
+        val user: UserDto.UserInPostDetailResponse,
+        val sameSeriesPosts: List<IdAndTitleResponse>?,
+        val content: String,
+        val likes: Int,
+        val tags: List<TagDto.TagResponse>,
+        val prevPost: IdAndTitleResponse?,
+        val nextPost: IdAndTitleResponse?
+    ) {
+        constructor(post: Post) : this(
+            id = post.id,
+            user = UserDto.UserInPostDetailResponse(post.user),
+            sameSeriesPosts =
+                if (post.series != null){
+                    post.series.posts.map { post -> IdAndTitleResponse(post) }
+                } else {
+                    null
+                },
+            content = post.content,
+            likes = post.likes,
+            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag)},
+            prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
+            nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) }
+            )
+    }
+
+    data class IdAndTitleResponse(
+        val id: Long,
+        val title: String
+    ) {
+        constructor(post: Post) : this(
+            id = post.id,
+            title = post.title
         )
     }
 }

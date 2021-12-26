@@ -27,4 +27,10 @@ class PostController(
             List<PostDto.MainPageResponse>{
         return postService.getTrendingPosts(pageable, date)
     }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostDetail(@PathVariable("id") id:Long) :PostDto.PageDetailResponse{
+        return postService.getPostDetail(id)
+    }
 }

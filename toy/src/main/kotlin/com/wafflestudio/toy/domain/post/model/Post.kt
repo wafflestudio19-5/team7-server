@@ -1,6 +1,7 @@
 package com.wafflestudio.toy.domain.post.model
 
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
+import com.wafflestudio.toy.domain.tag.model.PostTag
 import com.wafflestudio.toy.domain.user.model.Series
 import com.wafflestudio.toy.domain.user.model.User
 import org.hibernate.annotations.Formula
@@ -46,5 +47,53 @@ class Post(
     val series: Series?,
 
     @OneToMany(mappedBy = "post")
-    var comments: MutableList<Comment>
-) : BaseTimeEntity()
+    var comments: MutableList<Comment>,
+
+    @OneToMany(mappedBy = "post")
+    var postTags: MutableList<PostTag>
+) : BaseTimeEntity() {
+
+    fun getPrevPost(): Post? {
+        val userPosts:List<Post> = this.user.posts
+        var prevPost:Post = this
+        var prevPostId:Long = -1L
+
+        for (post in userPosts) {
+            if(prevPostId == -1L && post.id < this.id){
+                prevPost = post
+                prevPostId = post.id
+            }
+            if (prevPostId < post.id && post.id < this.id){
+                prevPost = post
+                prevPostId = post.id
+            }
+        }
+        return if (prevPost.id == this.id){
+             null
+        }else{
+            prevPost
+        }
+    }
+
+    fun getNextPost(): Post? {
+        val userPosts:List<Post> = this.user.posts
+        var nextPost = this
+        var nextPostId = -1L
+
+        for (post in userPosts) {
+            if(nextPostId == -1L && post.id > this.id){
+                nextPost = post
+                nextPostId = post.id
+            }
+            if (nextPostId > post.id && post.id > this.id){
+                nextPost = post
+                nextPostId = post.id
+            }
+        }
+        return if (nextPost.id == this.id){
+            null
+        }else{
+            nextPost
+        }
+    }
+}

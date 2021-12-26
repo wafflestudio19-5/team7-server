@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 class PostDto {
     data class MainPageResponse(
+        val id: Long,
         val user: UserDto.SimpleResponse,
         val title: String,
         val thumbnail: String, // thumbnail file url
@@ -15,6 +16,7 @@ class PostDto {
         val comments: Int      // num of comments
     ) {
         constructor(post: Post) : this(
+            id = post.id,
             user = UserDto.SimpleResponse(post.user),
             title = post.title,
             thumbnail = post.thumbnail,

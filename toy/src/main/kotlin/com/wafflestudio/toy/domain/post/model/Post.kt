@@ -55,45 +55,11 @@ class Post(
 
     fun getPrevPost(): Post? {
         val userPosts:List<Post> = this.user.posts
-        var prevPost:Post = this
-        var prevPostId:Long = -1L
-
-        for (post in userPosts) {
-            if(prevPostId == -1L && post.id < this.id){
-                prevPost = post
-                prevPostId = post.id
-            }
-            if (prevPostId < post.id && post.id < this.id){
-                prevPost = post
-                prevPostId = post.id
-            }
-        }
-        return if (prevPost.id == this.id){
-             null
-        }else{
-            prevPost
-        }
+        return userPosts.lastOrNull { it.id < this.id }
     }
 
     fun getNextPost(): Post? {
         val userPosts:List<Post> = this.user.posts
-        var nextPost = this
-        var nextPostId = -1L
-
-        for (post in userPosts) {
-            if(nextPostId == -1L && post.id > this.id){
-                nextPost = post
-                nextPostId = post.id
-            }
-            if (nextPostId > post.id && post.id > this.id){
-                nextPost = post
-                nextPostId = post.id
-            }
-        }
-        return if (nextPost.id == this.id){
-            null
-        }else{
-            nextPost
-        }
+        return userPosts.firstOrNull { it.id > this.id }
     }
 }

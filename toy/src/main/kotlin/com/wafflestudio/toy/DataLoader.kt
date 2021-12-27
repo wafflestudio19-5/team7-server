@@ -231,6 +231,7 @@ class DataLoader(
             url = "velog/post/7",
             series = null,
             comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val commentA = Comment(

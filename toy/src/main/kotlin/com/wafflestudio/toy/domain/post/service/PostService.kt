@@ -31,11 +31,8 @@ class PostService(
 
     fun getPostDetail(id: Long): PostDto.PageDetailResponse {
         val post = postRepository.findByIdOrNull(id)
-        return if (post != null) {
-            PostDto.PageDetailResponse(post)
-        } else {
-            throw PostNotFoundException("There is no post id $id")
-        }
+        post?.let { p -> return PostDto.PageDetailResponse(p) }
+        throw PostNotFoundException("There is no post id $id")
     }
 
     fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.MainPageResponse> {

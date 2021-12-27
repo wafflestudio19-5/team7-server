@@ -3,9 +3,9 @@ package com.wafflestudio.toy.global.common.exception
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class ErrorResponse(
-    @JsonProperty("error_code")
+    @JsonProperty("errorCode")
     val errorCode: Int,
-    @JsonProperty("error_message")
+    @JsonProperty("errorMessage")
     val errorMessage: String = "",
     val detail: String = ""
 )

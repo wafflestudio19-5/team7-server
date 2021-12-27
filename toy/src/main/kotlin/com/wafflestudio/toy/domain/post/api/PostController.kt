@@ -2,6 +2,7 @@ package com.wafflestudio.toy.domain.post.api
 
 import com.wafflestudio.toy.domain.post.dto.PostDto
 import com.wafflestudio.toy.domain.post.service.PostService
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -15,22 +16,31 @@ class PostController(
 ) {
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)
-    fun getRecentPost(@PageableDefault(size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable : Pageable): List<PostDto.MainPageResponse> {
+    fun getRecentPosts(@PageableDefault(size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable : Pageable
+    ): Page<PostDto.MainPageResponse> {
         return postService.getRecentPosts(pageable)
     }
 
     @GetMapping("/trend")
     @ResponseStatus(HttpStatus.OK)
-    fun getTrendingPost(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
+    fun getTrendingPosts(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
                         @RequestParam("date", required = false, defaultValue = "7") date: Int
     ):
-            List<PostDto.MainPageResponse>{
+            Page<PostDto.MainPageResponse>{
         return postService.getTrendingPosts(pageable, date)
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getPostDetail(@PathVariable("id") id:Long) :PostDto.PageDetailResponse{
+    fun getPostDetail(@PathVariable("id") id:Long) :PostDto.PageDetailResponse {
         return postService.getPostDetail(id)
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    fun searchPosts(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
+                   @RequestParam("keyword", required = true) keyword: String
+    ): Page<PostDto.MainPageResponse> {
+        return postService.searchPosts(pageable, keyword)
     }
 }

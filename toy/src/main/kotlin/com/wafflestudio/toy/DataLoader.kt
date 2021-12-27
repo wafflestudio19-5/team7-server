@@ -219,6 +219,20 @@ class DataLoader(
             postTags = mutableListOf()
         )
 
+        val postG = Post(
+            user = userB,
+            title = "Post with content",
+            content = "content to search",
+            views = 7,
+            likes = 11,
+            thumbnail = "",
+            summary = "summary of F",
+            private = false,
+            url = "velog/post/7",
+            series = null,
+            comments = mutableListOf(),
+        )
+
         val commentA = Comment(
             user = userB,
             post = postD,
@@ -237,6 +251,7 @@ class DataLoader(
         postRepository.save(postD)
         postRepository.save(postE)
         postRepository.save(postF)
+        postRepository.save(postG)
 
         commentRepository.save(commentA)
     }

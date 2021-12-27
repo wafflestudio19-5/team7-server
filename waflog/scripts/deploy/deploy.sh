@@ -1,6 +1,6 @@
 #!bin/bash
 
-JAR_NAME=toy-0.0.1-SNAPSHOT.jar
+JAR_NAME=waflog-0.0.1-SNAPSHOT.jar
 
 cp ~/build/$JAR_NAME ~/deploy/
 

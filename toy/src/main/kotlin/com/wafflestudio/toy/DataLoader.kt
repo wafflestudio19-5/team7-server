@@ -1,10 +1,12 @@
-package com.wafflestudio.toy.global.config
+package com.wafflestudio.toy
 
 import com.wafflestudio.toy.domain.post.model.Comment
 import com.wafflestudio.toy.domain.post.model.Post
 import com.wafflestudio.toy.domain.post.repository.CommentRepository
 import com.wafflestudio.toy.domain.post.repository.PostRepository
+import com.wafflestudio.toy.domain.user.model.Series
 import com.wafflestudio.toy.domain.user.model.User
+import com.wafflestudio.toy.domain.user.repository.SeriesRepository
 import com.wafflestudio.toy.domain.user.repository.UserRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Component
 class DataLoader(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val seriesRepository: SeriesRepository
 ) : ApplicationRunner {
     //test data in local
     override fun run(args: ApplicationArguments?) {
@@ -34,7 +37,8 @@ class DataLoader(
             twitterId = "",
             homepage = "",
             commentNotification = false,
-            updateNotification = false
+            updateNotification = false,
+            posts = mutableListOf()
         )
 
         val userB = User(
@@ -51,7 +55,8 @@ class DataLoader(
             twitterId = "",
             homepage = "",
             commentNotification = false,
-            updateNotification = false
+            updateNotification = false,
+            posts = mutableListOf()
         )
 
         val userC = User(
@@ -68,14 +73,28 @@ class DataLoader(
             twitterId = "",
             homepage = "",
             commentNotification = false,
-            updateNotification = false
+            updateNotification = false,
+            posts = mutableListOf()
         )
 
         userRepository.save(userA)
         userRepository.save(userB)
         userRepository.save(userC)
 
-        val postA = Post(
+        val series1 = Series(
+            name = "A_s1",
+            user = userA,
+            posts = mutableListOf()
+        )
+        val series2 = Series(
+            name = "A_s2",
+            user = userA,
+            posts = mutableListOf()
+        )
+
+        seriesRepository.save(series1)
+        seriesRepository.save(series2)
+        val postA1 = Post(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
@@ -84,9 +103,50 @@ class DataLoader(
             summary = "summary of A",
             private = false,
             url = "velog/post/1",
-            series = null,
-            comments = mutableListOf()
+            series = series1,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
         )
+        val postA2 = Post(
+            user = userA,
+            title = "Waffle's Spring",
+            content = "blah blah",
+            likes = 0,
+            thumbnail = "",
+            summary = "summary of A",
+            private = false,
+            url = "velog/post/1",
+            series = series1,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
+        )
+        val postA3 = Post(
+            user = userA,
+            title = "Waffle's Spring",
+            content = "blah blah",
+            likes = 0,
+            thumbnail = "",
+            summary = "summary of A",
+            private = false,
+            url = "velog/post/1",
+            series = series2,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
+        )
+        val postA4 = Post(
+            user = userA,
+            title = "Waffle's Spring",
+            content = "blah blah",
+            likes = 0,
+            thumbnail = "",
+            summary = "summary of A",
+            private = false,
+            url = "velog/post/1",
+            series = series1,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
+        )
+
         val postB = Post(
             user = userB,
             title = "Studio's Spring",
@@ -97,7 +157,8 @@ class DataLoader(
             private = true,             //private post
             url = "velog/post/2",
             series = null,
-            comments = mutableListOf()
+            comments = mutableListOf(),
+            postTags = mutableListOf()
         )
         val postC = Post(
             user = userC,
@@ -109,7 +170,8 @@ class DataLoader(
             private = false,
             url = "velog/post/3",
             series = null,
-            comments = mutableListOf()
+            comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val postD = Post(
@@ -124,6 +186,7 @@ class DataLoader(
             url = "velog/post/4",
             series = null,
             comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val postE = Post(
@@ -138,6 +201,7 @@ class DataLoader(
             url = "velog/post/5",
             series = null,
             comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val postF = Post(
@@ -152,6 +216,7 @@ class DataLoader(
             url = "velog/post/6",
             series = null,
             comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val postG = Post(
@@ -166,6 +231,7 @@ class DataLoader(
             url = "velog/post/7",
             series = null,
             comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         val commentA = Comment(
@@ -176,7 +242,11 @@ class DataLoader(
             content = "Sample comment"
         )
 
-        postRepository.save(postA)
+        postRepository.save(postA1)
+        postRepository.save(postA2)
+        postRepository.save(postA3)
+        postRepository.save(postA4)
+
         postRepository.save(postB)
         postRepository.save(postC)
         postRepository.save(postD)

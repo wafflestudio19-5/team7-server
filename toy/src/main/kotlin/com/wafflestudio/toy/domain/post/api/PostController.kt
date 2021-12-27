@@ -30,6 +30,12 @@ class PostController(
         return postService.getTrendingPosts(pageable, date)
     }
 
+    @GetMapping("/{post_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostDetail(@PathVariable("post_id") postId:Long) :PostDto.PageDetailResponse {
+        return postService.getPostDetail(postId)
+    }
+
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     fun searchPosts(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,

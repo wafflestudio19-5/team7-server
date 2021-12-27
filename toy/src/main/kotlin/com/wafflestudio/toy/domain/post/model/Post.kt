@@ -1,6 +1,7 @@
 package com.wafflestudio.toy.domain.post.model
 
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
+import com.wafflestudio.toy.domain.tag.model.PostTag
 import com.wafflestudio.toy.domain.user.model.Series
 import com.wafflestudio.toy.domain.user.model.User
 import org.hibernate.annotations.Formula
@@ -46,5 +47,19 @@ class Post(
     val series: Series?,
 
     @OneToMany(mappedBy = "post")
-    var comments: MutableList<Comment>
-) : BaseTimeEntity()
+    var comments: MutableList<Comment>,
+
+    @OneToMany(mappedBy = "post")
+    var postTags: MutableList<PostTag>
+) : BaseTimeEntity() {
+
+    fun getPrevPost(): Post? {
+        val userPosts:List<Post> = this.user.posts
+        return userPosts.lastOrNull { it.id < this.id }
+    }
+
+    fun getNextPost(): Post? {
+        val userPosts:List<Post> = this.user.posts
+        return userPosts.firstOrNull { it.id > this.id }
+    }
+}

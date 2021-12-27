@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class PingController {
 
-    @GetMapping("/ping/")
+    @GetMapping("/ping")
     fun getPong(): PingDto.Response {
         return PingDto.Response();
     }

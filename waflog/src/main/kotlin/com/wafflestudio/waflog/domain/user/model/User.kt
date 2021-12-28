@@ -23,11 +23,11 @@ class User (
     @field:NotBlank
     val password: String,
 
-    val shortIntro: String,
+    val shortIntro: String = "",
 
-    val longIntro: String,
+    val longIntro: String = "",
 
-    val image: String, // image file url
+    val image: String = "default image url", // image file url
 
     @Column(name = "page_title")
     @field:NotBlank
@@ -35,18 +35,18 @@ class User (
 
     @Column(name = "public_email")
     @field:Email
-    val publicEmail: String,
+    val publicEmail: String = "",
 
     @Column(name = "github_id")
-    val githubId: String,
+    val githubId: String = "",
 
     @Column(name = "facebook_id")
-    val facebookId: String,
+    val facebookId: String = "",
 
     @Column(name = "twitter_id")
-    val twitterId: String,
+    val twitterId: String = "",
 
-    val homepage: String,
+    val homepage: String = "",
 
     @Column(name = "comment_noti")
     val commentNotification: Boolean,

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "waffle_user")
-class User (
+class User(
     @Column(unique = true)
     @field:Email
     @field:NotBlank
@@ -57,4 +57,4 @@ class User (
     @OneToMany(mappedBy = "user")
     @OrderBy("id")
     var posts: MutableList<Post>
-    ): BaseTimeEntity()
+) : BaseTimeEntity()

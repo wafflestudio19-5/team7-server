@@ -13,8 +13,8 @@ class PostDto {
         val thumbnail: String, // thumbnail file url
         val summary: String,
         val createAt: LocalDateTime?,
-        val likes: Int,         // num of likes
-        val comments: Int      // num of comments
+        val likes: Int, // num of likes
+        val comments: Int // num of comments
     ) {
         constructor(post: Post) : this(
             id = post.id,
@@ -44,10 +44,10 @@ class PostDto {
             seriesPosts = post.series?.posts?.map { post -> IdAndTitleResponse(post) },
             content = post.content,
             likes = post.likes,
-            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag)},
+            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
             prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
             nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) }
-            )
+        )
     }
 
     data class IdAndTitleResponse(

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "post_tag")
-class PostTag (
+class PostTag(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     @field:NotNull
@@ -18,4 +18,4 @@ class PostTag (
     @field:NotNull
     val tag: Tag,
 
-    ): BaseEntity()
+) : BaseEntity()

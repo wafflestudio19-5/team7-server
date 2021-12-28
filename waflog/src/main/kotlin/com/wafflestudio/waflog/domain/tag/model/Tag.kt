@@ -5,11 +5,11 @@ import javax.persistence.Entity
 import javax.validation.constraints.NotBlank
 
 @Entity
-class Tag (
+class Tag(
 
     @field:NotBlank
     val name: String,
 
     val count: Int,
 
-        ): BaseEntity()
+) : BaseEntity()

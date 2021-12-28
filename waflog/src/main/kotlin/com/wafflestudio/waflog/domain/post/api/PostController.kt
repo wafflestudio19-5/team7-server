@@ -16,30 +16,38 @@ class PostController(
 ) {
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)
-    fun getRecentPosts(@PageableDefault(size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable : Pageable
+    fun getRecentPosts(
+        @PageableDefault(
+            size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
+        ) pageable: Pageable
     ): Page<PostDto.MainPageResponse> {
         return postService.getRecentPosts(pageable)
     }
 
     @GetMapping("/trend")
     @ResponseStatus(HttpStatus.OK)
-    fun getTrendingPosts(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
-                        @RequestParam("date", required = false, defaultValue = "7") date: Int
-    ):
-            Page<PostDto.MainPageResponse>{
+    fun getTrendingPosts(
+        @PageableDefault(
+            size = 30, sort = ["trending"], direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @RequestParam("date", required = false, defaultValue = "7") date: Int
+    ): Page<PostDto.MainPageResponse> {
         return postService.getTrendingPosts(pageable, date)
     }
 
     @GetMapping("/{post_id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getPostDetail(@PathVariable("post_id") postId:Long) :PostDto.PageDetailResponse {
+    fun getPostDetail(@PathVariable("post_id") postId: Long): PostDto.PageDetailResponse {
         return postService.getPostDetail(postId)
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    fun searchPosts(@PageableDefault(size = 30, sort = ["trending"], direction = Sort.Direction.DESC) pageable: Pageable,
-                   @RequestParam("keyword", required = true) keyword: String
+    fun searchPosts(
+        @PageableDefault(
+            size = 30, sort = ["trending"], direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @RequestParam("keyword", required = true) keyword: String
     ): Page<PostDto.MainPageResponse> {
         return postService.searchPosts(pageable, keyword)
     }

@@ -54,12 +54,12 @@ class Post(
 ) : BaseTimeEntity() {
 
     fun getPrevPost(): Post? {
-        val userPosts:List<Post> = this.user.posts
+        val userPosts: List<Post> = this.user.posts
         return userPosts.lastOrNull { it.id < this.id }
     }
 
     fun getNextPost(): Post? {
-        val userPosts:List<Post> = this.user.posts
+        val userPosts: List<Post> = this.user.posts
         return userPosts.firstOrNull { it.id > this.id }
     }
 }

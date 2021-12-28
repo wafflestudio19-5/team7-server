@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 
 @SpringBootApplication
 @EnableJpaAuditing
-class ToyApplication
+class WaflogApplication
 
 fun main(args: Array<String>) {
-    runApplication<ToyApplication>(*args)
+    runApplication<WaflogApplication>(*args)
 }

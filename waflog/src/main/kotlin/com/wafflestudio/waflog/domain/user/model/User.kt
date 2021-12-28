@@ -23,7 +23,9 @@ class User (
     @field:NotBlank
     val password: String,
 
-    val intro: String,
+    val shortIntro: String,
+
+    val longIntro: String,
 
     val image: String, // image file url
 

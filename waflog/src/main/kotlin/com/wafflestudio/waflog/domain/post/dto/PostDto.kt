@@ -41,7 +41,7 @@ class PostDto {
         constructor(post: Post) : this(
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
-            seriesPosts = post.series?.posts?.map { post -> IdAndTitleResponse(post) },
+            seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
             content = post.content,
             likes = post.likes,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },

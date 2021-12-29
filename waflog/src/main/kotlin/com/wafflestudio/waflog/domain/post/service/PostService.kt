@@ -14,7 +14,7 @@ import java.time.LocalDate
 class PostService(
     private val postRepository: PostRepository
 ) {
-    fun getRecentPosts(pageable : Pageable): Page<PostDto.MainPageResponse> {
+    fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
             postRepository.findAllByPrivateIsFalse(pageable)
         return posts.map { post -> PostDto.MainPageResponse(post) }

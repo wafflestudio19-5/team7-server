@@ -9,6 +9,6 @@ class PingController {
 
     @GetMapping("/ping")
     fun getPong(): PingDto.Response {
-        return PingDto.Response();
+        return PingDto.Response()
     }
 }

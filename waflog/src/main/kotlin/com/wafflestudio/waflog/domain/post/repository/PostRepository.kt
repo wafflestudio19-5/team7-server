@@ -12,11 +12,14 @@ interface PostRepository : JpaRepository<Post, Long?> {
     fun findAllByPrivateIsFalse(pageable: Pageable): Page<Post>
     fun findAllByPrivateIsFalseAndCreatedAtAfter(pageable: Pageable, start: LocalDateTime): Page<Post>
 
-    @Query("SELECT p FROM Post p WHERE (p.private = false) AND " +
-            "(p.title LIKE %:title% OR p.content LIKE %:content% OR p.user.username = :username)")
+    @Query(
+        "SELECT p FROM Post p WHERE (p.private = false) AND " +
+            "(p.title LIKE %:title% OR p.content LIKE %:content% OR p.user.username = :username)"
+    )
     fun searchByKeyword(
         pageable: Pageable,
         @Param("title") title: String,
         @Param("content") content: String,
-        @Param("username") username: String): Page<Post>
+        @Param("username") username: String
+    ): Page<Post>
 }

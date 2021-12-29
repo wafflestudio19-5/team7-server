@@ -9,5 +9,4 @@ class WaflogApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

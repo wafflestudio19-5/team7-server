@@ -21,7 +21,7 @@ class DataLoader(
     private val commentRepository: CommentRepository,
     private val seriesRepository: SeriesRepository
 ) : ApplicationRunner {
-    //test data in local
+    // test data in local
     override fun run(args: ApplicationArguments?) {
         val userA = User(
             email = "waffle@nsnu.ac.kr",
@@ -136,7 +136,7 @@ class DataLoader(
             likes = 0,
             thumbnail = "",
             summary = "summary of B",
-            private = true,             //private post
+            private = true, // private post
             url = "velog/post/2",
             series = null,
             comments = mutableListOf(),

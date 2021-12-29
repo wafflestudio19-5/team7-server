@@ -7,7 +7,7 @@ import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 
 @Entity
-class Comment (
+class Comment(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -28,4 +28,4 @@ class Comment (
     @field:NotBlank
     val content: String,
 
-    ): BaseTimeEntity()
+) : BaseTimeEntity()

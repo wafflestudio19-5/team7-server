@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.domain.user.dto
 
 import com.wafflestudio.waflog.domain.user.model.User
 
-
 class UserDto {
     data class SimpleResponse(
         val id: Long,
@@ -27,7 +26,7 @@ class UserDto {
         val facebookId: String,
         val twitterId: String,
         val homepage: String,
-    ){
+    ) {
         constructor(user: User) : this(
             id = user.id,
             name = user.name,

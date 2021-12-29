@@ -31,6 +31,7 @@ class PostDto {
     data class PageDetailResponse(
         val id: Long,
         val user: UserDto.UserInPostDetailResponse,
+        val url: String,
         val seriesPosts: List<IdAndTitleResponse>?,
         val content: String,
         val likes: Int,
@@ -41,6 +42,7 @@ class PostDto {
         constructor(post: Post) : this(
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
+            url = post.url,
             seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
             content = post.content,
             likes = post.likes,

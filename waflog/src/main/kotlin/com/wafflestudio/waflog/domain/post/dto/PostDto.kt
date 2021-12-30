@@ -10,6 +10,7 @@ class PostDto {
         val id: Long,
         val user: UserDto.SimpleResponse,
         val title: String,
+        val url: String,
         val thumbnail: String, // thumbnail file url
         val summary: String,
         val createAt: LocalDateTime?,
@@ -20,6 +21,7 @@ class PostDto {
             id = post.id,
             user = UserDto.SimpleResponse(post.user),
             title = post.title,
+            url = post.url,
             thumbnail = post.thumbnail,
             summary = post.summary,
             createAt = post.createdAt,
@@ -31,6 +33,7 @@ class PostDto {
     data class PageDetailResponse(
         val id: Long,
         val user: UserDto.UserInPostDetailResponse,
+        val url: String,
         val seriesPosts: List<IdAndTitleResponse>?,
         val content: String,
         val likes: Int,
@@ -41,6 +44,7 @@ class PostDto {
         constructor(post: Post) : this(
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
+            url = post.url,
             seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
             content = post.content,
             likes = post.likes,
@@ -52,11 +56,13 @@ class PostDto {
 
     data class IdAndTitleResponse(
         val id: Long,
-        val title: String
+        val title: String,
+        val url: String
     ) {
         constructor(post: Post) : this(
             id = post.id,
-            title = post.title
+            title = post.title,
+            url = post.url
         )
     }
 }

@@ -25,37 +25,37 @@ class DataLoader(
     override fun run(args: ApplicationArguments?) {
         val userA = User(
             email = "waffle@nsnu.ac.kr",
-            name = "James",
+            userId = "James",
             username = "Waffle",
-            password = "password",
             pageTitle = "Waffle's Page",
             publicEmail = "waffle@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
+            enabled = false,
             posts = mutableListOf()
         )
 
         val userB = User(
             email = "studio@nsnu.ac.kr",
-            name = "Peter",
+            userId = "Peter",
             username = "Studio",
-            password = "password",
             pageTitle = "Studio's Page",
             publicEmail = "studio@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
+            enabled = false,
             posts = mutableListOf()
         )
 
         val userC = User(
             email = "team7@nsnu.ac.kr",
-            name = "Annie",
+            userId = "Annie",
             username = "Team7",
-            password = "password",
             pageTitle = "Team7's Page",
             publicEmail = "Team7@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
+            enabled = false,
             posts = mutableListOf()
         )
 

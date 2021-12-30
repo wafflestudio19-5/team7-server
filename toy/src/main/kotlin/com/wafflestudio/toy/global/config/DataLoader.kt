@@ -22,9 +22,9 @@ class DataLoader(
     override fun run(args: ApplicationArguments?) {
         val userA = User(
             email = "waffle@nsnu.ac.kr",
+            userId = "James",
             name = "James",
             username = "Waffle",
-            password = "password",
             intro = "",
             image = "",
             pageTitle = "Waffle's Page",
@@ -39,9 +39,9 @@ class DataLoader(
 
         val userB = User(
             email = "studio@nsnu.ac.kr",
+            userId = "Peter",
             name = "Peter",
             username = "Studio",
-            password = "password",
             intro = "",
             image = "",
             pageTitle = "Studio's Page",
@@ -56,9 +56,9 @@ class DataLoader(
 
         val userC = User(
             email = "team7@nsnu.ac.kr",
+            userId = "Annie",
             name = "Annie",
             username = "Team7",
-            password = "password",
             intro = "",
             image = "",
             pageTitle = "Team7's Page",

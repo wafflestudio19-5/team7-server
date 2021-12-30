@@ -1,5 +1,6 @@
 package com.wafflestudio.toy.domain.user.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -15,41 +16,41 @@ class User (
     @field:NotBlank
     val email: String,
 
-    val name: String,
+    var userId: String? = "",
 
     @Column(unique = true)
-    @field:NotBlank
-    val username: String,
+    var username: String? = "",
 
-    @field:NotBlank
-    val password: String,
+    var intro: String? = "",
 
-    val intro: String,
+    val name: String? = "",
 
-    val image: String, // image file url
+    val image: String? = "", // image file url
 
     @Column(name = "page_title")
     @field:NotBlank
-    val pageTitle: String,
+    val pageTitle: String? = "0",
 
     @Column(name = "public_email")
     @field:Email
-    val publicEmail: String,
+    val publicEmail: String? = "",
 
     @Column(name = "github_id")
-    val githubId: String,
+    val githubId: String? = "",
 
     @Column(name = "facebook_id")
-    val facebookId: String,
+    val facebookId: String? = "",
 
     @Column(name = "twitter_id")
-    val twitterId: String,
+    val twitterId: String? = "",
 
-    val homepage: String,
+    val homepage: String? = "",
 
     @Column(name = "comment_noti")
-    val commentNotification: Boolean,
+    val commentNotification: Boolean? = false,
 
     @Column(name = "update_noti")
-    val updateNotification: Boolean,
+    val updateNotification: Boolean? = false,
+
+    var enabled: Boolean? = false,
         ): BaseTimeEntity()

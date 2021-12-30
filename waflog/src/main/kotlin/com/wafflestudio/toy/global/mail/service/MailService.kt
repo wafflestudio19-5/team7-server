@@ -32,8 +32,10 @@ class MailService(
     private fun createMessageWithAttachment(email: MailDto.Email): MimeMessage {
         val message: MimeMessage = emailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
-        val kotlinIconStream = URL("https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png").openStream()
-        val springIconStream = URL("https://upload.wikimedia.org/wikipedia/commons/4/44/Spring_Framework_Logo_2018.svg").openStream()
+        val kotlinIconStream = URL("https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png")
+            .openStream()
+        val springIconStream = URL("https://upload.wikimedia.org/wikipedia/commons/4/44/Spring_Framework_Logo_2018.svg")
+            .openStream()
 
         setupMessage(helper, email)
         message.setFrom(InternetAddress("waflog.register@gmail.com", "waflog"))

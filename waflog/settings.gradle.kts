@@ -1,1 +1,1 @@
-rootProject.name = "toy"
+rootProject.name = "waflog"

@@ -7,6 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.6.0"
     kotlin("plugin.jpa") version "1.6.0"
     kotlin("plugin.noarg") version "1.6.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
 }
 
 group = "com.wafflestudio"

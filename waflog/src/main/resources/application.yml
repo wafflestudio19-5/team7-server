@@ -31,7 +31,6 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
----
 spring:
   mail:
     host: smtp.gmail.com

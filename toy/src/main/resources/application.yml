@@ -31,3 +31,16 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+---
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: waflog.register@gmail.com
+    password: wafflestudio123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

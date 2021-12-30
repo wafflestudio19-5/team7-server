@@ -9,5 +9,4 @@ class ToyApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Entity
-class Save (
+class Save(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @field:NotNull
@@ -22,4 +22,4 @@ class Save (
     @field:NotBlank
     val content: String,
 
-    ): BaseTimeEntity()
+) : BaseTimeEntity()

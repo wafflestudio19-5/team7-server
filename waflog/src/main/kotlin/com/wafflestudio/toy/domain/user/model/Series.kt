@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Entity
-class Series (
+class Series(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @field:NotNull
@@ -17,4 +17,4 @@ class Series (
 
     @field:NotBlank
     val name: String,
-        ): BaseEntity()
+) : BaseEntity()

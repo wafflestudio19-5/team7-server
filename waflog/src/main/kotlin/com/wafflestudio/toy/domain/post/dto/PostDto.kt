@@ -11,8 +11,8 @@ class PostDto {
         val thumbnail: String, // thumbnail file url
         val summary: String,
         val createAt: LocalDateTime?,
-        val likes: Int,         // num of likes
-        val comments: Int      // num of comments
+        val likes: Int, // num of likes
+        val comments: Int // num of comments
     ) {
         constructor(post: Post) : this(
             user = UserDto.SimpleResponse(post.user),

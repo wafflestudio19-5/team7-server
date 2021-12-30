@@ -3,15 +3,11 @@ package com.wafflestudio.toy.global.config
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -32,7 +28,7 @@ class SecurityConfig() : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user/").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/recent/").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/trend/").permitAll()
-            .anyRequest().authenticated()   // Because signin api doesn't exist yet, so to test permit all request
+            .anyRequest().authenticated() // Because signin api doesn't exist yet, so to test permit all request
     }
 
     @Bean
@@ -46,4 +42,3 @@ class SecurityConfig() : WebSecurityConfigurerAdapter() {
         return source
     }
 }
-

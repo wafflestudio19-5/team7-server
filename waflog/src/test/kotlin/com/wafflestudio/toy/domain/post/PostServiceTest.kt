@@ -1,7 +1,6 @@
 package com.wafflestudio.toy.domain.post
 
 import com.wafflestudio.toy.domain.post.service.PostService
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension

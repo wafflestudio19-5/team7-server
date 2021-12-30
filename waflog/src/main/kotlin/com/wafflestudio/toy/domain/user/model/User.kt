@@ -1,6 +1,5 @@
 package com.wafflestudio.toy.domain.user.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wafflestudio.toy.domain.model.BaseTimeEntity
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -10,7 +9,7 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "waffle_user")
-class User (
+class User(
     @Column(unique = true)
     @field:Email
     @field:NotBlank
@@ -53,4 +52,4 @@ class User (
     val updateNotification: Boolean? = false,
 
     var enabled: Boolean? = false,
-        ): BaseTimeEntity()
+) : BaseTimeEntity()

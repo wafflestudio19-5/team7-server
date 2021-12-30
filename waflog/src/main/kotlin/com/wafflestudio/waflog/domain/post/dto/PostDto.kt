@@ -10,6 +10,7 @@ class PostDto {
         val id: Long,
         val user: UserDto.SimpleResponse,
         val title: String,
+        val url: String,
         val thumbnail: String, // thumbnail file url
         val summary: String,
         val createAt: LocalDateTime?,
@@ -20,6 +21,7 @@ class PostDto {
             id = post.id,
             user = UserDto.SimpleResponse(post.user),
             title = post.title,
+            url = post.url,
             thumbnail = post.thumbnail,
             summary = post.summary,
             createAt = post.createdAt,
@@ -54,11 +56,13 @@ class PostDto {
 
     data class IdAndTitleResponse(
         val id: Long,
-        val title: String
+        val title: String,
+        val url: String
     ) {
         constructor(post: Post) : this(
             id = post.id,
-            title = post.title
+            title = post.title,
+            url = post.url
         )
     }
 }

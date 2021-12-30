@@ -1,6 +1,5 @@
 package com.wafflestudio.waflog.domain.user.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
 import javax.persistence.*

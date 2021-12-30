@@ -5,12 +5,12 @@ import com.wafflestudio.waflog.domain.user.model.User
 import javax.persistence.*
 
 @Entity
-@Table(name="verify_token")
-class VerificationToken (
+@Table(name = "verify_token")
+class VerificationToken(
     @ManyToOne
-    @JoinColumn(name="user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     val user: User,
 
     val token: String
 
-): BaseTimeEntity()
+) : BaseTimeEntity()

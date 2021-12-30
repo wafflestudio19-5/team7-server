@@ -50,5 +50,4 @@ class MailService(
         helper.setSubject(email.subject)
         helper.setText(email.text)
     }
-
 }

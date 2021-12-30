@@ -11,7 +11,6 @@ import com.wafflestudio.waflog.global.mail.service.MailService
 import org.springframework.stereotype.Service
 import java.util.*
 
-
 @Service
 class AuthService(
     private val userRepository: UserRepository,
@@ -28,7 +27,7 @@ class AuthService(
         val token = generateVerificationToken(user)
         val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
         val message = mailContentBuilder.build(link)
-        val mail = MailDto.Email(email, "Waflog 회원가입", message,true)
+        val mail = MailDto.Email(email, "Waflog 회원가입", message, true)
         mailService.sendMail(mail)
     }
 

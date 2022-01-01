@@ -16,13 +16,13 @@ class AuthController(
         return ExistUserDto.Response(authService.signupEmail(signupEmailRequest))
     }
 
-    @GetMapping("/verify/{token}")
+    @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
-    fun verifyAccount(@PathVariable token: String) {
+    fun verifyAccount(@RequestParam(value = "token") token: String) {
         authService.verifyAccount(token)
     }
 
-    @PostMapping("/user/signup")
+    @PostMapping("/user/info")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {
         authService.signup(signupRequest)

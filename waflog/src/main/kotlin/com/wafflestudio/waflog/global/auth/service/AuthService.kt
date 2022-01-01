@@ -41,10 +41,10 @@ class AuthService(
 
     fun signup(signUpRequest: UserDto.SignUpRequest) {
         val email = signUpRequest.email
-        val username = signUpRequest.username
-        val userid = signUpRequest.userid
-        val intro = signUpRequest.intro
-        val user = User(email, userid, username, intro)
+        val userName = signUpRequest.userName
+        val userId = signUpRequest.userId
+        val shortIntro = signUpRequest.shortIntro
+        val user = User(email, userId, userName, shortIntro)
         verificationTokenUserRepository.deleteByEmail(email)
         userRepository.save(user)
     }

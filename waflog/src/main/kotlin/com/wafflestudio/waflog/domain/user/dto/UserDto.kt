@@ -17,8 +17,7 @@ class UserDto {
         val username: String,
         val pageTitle: String?,
         val image: String?,
-        val intro: String,
-        val shortIntro: String?,
+        val shortIntro: String,
         val publicEmail: String?,
         val githubId: String?,
         val facebookId: String?,
@@ -31,7 +30,6 @@ class UserDto {
             username = user.userName,
             pageTitle = user.pageTitle,
             image = user.image,
-            intro = user.intro,
             shortIntro = user.shortIntro,
             publicEmail = user.publicEmail,
             githubId = user.githubId,
@@ -47,8 +45,8 @@ class UserDto {
 
     data class SignUpRequest(
         val email: String,
-        val username: String,
-        val userid: String,
-        val intro: String
+        val userName: String,
+        val userId: String,
+        val shortIntro: String
     )
 }

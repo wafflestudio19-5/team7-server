@@ -19,9 +19,7 @@ class User(
     @Column(unique = true)
     var userName: String,
 
-    var intro: String,
-
-    val shortIntro: String? = "",
+    val shortIntro: String,
 
     val longIntro: String? = "",
 

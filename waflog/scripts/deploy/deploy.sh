@@ -18,7 +18,7 @@ fi
 
 PORT_USING_PID=$(lsof -ti tcp:8080)
 
- if [[ -z $PORT_USING_PID ]];
+if [[ -z $PORT_USING_PID ]];
 then
     echo "[Deploy] : Port available"
 else

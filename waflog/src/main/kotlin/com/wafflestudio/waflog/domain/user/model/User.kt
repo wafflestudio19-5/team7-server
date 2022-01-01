@@ -27,7 +27,7 @@ class User(
 
     @Column(name = "page_title")
     @field:NotBlank
-    val pageTitle: String = "default",
+    val pageTitle: String = "",
 
     @Column(name = "public_email")
     @field:Email

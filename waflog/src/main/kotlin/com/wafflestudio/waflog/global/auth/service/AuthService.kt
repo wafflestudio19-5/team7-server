@@ -54,7 +54,7 @@ class AuthService(
             userId = userId,
             name = name,
             shortIntro = shortIntro,
-            pageTitle = "${userId}.log"
+            pageTitle = "$userId.log"
         )
 
         verificationTokenRepository.deleteById(token.id)

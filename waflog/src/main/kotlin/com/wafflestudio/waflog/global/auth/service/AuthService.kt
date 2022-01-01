@@ -26,14 +26,14 @@ class AuthService(
             ?: return run {
                 val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
                 val message = mailContentBuilder.build(link)
-                val mail = MailDto.Email(email, "Waflog 회원가입", message, true)
+                val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
                 mailService.sendMail(mail)
                 true
             }
         return run {
             val link = "https://d259mvltzqd1q5.cloudfront.net/email-login?code=$token"
             val message = mailContentBuilder.build(link)
-            val mail = MailDto.Email(email, "Waflog 로그인", message, true)
+            val mail = MailDto.Email(email, "Waflog 로그인", message, false)
             mailService.sendMail(mail)
             false
         }

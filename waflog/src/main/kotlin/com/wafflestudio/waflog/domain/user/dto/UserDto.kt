@@ -4,10 +4,14 @@ import com.wafflestudio.waflog.domain.user.model.User
 
 class UserDto {
     data class SimpleResponse(
-        val email: String
+        val id: Long,
+        val userId: String,
+        val image: String
     ) {
         constructor(user: User) : this(
-            email = user.email
+            id = user.id,
+            userId = user.userId,
+            image = user.image
         )
     }
 

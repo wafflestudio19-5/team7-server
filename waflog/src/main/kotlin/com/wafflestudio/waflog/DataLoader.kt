@@ -31,7 +31,6 @@ class DataLoader(
             publicEmail = "waffle@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
-            enabled = false,
             posts = mutableListOf()
         )
 
@@ -43,7 +42,6 @@ class DataLoader(
             publicEmail = "studio@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
-            enabled = false,
             posts = mutableListOf()
         )
 
@@ -55,7 +53,6 @@ class DataLoader(
             publicEmail = "Team7@nsnu.ac.kr",
             commentNotification = false,
             updateNotification = false,
-            enabled = false,
             posts = mutableListOf()
         )
 

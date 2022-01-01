@@ -14,12 +14,12 @@ class User(
     @field:NotBlank
     val email: String,
 
-    var userId: String? = "",
+    var userId: String,
 
     @Column(unique = true)
-    var username: String? = "",
+    var userName: String,
 
-    var intro: String? = "",
+    var intro: String,
 
     val shortIntro: String? = "",
 
@@ -51,8 +51,6 @@ class User(
 
     @Column(name = "update_noti")
     val updateNotification: Boolean? = false,
-
-    var enabled: Boolean? = false,
 
     @OneToMany(mappedBy = "user")
     @OrderBy("id")

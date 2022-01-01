@@ -1,6 +1,8 @@
 package com.wafflestudio.waflog.global.auth.api
 
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.global.auth.dto.VerifiedMailDto
+import com.wafflestudio.waflog.global.auth.dto.ExistUserDto
 import com.wafflestudio.waflog.global.auth.service.AuthService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -10,9 +12,9 @@ class AuthController(
     private val authService: AuthService
 ) {
     @PostMapping("/user/")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun signUpEmail(@RequestBody signupEmailRequest: UserDto.SignUpEmailRequest) {
-        authService.signupEmail(signupEmailRequest)
+    @ResponseStatus(HttpStatus.OK)
+    fun signUpEmail(@RequestBody signupEmailRequest: UserDto.SignUpEmailRequest): ExistUserDto.Response {
+        return ExistUserDto.Response(authService.signupEmail(signupEmailRequest))
     }
 
     @GetMapping("/verify/{token}/")
@@ -22,7 +24,7 @@ class AuthController(
     }
 
     @PostMapping("/user/signup/")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {
         authService.signup(signupRequest)
     }

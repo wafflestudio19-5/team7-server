@@ -6,7 +6,7 @@ import javax.persistence.Table
 import javax.validation.constraints.Email
 
 @Entity
-@Table(name = "token_user")
+@Table(name = "verify_token")
 class VerificationToken(
     @field:Email
     val email: String,

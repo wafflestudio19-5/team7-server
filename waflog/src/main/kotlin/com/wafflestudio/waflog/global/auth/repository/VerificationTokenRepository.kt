@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface VerificationTokenRepository : JpaRepository<VerificationToken, Long?> {
     fun findByToken(token: String?): VerificationToken?
+    fun findByEmail(email: String?): VerificationToken?
 }

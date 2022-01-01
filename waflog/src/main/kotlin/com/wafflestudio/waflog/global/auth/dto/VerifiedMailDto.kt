@@ -1,13 +1,13 @@
 package com.wafflestudio.waflog.global.auth.dto
 
-import com.wafflestudio.waflog.global.auth.model.VerificationTokenUser
+import com.wafflestudio.waflog.global.auth.model.VerificationToken
 
 class VerifiedMailDto {
     data class Response(
         val email: String
     ) {
-        constructor(verificationTokenUser: VerificationTokenUser) : this(
-            email = verificationTokenUser.email
+        constructor(verificationToken: VerificationToken) : this(
+            email = verificationToken.email
         )
     }
 }

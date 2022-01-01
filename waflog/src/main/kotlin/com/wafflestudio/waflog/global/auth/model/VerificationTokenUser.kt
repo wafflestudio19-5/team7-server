@@ -1,15 +1,15 @@
 package com.wafflestudio.waflog.global.auth.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.validation.constraints.Email
+import com.wafflestudio.waflog.domain.user.model.User
+import javax.persistence.*
 
 @Entity
-@Table(name = "token_user")
+@Table(name = "verify_token")
 class VerificationTokenUser(
-    @field:Email
-    val email: String,
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    val user: User,
 
     val token: String
 

@@ -5,8 +5,8 @@ import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.EmailNotFoundException
 import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
-import com.wafflestudio.waflog.global.auth.model.VerificationTokenUser
-import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepository
+import com.wafflestudio.waflog.global.auth.model.VerificationToken
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import com.wafflestudio.waflog.global.mail.dto.MailDto
 import com.wafflestudio.waflog.global.mail.service.MailContentBuilder
 import com.wafflestudio.waflog.global.mail.service.MailService
@@ -17,7 +17,7 @@ import java.util.*
 class AuthService(
     private val userRepository: UserRepository,
     private val mailService: MailService,
-    private val verificationTokenUserRepository: VerificationTokenUserRepository,
+    private val verificationTokenRepository: VerificationTokenRepository,
     private val mailContentBuilder: MailContentBuilder
 ) {
     fun signupEmail(signUpEmailRequest: UserDto.SignUpEmailRequest): Boolean {
@@ -46,22 +46,22 @@ class AuthService(
         val userId = signUpRequest.userId
         val shortIntro = signUpRequest.shortIntro
         val user = User(email, userId, name, shortIntro)
-        val id = verificationTokenUserRepository.findByEmail(email)?.id
+        val id = verificationTokenRepository.findByEmail(email)?.id
             ?: throw EmailNotFoundException("$email 인 유저를 찾을 수 없음")
 
-        verificationTokenUserRepository.deleteById(id)
+        verificationTokenRepository.deleteById(id)
         userRepository.save(user)
     }
 
     private fun generateVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
-        val verificationTokenUser = VerificationTokenUser(email, token)
-        verificationTokenUserRepository.save(verificationTokenUser)
+        val verificationTokenUser = VerificationToken(email, token)
+        verificationTokenRepository.save(verificationTokenUser)
         return token
     }
 
     fun verifyAccount(token: String) {
-        verificationTokenUserRepository.findByToken(token)
+        verificationTokenRepository.findByToken(token)
             ?: throw TokenNotFoundException("잘못된 토큰")
     }
 }

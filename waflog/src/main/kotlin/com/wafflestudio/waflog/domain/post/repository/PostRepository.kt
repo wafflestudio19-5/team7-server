@@ -14,7 +14,7 @@ interface PostRepository : JpaRepository<Post, Long?> {
 
     @Query(
         "SELECT p FROM Post p WHERE (p.private = false) AND " +
-            "(p.title LIKE %:title% OR p.content LIKE %:content% OR p.user.username = :username)"
+            "(p.title LIKE %:title% OR p.content LIKE %:content% OR p.user.userId = :username)"
     )
     fun searchByKeyword(
         pageable: Pageable,

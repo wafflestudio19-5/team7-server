@@ -14,16 +14,12 @@ class User(
     @field:NotBlank
     val email: String,
 
-    val name: String,
-
     @Column(unique = true)
-    @field:NotBlank
-    val username: String,
+    var userId: String,
 
-    @field:NotBlank
-    val password: String,
+    var name: String,
 
-    val shortIntro: String = "",
+    val shortIntro: String,
 
     val longIntro: String = "",
 
@@ -31,7 +27,7 @@ class User(
 
     @Column(name = "page_title")
     @field:NotBlank
-    val pageTitle: String,
+    val pageTitle: String = "default",
 
     @Column(name = "public_email")
     @field:Email
@@ -49,12 +45,12 @@ class User(
     val homepage: String = "",
 
     @Column(name = "comment_noti")
-    val commentNotification: Boolean,
+    val commentNotification: Boolean = false,
 
     @Column(name = "update_noti")
-    val updateNotification: Boolean,
+    val updateNotification: Boolean = false,
 
     @OneToMany(mappedBy = "user")
     @OrderBy("id")
-    var posts: MutableList<Post>
+    var posts: MutableList<Post> = mutableListOf()
 ) : BaseTimeEntity()

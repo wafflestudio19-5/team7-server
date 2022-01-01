@@ -4,21 +4,17 @@ import com.wafflestudio.waflog.domain.user.model.User
 
 class UserDto {
     data class SimpleResponse(
-        val id: Long,
-        val username: String,
-        val image: String
+        val email: String
     ) {
         constructor(user: User) : this(
-            id = user.id,
-            username = user.username,
-            image = user.image
+            email = user.email
         )
     }
 
     data class UserInPostDetailResponse(
         val id: Long,
         val name: String,
-        val username: String,
+        val userId: String,
         val pageTitle: String,
         val image: String,
         val shortIntro: String,
@@ -31,7 +27,7 @@ class UserDto {
         constructor(user: User) : this(
             id = user.id,
             name = user.name,
-            username = user.username,
+            userId = user.userId,
             pageTitle = user.pageTitle,
             image = user.image,
             shortIntro = user.shortIntro,
@@ -42,4 +38,15 @@ class UserDto {
             homepage = user.homepage
         )
     }
+
+    data class SignUpEmailRequest(
+        val email: String
+    )
+
+    data class SignUpRequest(
+        val email: String,
+        val name: String,
+        val userId: String,
+        val shortIntro: String
+    )
 }

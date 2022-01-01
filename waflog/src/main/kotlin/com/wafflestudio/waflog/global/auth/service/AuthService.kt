@@ -21,16 +21,16 @@ class AuthService(
 ) {
     fun signupEmail(signUpEmailRequest: UserDto.SignUpEmailRequest): Boolean {
         val email = signUpEmailRequest.email
-        val existUser = userRepository.findByEmail(email)
         val token = generateVerificationToken(email)
-
-        return if (existUser == null) {
-            val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
-            val message = mailContentBuilder.build(link)
-            val mail = MailDto.Email(email, "Waflog 회원가입", message, true)
-            mailService.sendMail(mail)
-            true
-        } else {
+        val existUser = userRepository.findByEmail(email)
+            ?: return run {
+                val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
+                val message = mailContentBuilder.build(link)
+                val mail = MailDto.Email(email, "Waflog 회원가입", message, true)
+                mailService.sendMail(mail)
+                true
+            }
+        return run {
             val link = "https://d259mvltzqd1q5.cloudfront.net/email-login?code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, true)

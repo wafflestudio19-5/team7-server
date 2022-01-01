@@ -21,34 +21,34 @@ class User(
 
     val shortIntro: String,
 
-    val longIntro: String? = "",
+    val longIntro: String = "",
 
-    val image: String? = "default image url", // image file url
+    val image: String = "default image url", // image file url
 
     @Column(name = "page_title")
     @field:NotBlank
-    val pageTitle: String? = "default",
+    val pageTitle: String = "default",
 
     @Column(name = "public_email")
     @field:Email
-    val publicEmail: String? = "",
+    val publicEmail: String = "",
 
     @Column(name = "github_id")
-    val githubId: String? = "",
+    val githubId: String = "",
 
     @Column(name = "facebook_id")
-    val facebookId: String? = "",
+    val facebookId: String = "",
 
     @Column(name = "twitter_id")
-    val twitterId: String? = "",
+    val twitterId: String = "",
 
-    val homepage: String? = "",
+    val homepage: String = "",
 
     @Column(name = "comment_noti")
-    val commentNotification: Boolean? = false,
+    val commentNotification: Boolean = false,
 
     @Column(name = "update_noti")
-    val updateNotification: Boolean? = false,
+    val updateNotification: Boolean = false,
 
     @OneToMany(mappedBy = "user")
     @OrderBy("id")

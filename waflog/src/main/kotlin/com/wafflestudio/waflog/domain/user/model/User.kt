@@ -14,10 +14,10 @@ class User(
     @field:NotBlank
     val email: String,
 
+    @Column(unique = true)
     var userId: String,
 
-    @Column(unique = true)
-    var userName: String,
+    var name: String,
 
     val shortIntro: String,
 

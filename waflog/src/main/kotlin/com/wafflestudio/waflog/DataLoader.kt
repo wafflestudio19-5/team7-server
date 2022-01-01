@@ -26,7 +26,7 @@ class DataLoader(
         val userA = User(
             email = "waffle@nsnu.ac.kr",
             userId = "James",
-            userName = "Waffle",
+            name = "Waffle",
             shortIntro = "",
             pageTitle = "Waffle's Page",
             publicEmail = "waffle@nsnu.ac.kr",
@@ -38,7 +38,7 @@ class DataLoader(
         val userB = User(
             email = "studio@nsnu.ac.kr",
             userId = "Peter",
-            userName = "Studio",
+            name = "Studio",
             shortIntro = "",
             pageTitle = "Studio's Page",
             publicEmail = "studio@nsnu.ac.kr",
@@ -50,7 +50,7 @@ class DataLoader(
         val userC = User(
             email = "team7@nsnu.ac.kr",
             userId = "Annie",
-            userName = "Team7",
+            name = "Team7",
             shortIntro = "",
             pageTitle = "Team7's Page",
             publicEmail = "Team7@nsnu.ac.kr",

@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface VerificationTokenUserRepository : JpaRepository<VerificationTokenUser, Long?> {
     fun findByToken(token: String?): VerificationTokenUser?
     fun findByEmail(email: String?): VerificationTokenUser?
-    fun deleteByEmail(email: String?) { deleteById(findByEmail(email)!!.id) }
 }

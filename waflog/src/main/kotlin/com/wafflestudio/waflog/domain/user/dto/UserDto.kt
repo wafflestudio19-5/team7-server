@@ -14,7 +14,7 @@ class UserDto {
     data class UserInPostDetailResponse(
         val id: Long,
         val name: String,
-        val username: String,
+        val userId: String,
         val pageTitle: String,
         val image: String,
         val shortIntro: String,
@@ -26,8 +26,8 @@ class UserDto {
     ) {
         constructor(user: User) : this(
             id = user.id,
-            name = user.userId,
-            username = user.userName,
+            name = user.name,
+            userId = user.userId,
             pageTitle = user.pageTitle,
             image = user.image,
             shortIntro = user.shortIntro,
@@ -45,7 +45,7 @@ class UserDto {
 
     data class SignUpRequest(
         val email: String,
-        val userName: String,
+        val name: String,
         val userId: String,
         val shortIntro: String
     )

@@ -1,7 +1,6 @@
 package com.wafflestudio.waflog.global.auth.api
 
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.global.auth.dto.VerifiedMailDto
 import com.wafflestudio.waflog.global.auth.dto.ExistUserDto
 import com.wafflestudio.waflog.global.auth.service.AuthService
 import org.springframework.http.HttpStatus

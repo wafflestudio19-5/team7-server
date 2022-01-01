@@ -1,7 +1,6 @@
 package com.wafflestudio.waflog.global.auth.service
 
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.TokenMissMatchedException
@@ -25,7 +24,7 @@ class AuthService(
         val existUser = userRepository.findByEmail(email)
         val token = generateVerificationToken(email)
 
-        return if(existUser == null) {
+        return if (existUser == null) {
             val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 회원가입", message, true)

@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.*
 class AuthController(
     private val authService: AuthService
 ) {
-    @PostMapping("/user/")
+    @PostMapping("/user")
     @ResponseStatus(HttpStatus.OK)
     fun signUpEmail(@RequestBody signupEmailRequest: UserDto.SignUpEmailRequest): ExistUserDto.Response {
         return ExistUserDto.Response(authService.signupEmail(signupEmailRequest))
     }
 
-    @GetMapping("/verify/{token}/")
+    @GetMapping("/verify/{token}")
     @ResponseStatus(HttpStatus.OK)
     fun verifyAccount(@PathVariable token: String) {
         authService.verifyAccount(token)
     }
 
-    @PostMapping("/user/signup/")
+    @PostMapping("/user/signup")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {
         authService.signup(signupRequest)

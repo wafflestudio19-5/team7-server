@@ -67,9 +67,9 @@ class SecurityConfig(
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/user/info").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/auth/verify", "/api/v1/auth/verify/login").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/v1/post/recent", "/api/v1/post/trend").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}", "/api/v1/post/search").permitAll()
-            .anyRequest().authenticated() // Because signin api doesn't exist yet, so to test permit all request
+            .antMatchers(HttpMethod.GET, "/api/v1/post/recent", "/api/v1/post/trend").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}", "/api/v1/post/search").permitAll()
+            .anyRequest().authenticated()
     }
 
     @Bean

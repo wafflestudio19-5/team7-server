@@ -285,7 +285,7 @@ class DataLoader(
         )
 
         val rootCommentList = listOf(commentA, commentD, commentH, commentI)
-        rootCommentList.forEach{
+        rootCommentList.forEach {
             commentRepository.save(it)
         }
 
@@ -353,9 +353,8 @@ class DataLoader(
             commentB, commentC, commentE,
             commentF, commentG, commentJ
         )
-        commentList.forEach{
+        commentList.forEach {
             commentRepository.save(it)
         }
-
     }
 }

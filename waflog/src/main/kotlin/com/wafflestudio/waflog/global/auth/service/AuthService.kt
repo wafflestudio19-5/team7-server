@@ -54,12 +54,20 @@ class AuthService(
     fun signUp(signUpRequest: UserDto.SignUpRequest) {
         val email = signUpRequest.email
         val name = signUpRequest.name
-        val userId = signUpRequest.userId
+        val userId = signUpRequest.userId.lowercase()
         val shortIntro = signUpRequest.shortIntro
-        val user = User(email, userId, name, shortIntro)
-        val id = verificationTokenRepository.findByEmail(email)?.id
-            ?: throw EmailNotFoundException("$email 인 유저를 찾을 수 없음")
-        verificationTokenRepository.deleteById(id)
+        val token = verificationTokenRepository.findByEmail(email)
+            ?: throw EmailNotFoundException("User with $email not found")
+
+        val user = User(
+            email = email,
+            userId = userId,
+            name = name,
+            shortIntro = shortIntro,
+            pageTitle = "$userId.log"
+        )
+
+        verificationTokenRepository.deleteById(token.id)
         userRepository.save(user)
     }
 

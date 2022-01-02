@@ -35,22 +35,28 @@ class PostDto {
         val user: UserDto.UserInPostDetailResponse,
         val url: String,
         val seriesPosts: List<IdAndTitleResponse>?,
+        val title: String,
         val content: String,
         val likes: Int,
+        val thumbnail: String,
         val tags: List<TagDto.TagResponse>,
         val prevPost: IdAndTitleResponse?,
-        val nextPost: IdAndTitleResponse?
+        val nextPost: IdAndTitleResponse?,
+        val createdAt: LocalDateTime?
     ) {
         constructor(post: Post) : this(
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
             url = post.url,
             seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
+            title = post.title,
             content = post.content,
             likes = post.likes,
+            thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
             prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
-            nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) }
+            nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) },
+            createdAt = post.createdAt
         )
     }
 

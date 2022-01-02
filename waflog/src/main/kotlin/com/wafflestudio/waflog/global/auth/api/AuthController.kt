@@ -24,7 +24,7 @@ class AuthController(
 
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
-    fun verifyNewAccount(@RequestParam(value = "token") token: String) {
+    fun verifyAccount(@RequestParam(value = "token") token: String) {
         authService.verifyAccount(token)
     }
 

@@ -52,5 +52,9 @@ class User(
 
     @OneToMany(mappedBy = "user")
     @OrderBy("id")
-    var posts: MutableList<Post> = mutableListOf()
+    var posts: MutableList<Post> = mutableListOf(),
+
+    var token: String = "",
+
+    val role: String = "user"
 ) : BaseTimeEntity()

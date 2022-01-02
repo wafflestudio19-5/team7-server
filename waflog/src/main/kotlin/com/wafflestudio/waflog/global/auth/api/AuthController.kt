@@ -28,12 +28,6 @@ class AuthController(
         authService.verifyAccount(token)
     }
 
-    @GetMapping("/verify/login")
-    @ResponseStatus(HttpStatus.OK)
-    fun verifyExistAccount(@RequestParam(value = "token") token: String): UserDto.SimpleResponse {
-        return authService.signIn(token)
-    }
-
     @PostMapping("/user/info")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {

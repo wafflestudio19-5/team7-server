@@ -6,10 +6,13 @@ import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.EmailNotFoundException
 import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
+import com.wafflestudio.waflog.global.auth.model.VerificationTokenUser
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepository
 import com.wafflestudio.waflog.global.mail.dto.MailDto
 import com.wafflestudio.waflog.global.mail.service.MailContentBuilder
 import com.wafflestudio.waflog.global.mail.service.MailService
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -18,34 +21,45 @@ class AuthService(
     private val userRepository: UserRepository,
     private val mailService: MailService,
     private val verificationTokenRepository: VerificationTokenRepository,
-    private val mailContentBuilder: MailContentBuilder
+    private val verificationTokenUserRepository: VerificationTokenUserRepository,
+    private val mailContentBuilder: MailContentBuilder,
+    private val passwordEncoder: PasswordEncoder
 ) {
-    fun signupEmail(signUpEmailRequest: UserDto.SignUpEmailRequest): Boolean {
-        val email = signUpEmailRequest.email
-        val token = generateVerificationToken(email)
+    fun signUpEmail(joinEmailRequest: UserDto.JoinEmailRequest): Boolean {
+        val email = joinEmailRequest.email
         userRepository.findByEmail(email)
             ?: return run {
+                val token = generateSignUpVerificationToken(email)
                 val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
                 val message = mailContentBuilder.build(link)
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
                 mailService.sendMail(mail)
-                true
+                false // new user
             }
+        return signInEmail(joinEmailRequest)
+    }
+
+    fun signInEmail(joinEmailRequest: UserDto.JoinEmailRequest): Boolean {
+        val email = joinEmailRequest.email
+        val user = userRepository.findByEmail(email)
+            ?: return signUpEmail(joinEmailRequest)
         return run {
+            val token = generateSignInVerificationToken(user)
             val link = "https://d259mvltzqd1q5.cloudfront.net/email-login?code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
+            user.token = passwordEncoder.encode(token)
+            userRepository.save(user)
             mailService.sendMail(mail)
-            false
+            true // exist user
         }
     }
 
-    fun signup(signUpRequest: UserDto.SignUpRequest) {
+    fun signUp(signUpRequest: UserDto.SignUpRequest) {
         val email = signUpRequest.email
         val name = signUpRequest.name
         val userId = signUpRequest.userId.lowercase()
         val shortIntro = signUpRequest.shortIntro
-
         val token = verificationTokenRepository.findByEmail(email)
             ?: throw EmailNotFoundException("User with $email not found")
 
@@ -61,10 +75,17 @@ class AuthService(
         userRepository.save(user)
     }
 
-    private fun generateVerificationToken(email: String): String {
+    private fun generateSignUpVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
         val verificationToken = VerificationToken(email, token)
         verificationTokenRepository.save(verificationToken)
+        return token
+    }
+
+    private fun generateSignInVerificationToken(user: User): String {
+        val token = UUID.randomUUID().toString()
+        val verificationTokenUser = VerificationTokenUser(user, token)
+        verificationTokenUserRepository.save(verificationTokenUser)
         return token
     }
 

@@ -12,8 +12,14 @@ class AuthController(
 ) {
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    fun signUpEmail(@RequestBody signupEmailRequest: UserDto.SignUpEmailRequest): ExistUserDto.Response {
-        return ExistUserDto.Response(authService.signupEmail(signupEmailRequest))
+    fun signUpEmail(@RequestBody joinEmailRequest: UserDto.JoinEmailRequest): ExistUserDto.Response {
+        return ExistUserDto.Response(authService.signUpEmail(joinEmailRequest))
+    }
+
+    @PostMapping("/user/login")
+    @ResponseStatus(HttpStatus.OK)
+    fun signInEmail(@RequestBody joinEmailRequest: UserDto.JoinEmailRequest): ExistUserDto.Response {
+        return ExistUserDto.Response(authService.signInEmail(joinEmailRequest))
     }
 
     @GetMapping("/verify")
@@ -25,6 +31,6 @@ class AuthController(
     @PostMapping("/user/info")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {
-        authService.signup(signupRequest)
+        authService.signUp(signupRequest)
     }
 }

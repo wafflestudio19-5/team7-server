@@ -47,6 +47,7 @@ class Post(
     val series: Series?,
 
     @OneToMany(mappedBy = "post")
+    @OrderBy("root_comment ASC, lft ASC")
     var comments: MutableList<Comment>,
 
     @OneToMany(mappedBy = "post")

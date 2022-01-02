@@ -39,7 +39,7 @@ class UserDto {
         )
     }
 
-    data class SignUpEmailRequest(
+    data class JoinEmailRequest(
         val email: String
     )
 

@@ -12,19 +12,31 @@ class AuthController(
 ) {
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    fun signUpEmail(@RequestBody signupEmailRequest: UserDto.SignUpEmailRequest): ExistUserDto.Response {
-        return ExistUserDto.Response(authService.signupEmail(signupEmailRequest))
+    fun signUpEmail(@RequestBody joinEmailRequest: UserDto.JoinEmailRequest): ExistUserDto.Response {
+        return ExistUserDto.Response(authService.signUpEmail(joinEmailRequest))
+    }
+
+    @PostMapping("/user/login")
+    @ResponseStatus(HttpStatus.OK)
+    fun signInEmail(@RequestBody joinEmailRequest: UserDto.JoinEmailRequest): ExistUserDto.Response {
+        return ExistUserDto.Response(authService.signInEmail(joinEmailRequest))
     }
 
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
-    fun verifyAccount(@RequestParam(value = "token") token: String) {
+    fun verifyNewAccount(@RequestParam(value = "token") token: String) {
         authService.verifyAccount(token)
+    }
+
+    @GetMapping("/verify/login")
+    @ResponseStatus(HttpStatus.OK)
+    fun verifyExistAccount(@RequestParam(value = "token") token: String): UserDto.SimpleResponse {
+        return authService.signIn(token)
     }
 
     @PostMapping("/user/info")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest) {
-        authService.signup(signupRequest)
+        authService.signUp(signupRequest)
     }
 }

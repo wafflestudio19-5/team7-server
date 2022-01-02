@@ -12,6 +12,7 @@ import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepos
 import com.wafflestudio.waflog.global.mail.dto.MailDto
 import com.wafflestudio.waflog.global.mail.service.MailContentBuilder
 import com.wafflestudio.waflog.global.mail.service.MailService
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -21,13 +22,14 @@ class AuthService(
     private val mailService: MailService,
     private val verificationTokenRepository: VerificationTokenRepository,
     private val verificationTokenUserRepository: VerificationTokenUserRepository,
-    private val mailContentBuilder: MailContentBuilder
+    private val mailContentBuilder: MailContentBuilder,
+    private val passwordEncoder: PasswordEncoder
 ) {
     fun signUpEmail(joinEmailRequest: UserDto.JoinEmailRequest): Boolean {
         val email = joinEmailRequest.email
         userRepository.findByEmail(email)
             ?: return run {
-                val token = generateNewVerificationToken(email)
+                val token = generateSignUpVerificationToken(email)
                 val link = "https://d259mvltzqd1q5.cloudfront.net/register?code=$token"
                 val message = mailContentBuilder.build(link)
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
@@ -42,10 +44,12 @@ class AuthService(
         val user = userRepository.findByEmail(email)
             ?: return signUpEmail(joinEmailRequest)
         return run {
-            val token = generateExistVerificationToken(user)
+            val token = generateSignInVerificationToken(user)
             val link = "https://d259mvltzqd1q5.cloudfront.net/email-login?code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
+            user.token = passwordEncoder.encode(token)
+            userRepository.save(user)
             mailService.sendMail(mail)
             true // exist user
         }
@@ -71,14 +75,14 @@ class AuthService(
         userRepository.save(user)
     }
 
-    private fun generateNewVerificationToken(email: String): String {
+    private fun generateSignUpVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
         val verificationToken = VerificationToken(email, token)
         verificationTokenRepository.save(verificationToken)
         return token
     }
 
-    private fun generateExistVerificationToken(user: User): String {
+    private fun generateSignInVerificationToken(user: User): String {
         val token = UUID.randomUUID().toString()
         val verificationTokenUser = VerificationTokenUser(user, token)
         verificationTokenUserRepository.save(verificationTokenUser)
@@ -88,13 +92,5 @@ class AuthService(
     fun verifyAccount(token: String) {
         verificationTokenRepository.findByToken(token)
             ?: throw TokenNotFoundException("잘못된 토큰")
-    }
-
-    fun signIn(token: String): UserDto.SimpleResponse {
-        val tokenUser = verificationTokenUserRepository.findByToken(token)
-            ?: throw TokenNotFoundException("잘못된 토큰")
-        val user = tokenUser.user
-        verificationTokenUserRepository.deleteById(tokenUser.id)
-        return UserDto.SimpleResponse(user)
     }
 }

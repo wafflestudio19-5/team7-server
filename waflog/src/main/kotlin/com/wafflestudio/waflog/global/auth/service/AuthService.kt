@@ -89,8 +89,9 @@ class AuthService(
         return token
     }
 
-    fun verifyAccount(token: String) {
-        verificationTokenRepository.findByToken(token)
+    fun verifyAccount(token: String): String {
+        val verificationToken = verificationTokenRepository.findByToken(token)
             ?: throw TokenNotFoundException("잘못된 토큰")
+        return verificationToken.email
     }
 }

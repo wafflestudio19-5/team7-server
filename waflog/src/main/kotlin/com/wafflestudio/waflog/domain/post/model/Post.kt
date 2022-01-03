@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Entity
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "url"])])
 class Post(
 
     @ManyToOne(fetch = FetchType.LAZY)

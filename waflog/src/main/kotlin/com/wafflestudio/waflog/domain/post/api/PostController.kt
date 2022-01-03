@@ -35,12 +35,6 @@ class PostController(
         return postService.getTrendingPosts(pageable, date)
     }
 
-    @GetMapping("/{post_id}")
-    @ResponseStatus(HttpStatus.OK)
-    fun getPostDetail(@PathVariable("post_id") postId: Long): PostDto.PageDetailResponse {
-        return postService.getPostDetail(postId)
-    }
-
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     fun searchPosts(
@@ -50,5 +44,20 @@ class PostController(
         @RequestParam("keyword", required = true) keyword: String
     ): Page<PostDto.MainPageResponse> {
         return postService.searchPosts(pageable, keyword)
+    }
+
+    @GetMapping("/{post_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostDetail(@PathVariable("post_id") postId: Long): PostDto.PageDetailResponse {
+        return postService.getPostDetail(postId)
+    }
+
+    @GetMapping("/@{user_id}/{post_url}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostDetailWithURL(
+        @PathVariable("user_id") userId: String,
+        @PathVariable("post_url") postURL: String,
+    ): PostDto.PageDetailResponse {
+        return postService.getPostDetailWithURL(userId, postURL)
     }
 }

@@ -25,7 +25,7 @@ class DataLoader(
     override fun run(args: ApplicationArguments?) {
         val userA = User(
             email = "waffle@nsnu.ac.kr",
-            userId = "James",
+            userId = "james",
             name = "Waffle",
             shortIntro = "",
             pageTitle = "Waffle's Page",
@@ -37,7 +37,7 @@ class DataLoader(
 
         val userB = User(
             email = "studio@nsnu.ac.kr",
-            userId = "Peter",
+            userId = "peter",
             name = "Studio",
             shortIntro = "",
             pageTitle = "Studio's Page",
@@ -49,7 +49,7 @@ class DataLoader(
 
         val userC = User(
             email = "team7@nsnu.ac.kr",
-            userId = "Annie",
+            userId = "annie",
             name = "Team7",
             shortIntro = "",
             pageTitle = "Team7's Page",
@@ -84,7 +84,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of A",
             private = false,
-            url = "velog/post/1",
+            url = "waffle-spring",
             series = series1,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -97,7 +97,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of A",
             private = false,
-            url = "velog/post/1",
+            url = "waffle-spring-2",
             series = series1,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -110,7 +110,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of A",
             private = false,
-            url = "velog/post/1",
+            url = "waffle-spring-3",
             series = series2,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -123,7 +123,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of A",
             private = false,
-            url = "velog/post/1",
+            url = "waffle-spring-4",
             series = series1,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -137,7 +137,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of B",
             private = true, // private post
-            url = "velog/post/2",
+            url = "studio-spring",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -150,7 +150,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of C",
             private = false,
-            url = "velog/post/3",
+            url = "team7-spring",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -165,7 +165,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of D",
             private = false,
-            url = "velog/post/4",
+            url = "1st-trending-spring",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -180,7 +180,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of E",
             private = false,
-            url = "velog/post/5",
+            url = "2nd-trending-spring",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -195,7 +195,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of F",
             private = false,
-            url = "velog/post/6",
+            url = "3rd-trending-spring",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -210,7 +210,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of F",
             private = false,
-            url = "velog/post/7",
+            url = "post-with-content",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()
@@ -225,7 +225,7 @@ class DataLoader(
             thumbnail = "",
             summary = "summary of the post",
             private = false,
-            url = "velog/post/8",
+            url = "post-with-comments",
             series = null,
             comments = mutableListOf(),
             postTags = mutableListOf()

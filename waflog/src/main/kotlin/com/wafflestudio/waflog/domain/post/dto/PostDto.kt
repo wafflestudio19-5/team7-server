@@ -40,6 +40,7 @@ class PostDto {
         val likes: Int,
         val thumbnail: String,
         val tags: List<TagDto.TagResponse>,
+        val comments: List<CommentDto.RootCommentResponse>,
         val prevPost: IdAndTitleResponse?,
         val nextPost: IdAndTitleResponse?,
         val createdAt: LocalDateTime?
@@ -54,6 +55,14 @@ class PostDto {
             likes = post.likes,
             thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
+            comments = post.comments
+                .filter { it.depth == 0 }
+                .map { root ->
+                    CommentDto.RootCommentResponse(
+                        root,
+                        post.comments.filter { it.rootComment == root.id }
+                    )
+                },
             prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
             nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) },
             createdAt = post.createdAt

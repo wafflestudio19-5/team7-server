@@ -18,9 +18,9 @@ class Comment(
     val post: Post,
 
     @Column(name = "root_comment")
-    val rootComment: Long = 0,
-    val lft: Long = 1,
-    val rgt: Long = 2,
+    var rootComment: Long = 0,
+    var lft: Long = 1,
+    var rgt: Long = 2,
 
     @field:Min(0)
     val depth: Int = 0,

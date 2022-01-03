@@ -216,12 +216,19 @@ class DataLoader(
             postTags = mutableListOf()
         )
 
-        val commentA = Comment(
-            user = userB,
-            post = postD,
-            rootComment = 1,
-            depth = 0,
-            content = "Sample comment"
+        val postWithComments = Post(
+            user = userA,
+            title = "Post with comments",
+            content = "content of the post",
+            views = 7,
+            likes = 11,
+            thumbnail = "",
+            summary = "summary of the post",
+            private = false,
+            url = "velog/post/8",
+            series = null,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
         )
 
         postRepository.save(postA1)
@@ -235,7 +242,119 @@ class DataLoader(
         postRepository.save(postE)
         postRepository.save(postF)
         postRepository.save(postG)
+        postRepository.save(postWithComments)
 
-        commentRepository.save(commentA)
+        val commentSample = Comment(
+            user = userB,
+            post = postD,
+            rootComment = 1,
+            depth = 0,
+            content = "Sample comment"
+        )
+
+        commentRepository.save(commentSample)
+
+        val commentA = Comment(
+            user = userA,
+            post = postWithComments,
+            depth = 0,
+            content = "aaaaa",
+            rgt = 8
+        )
+
+        val commentD = Comment(
+            user = userB,
+            post = postWithComments,
+            depth = 0,
+            content = "ddddd",
+            rgt = 8
+        )
+
+        val commentH = Comment(
+            user = userC,
+            post = postWithComments,
+            depth = 0,
+            content = "hhhhh"
+        )
+
+        val commentI = Comment(
+            user = userB,
+            post = postWithComments,
+            depth = 0,
+            content = "iiiii"
+        )
+
+        val rootCommentList = listOf(commentA, commentD, commentH, commentI)
+        rootCommentList.forEach {
+            commentRepository.save(it)
+        }
+
+        val commentB = Comment(
+            user = userB,
+            post = postWithComments,
+            rootComment = commentA.id,
+            depth = 1,
+            content = "bbbbb",
+            lft = 2,
+            rgt = 7
+        )
+
+        val commentC = Comment(
+            user = userC,
+            post = postWithComments,
+            rootComment = commentA.id,
+            depth = 1,
+            content = "ccccc",
+            lft = 5,
+            rgt = 6
+        )
+
+        val commentE = Comment(
+            user = userA,
+            post = postWithComments,
+            rootComment = commentD.id,
+            depth = 1,
+            content = "eeeee",
+            lft = 2,
+            rgt = 3
+        )
+
+        val commentF = Comment(
+            user = userC,
+            post = postWithComments,
+            rootComment = commentA.id,
+            depth = 2,
+            content = "fffff",
+            lft = 3,
+            rgt = 4
+        )
+
+        val commentG = Comment(
+            user = userC,
+            post = postWithComments,
+            rootComment = commentD.id,
+            depth = 1,
+            content = "ggggg",
+            lft = 4,
+            rgt = 7
+        )
+
+        val commentJ = Comment(
+            user = userA,
+            post = postWithComments,
+            rootComment = commentD.id,
+            depth = 2,
+            content = "jjjjj",
+            lft = 5,
+            rgt = 6
+        )
+
+        val commentList = listOf(
+            commentB, commentC, commentE,
+            commentF, commentG, commentJ
+        )
+        commentList.forEach {
+            commentRepository.save(it)
+        }
     }
 }

@@ -22,8 +22,8 @@ class MailService(
     private fun createSimpleMessage(email: MailDto.Email): MimeMessage {
         val message: MimeMessage = emailSender.createMimeMessage()
         val helper = MimeMessageHelper(message)
-        helper.setText(email.text, true)
         setupMessage(helper, email)
+        helper.setText(email.text, true)
         message.setFrom(InternetAddress("waflog.register@gmail.com", "waflog"))
 
         return message

@@ -29,7 +29,7 @@ class PostService(
         val private = createRequest.private
         var url = createRequest.url
         if (url == "") {
-            if (title.length == 1) url += "-" + getRandomString(8)
+            if (title.length == 1) url = title + "-" + getRandomString(8)
             else url = title
         }
         val seriesName = createRequest.seriesName

@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.global.auth.dto
 
 class VerifiedMailDto {
     data class Response(
-        val email: String,
-        val token: String
+        val email: String
     )
 }

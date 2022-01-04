@@ -6,6 +6,7 @@ import com.wafflestudio.waflog.global.auth.dto.ExistUserDto
 import com.wafflestudio.waflog.global.auth.dto.VerifiedMailDto
 import com.wafflestudio.waflog.global.auth.service.AuthService
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -28,9 +29,13 @@ class AuthController(
 
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
-    fun verifyAccount(@RequestParam(value = "token", required = true) token: String): VerifiedMailDto.Response {
+    fun verifyAccount(@RequestParam(value = "token", required = true) token: String):
+        ResponseEntity<VerifiedMailDto.Response> {
         val email = authService.verifyAccount(token)
-        return VerifiedMailDto.Response(email, jwtTokenProvider.generateToken(email))
+        return ResponseEntity
+            .ok()
+            .header("Authentication", jwtTokenProvider.generateToken(email))
+            .body(VerifiedMailDto.Response(email))
     }
 
     @PostMapping("/user/info")

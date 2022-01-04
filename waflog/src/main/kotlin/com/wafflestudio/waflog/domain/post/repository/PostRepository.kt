@@ -22,4 +22,6 @@ interface PostRepository : JpaRepository<Post, Long?> {
         @Param("content") content: String,
         @Param("userId") userId: String
     ): Page<Post>
+
+    fun findByPrivateIsFalseAndUser_UserIdAndUrl(userId: String, url: String): Post?
 }

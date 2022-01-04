@@ -10,7 +10,6 @@ class CommentDto {
         val user: UserDto.SimpleResponse,
         val content: String,
         val depth: Int,
-        val rootComment: Long,
         val createdAt: LocalDateTime?
     ) {
         constructor(comment: Comment) : this(
@@ -19,7 +18,6 @@ class CommentDto {
                 ?: UserDto.SimpleResponse(id = -1, userId = "알 수 없음", image = ""),
             content = comment.user?.let { comment.content } ?: "삭제된 댓글입니다.",
             depth = comment.depth,
-            rootComment = comment.rootComment,
             createdAt = comment.createdAt
         )
     }

@@ -36,4 +36,10 @@ class PostService(
         val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
+
+    fun getPostDetailWithURL(userId: String, postURL: String): PostDto.PageDetailResponse {
+        val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
+            ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+        return PostDto.PageDetailResponse(post)
+    }
 }

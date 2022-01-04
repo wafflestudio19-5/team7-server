@@ -27,10 +27,10 @@ class PostService(
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary
         val private = createRequest.private
-        var url = createRequest.url
+        var url = createRequest.url.replace(" ", "-")
         if (url == "") {
-            if (title.length == 1) url = title + "-" + getRandomString(8)
-            else url = title
+            url = if (title.length == 1) title + "-" + getRandomString(8)
+            else title.replace(" ", "-")
         }
         val seriesName = createRequest.seriesName
         val series = seriesRepository.findByName(seriesName)

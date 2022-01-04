@@ -2,18 +2,27 @@ package com.wafflestudio.waflog.domain.post.api
 
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.service.PostService
+import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.global.auth.CurrentUser
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/post")
 class PostController(
     private val postService: PostService
 ) {
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun writePost(@RequestBody createRequest: PostDto.CreateRequest, @CurrentUser user: User) {
+        postService.writePost(createRequest, user)
+    }
+
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)
     fun getRecentPosts(

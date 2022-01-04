@@ -80,4 +80,14 @@ class PostDto {
             url = post.url
         )
     }
+
+    data class CreateRequest(
+        val title: String,
+        val content: String,
+        val thumbnail: String,
+        val summary: String,
+        val private: Boolean,
+        val url: String,
+        val seriesName: String
+    )
 }

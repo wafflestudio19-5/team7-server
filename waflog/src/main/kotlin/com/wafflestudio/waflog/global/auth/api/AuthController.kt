@@ -6,7 +6,6 @@ import com.wafflestudio.waflog.global.auth.dto.ExistUserDto
 import com.wafflestudio.waflog.global.auth.dto.VerifiedMailDto
 import com.wafflestudio.waflog.global.auth.service.AuthService
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController

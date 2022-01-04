@@ -14,7 +14,6 @@ class Series(
     val user: User,
 
     @field:NotBlank
-    @Column(unique = true)
     val name: String,
 
     @OneToMany(mappedBy = "series")

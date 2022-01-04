@@ -12,7 +12,7 @@ class VerificationTokenPrincipalDetailService(private val verificationTokenRepos
     UserDetailsService {
     override fun loadUserByUsername(s: String): UserDetails {
         val user = verificationTokenRepository.findByEmail(s)
-            ?: throw UsernameNotFoundException("User with email '%s' not found")
+            ?: throw UsernameNotFoundException("User with email '$s' not found")
         return VerificationTokenPrincipal(user)
     }
 }

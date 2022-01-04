@@ -4,7 +4,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 
 class AuthenticationToken(
-    private val principal: UserPrincipal,
+    private val principal: VerificationTokenPrincipal,
     private var accessToken: Any?,
     authorities: Collection<GrantedAuthority?>? = null
 ) : AbstractAuthenticationToken(authorities) {
@@ -16,7 +16,7 @@ class AuthenticationToken(
 
     override fun getCredentials(): Any? { return accessToken }
 
-    override fun getPrincipal(): UserPrincipal { return principal }
+    override fun getPrincipal(): VerificationTokenPrincipal { return principal }
 
     override fun eraseCredentials() {
         super.eraseCredentials()

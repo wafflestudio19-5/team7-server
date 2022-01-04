@@ -54,7 +54,4 @@ class User(
     @OrderBy("id")
     var posts: MutableList<Post> = mutableListOf(),
 
-    var token: String = "",
-
-    val role: String = "user"
 ) : BaseTimeEntity()

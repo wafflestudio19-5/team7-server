@@ -6,9 +6,7 @@ import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.EmailNotFoundException
 import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
-import com.wafflestudio.waflog.global.auth.model.VerificationTokenUser
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
-import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepository
 import com.wafflestudio.waflog.global.mail.dto.MailDto
 import com.wafflestudio.waflog.global.mail.service.MailContentBuilder
 import com.wafflestudio.waflog.global.mail.service.MailService
@@ -21,7 +19,6 @@ class AuthService(
     private val userRepository: UserRepository,
     private val mailService: MailService,
     private val verificationTokenRepository: VerificationTokenRepository,
-    private val verificationTokenUserRepository: VerificationTokenUserRepository,
     private val mailContentBuilder: MailContentBuilder,
     private val passwordEncoder: PasswordEncoder
 ) {
@@ -29,7 +26,7 @@ class AuthService(
         val email = joinEmailRequest.email
         userRepository.findByEmail(email)
             ?: return run {
-                val token = generateSignUpVerificationToken(email)
+                val token = generateVerificationToken(email)
                 val link = "https://waflog-web.kro.kr/register?code=$token"
                 val message = mailContentBuilder.build(link)
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
@@ -44,12 +41,10 @@ class AuthService(
         val user = userRepository.findByEmail(email)
             ?: return signUpEmail(joinEmailRequest)
         return run {
-            val token = generateSignInVerificationToken(user)
+            val token = generateVerificationToken(user)
             val link = "https://waflog-web.kro.kr/email-login?code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
-            user.token = passwordEncoder.encode(token)
-            userRepository.save(user)
             mailService.sendMail(mail)
             true // exist user
         }
@@ -75,17 +70,17 @@ class AuthService(
         userRepository.save(user)
     }
 
-    private fun generateSignUpVerificationToken(email: String): String {
-        val token = UUID.randomUUID().toString()
+    private fun generateVerificationToken(email: String): String {
+        val token = passwordEncoder.encode(UUID.randomUUID().toString())
         val verificationToken = VerificationToken(email, token)
         verificationTokenRepository.save(verificationToken)
         return token
     }
 
-    private fun generateSignInVerificationToken(user: User): String {
-        val token = UUID.randomUUID().toString()
-        val verificationTokenUser = VerificationTokenUser(user, token)
-        verificationTokenUserRepository.save(verificationTokenUser)
+    private fun generateVerificationToken(user: User): String {
+        val token = passwordEncoder.encode(UUID.randomUUID().toString())
+        val verificationToken = VerificationToken(user.email, token)
+        verificationTokenRepository.save(verificationToken)
         return token
     }
 

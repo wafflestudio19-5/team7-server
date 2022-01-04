@@ -1,9 +1,9 @@
 package com.wafflestudio.waflog.global.auth
 
-import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
-import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.exception.VerificationTokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.AuthenticationToken
-import com.wafflestudio.waflog.global.auth.model.UserPrincipal
+import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -13,7 +13,7 @@ import java.util.*
 
 @Component
 class JwtTokenProvider(
-    private val userRepository: UserRepository
+    private val verificationTokenRepository: VerificationTokenRepository
 ) {
     private val logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
     val tokenPrefix = "Bearer "
@@ -40,8 +40,8 @@ class JwtTokenProvider(
 
     // For Login
     fun generateToken(authentication: Authentication): String {
-        val userPrincipal = authentication.principal as UserPrincipal
-        return generateToken(userPrincipal.user.email)
+        val verificationTokenPrincipal = authentication.principal as VerificationTokenPrincipal
+        return generateToken(verificationTokenPrincipal.verificationToken.email)
     }
 
     fun validateToken(authToken: String?): Boolean {
@@ -84,9 +84,9 @@ class JwtTokenProvider(
             .body
         // Recover User class from JWT
         val email = claims.get("email", String::class.java)
-        val currentUser = userRepository.findByEmail(email)
-            ?: throw UserNotFoundException("$email is not valid email, check token is expired")
-        val userPrincipal = UserPrincipal(currentUser)
+        val currentToken = verificationTokenRepository.findByEmail(email)
+            ?: throw VerificationTokenNotFoundException("$email is not valid email, check token is expired")
+        val userPrincipal = VerificationTokenPrincipal(currentToken)
         val authorises = userPrincipal.authorities
         // Make token with parsed data
         return AuthenticationToken(userPrincipal, null, authorises)

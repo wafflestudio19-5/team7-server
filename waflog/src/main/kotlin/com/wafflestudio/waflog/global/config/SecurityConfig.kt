@@ -4,8 +4,8 @@ import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.SignInAuthenticationFilter
-import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepository
-import com.wafflestudio.waflog.global.auth.service.UserPrincipalDetailService
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
+import com.wafflestudio.waflog.global.auth.service.VerificationTokenPrincipalDetailService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -28,8 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val verificationTokenUserRepository: VerificationTokenUserRepository,
-    private val userPrincipalDetailService: UserPrincipalDetailService
+    private val verificationTokenRepository: VerificationTokenRepository,
+    private val userPrincipalDetailService: VerificationTokenPrincipalDetailService
 
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -58,7 +58,7 @@ class SecurityConfig(
             .and()
             .addFilter(
                 SignInAuthenticationFilter(
-                    authenticationManager(), jwtTokenProvider, verificationTokenUserRepository
+                    authenticationManager(), jwtTokenProvider, verificationTokenRepository
                 )
             )
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))

@@ -3,7 +3,6 @@ package com.wafflestudio.waflog.domain.post.dto
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.tag.dto.TagDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.domain.user.model.Series
 import java.time.LocalDateTime
 
 class PostDto {
@@ -89,6 +88,6 @@ class PostDto {
         val summary: String,
         val private: Boolean,
         val url: String,
-        val series: Series
+        val seriesName: String
     )
 }

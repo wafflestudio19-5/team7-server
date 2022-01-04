@@ -6,6 +6,7 @@ import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.service.PostService
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.global.auth.CurrentUser
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/post")
 class PostController(
     private val postService: PostService,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val seriesRepository: SeriesRepository
 ) {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,7 +32,8 @@ class PostController(
         val summary = createRequest.summary
         val private = createRequest.private
         val url = createRequest.url
-        val series = createRequest.series
+        val seriesName = createRequest.seriesName
+        val series = seriesRepository.findByName(seriesName)
         val post = Post(
             user = user,
             title = title,

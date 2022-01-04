@@ -11,6 +11,8 @@ class VerificationToken(
     @field:Email
     val email: String,
 
-    val token: String
+    val token: String,
+
+    val role: String = "user"
 
 ) : BaseTimeEntity()

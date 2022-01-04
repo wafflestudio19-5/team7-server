@@ -2,8 +2,8 @@ package com.wafflestudio.waflog.global.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.waflog.global.auth.dto.LoginRequest
-import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
-import com.wafflestudio.waflog.global.auth.repository.VerificationTokenUserRepository
+import com.wafflestudio.waflog.global.auth.exception.VerificationTokenNotFoundException
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse
 class SignInAuthenticationFilter(
     authenticationManager: AuthenticationManager?,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val verificationTokenUserRepository: VerificationTokenUserRepository
+    private val verificationTokenRepository: VerificationTokenRepository
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
         setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/api/v1/auth/verify/login", "POST"))
@@ -45,10 +45,10 @@ class SignInAuthenticationFilter(
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val parsedRequest: LoginRequest = parseRequest(request)
-        val tokenUser = verificationTokenUserRepository.findByToken(parsedRequest.token)
-            ?: throw TokenNotFoundException("잘못된 토큰")
+        val token = verificationTokenRepository.findByToken(parsedRequest.token)
+            ?: throw VerificationTokenNotFoundException("잘못된 토큰")
         val authRequest: Authentication =
-            UsernamePasswordAuthenticationToken(tokenUser.user.email, parsedRequest.token)
+            UsernamePasswordAuthenticationToken(token.email, parsedRequest.token)
         return authenticationManager.authenticate(authRequest)
     }
 

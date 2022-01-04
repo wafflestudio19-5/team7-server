@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.CorsUtils
+import org.springframework.web.cors.CorsUtils.isPreFlightRequest
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
@@ -63,6 +65,7 @@ class SecurityConfig(
             )
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
             .authorizeRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .antMatchers(HttpMethod.GET, "/ping").permitAll() // SignUp user
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/user/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/auth/verify").permitAll()

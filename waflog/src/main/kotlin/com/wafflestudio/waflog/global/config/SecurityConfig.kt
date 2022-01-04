@@ -78,6 +78,7 @@ class SecurityConfig(
         corsConfiguration.addAllowedOrigin("*")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("*")
+        corsConfiguration.addExposedHeader("Authentication")
         var source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)
         return source

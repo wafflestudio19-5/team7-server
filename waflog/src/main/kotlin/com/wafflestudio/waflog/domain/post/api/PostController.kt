@@ -1,7 +1,12 @@
 package com.wafflestudio.waflog.domain.post.api
 
 import com.wafflestudio.waflog.domain.post.dto.PostDto
+import com.wafflestudio.waflog.domain.post.exception.InvalidPostFormException
+import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.service.PostService
+import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.global.auth.CurrentUser
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -12,8 +17,37 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/post")
 class PostController(
-    private val postService: PostService
+    private val postService: PostService,
+    private val postRepository: PostRepository
 ) {
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun writePost(@RequestBody createRequest: PostDto.CreateRequest, @CurrentUser user: User) {
+        val title = createRequest.title
+        if (title == "") throw InvalidPostFormException("제목이 비어있습니다.")
+        val content = createRequest.content
+        val thumbnail = createRequest.thumbnail
+        val summary = createRequest.summary
+        val private = createRequest.private
+        val url = createRequest.url
+        val series = createRequest.series
+        val post = Post(
+            user = user,
+            title = title,
+            content = content,
+            likes = 0,
+            thumbnail = thumbnail,
+            summary = summary,
+            private = private,
+            url = url,
+            series = series,
+            comments = mutableListOf(),
+            postTags = mutableListOf()
+        )
+
+        postRepository.save(post)
+    }
+
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)
     fun getRecentPosts(

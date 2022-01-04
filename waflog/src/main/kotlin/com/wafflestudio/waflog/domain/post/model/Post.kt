@@ -22,7 +22,6 @@ class Post(
     @field:NotBlank
     val title: String,
 
-    @field:NotBlank
     val content: String,
 
     @field:Min(0)

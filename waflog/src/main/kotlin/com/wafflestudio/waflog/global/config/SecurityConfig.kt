@@ -85,6 +85,7 @@ class SecurityConfig(
         corsConfiguration.addAllowedMethod("GET")
         corsConfiguration.addAllowedMethod("POST")
         corsConfiguration.addAllowedMethod("DELETE")
+        corsConfiguration.addAllowedMethod("PUT")
         corsConfiguration.addExposedHeader("Authentication")
         var source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)

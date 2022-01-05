@@ -1,6 +1,6 @@
 #!bin/bash
 
-JAR_PATH=$(ls -t ~/build/*jar | head -n 1)
+JAR_PATH=$(ls -t ~/build/*.jar | head -n 1)
 
 JAR_NAME=$(basename $JAR_PATH)
 

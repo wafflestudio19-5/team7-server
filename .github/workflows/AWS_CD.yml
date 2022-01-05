@@ -28,7 +28,7 @@ jobs:
         cache: gradle
 
     - name: Build with Gradle
-      run: ./gradlew build -x test 
+      run: ./gradlew bootJar
 
     - name: Make directory for zip
       run: mkdir deploy

@@ -2,7 +2,9 @@ package com.wafflestudio.waflog.domain.post.dto
 
 import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.global.common.dto.ListResponse
 import java.time.LocalDateTime
+import javax.validation.constraints.NotBlank
 
 class CommentDto {
     data class CommentResponse(
@@ -24,13 +26,23 @@ class CommentDto {
 
     data class RootCommentResponse(
         val rootComment: CommentResponse,
-        val replyNumber: Int,
-        val replies: List<CommentResponse>
+        val replies: ListResponse<CommentResponse>
     ) {
         constructor(rootComment: Comment, replyList: List<Comment>) : this(
             rootComment = CommentResponse(rootComment),
-            replyNumber = replyList.size,
-            replies = replyList.map { CommentResponse(it) }
+            replies = ListResponse(replyList.map { reply -> CommentResponse(reply) })
         )
     }
+
+    data class CreateRequest(
+        val parentComment: Long = 0,
+
+        @field:NotBlank
+        val content: String,
+    )
+
+    data class ModifyRequest(
+        @field:NotBlank
+        val content: String
+    )
 }

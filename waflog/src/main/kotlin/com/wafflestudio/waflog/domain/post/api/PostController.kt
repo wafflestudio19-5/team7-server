@@ -1,16 +1,26 @@
 package com.wafflestudio.waflog.domain.post.api
 
+import com.wafflestudio.waflog.domain.post.dto.CommentDto
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.service.PostService
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.global.auth.CurrentUser
+import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/post")
@@ -68,5 +78,36 @@ class PostController(
         @PathVariable("post_url") postURL: String,
     ): PostDto.PageDetailResponse {
         return postService.getPostDetailWithURL(userId, postURL)
+    }
+
+    @PostMapping("/{post_id}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun writeComment(
+        @PathVariable("post_id") postId: Long,
+        @RequestBody createRequest: CommentDto.CreateRequest,
+        @CurrentUser user: User
+    ): ListResponse<CommentDto.RootCommentResponse> {
+        return postService.writeComment(postId, createRequest, user)
+    }
+
+    @PutMapping("/{post_id}/comment/{comment_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun modifyComment(
+        @PathVariable("post_id") postId: Long,
+        @PathVariable("comment_id") commentId: Long,
+        @RequestBody modifyRequest: CommentDto.ModifyRequest,
+        @CurrentUser user: User
+    ): ListResponse<CommentDto.RootCommentResponse> {
+        return postService.modifyComment(postId, commentId, modifyRequest, user)
+    }
+
+    @DeleteMapping("/{post_id}/comment/{comment_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteComment(
+        @PathVariable("post_id") postId: Long,
+        @PathVariable("comment_id") commentId: Long,
+        @CurrentUser user: User
+    ): ListResponse<CommentDto.RootCommentResponse> {
+        return postService.deleteComment(postId, commentId, user)
     }
 }

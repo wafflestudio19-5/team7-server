@@ -79,7 +79,6 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         var corsConfiguration = CorsConfiguration()
-        corsConfiguration.allowCredentials = true
         corsConfiguration.addAllowedOrigin("*")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("GET")

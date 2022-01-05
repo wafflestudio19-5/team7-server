@@ -75,8 +75,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         var corsConfiguration = CorsConfiguration()
-        corsConfiguration.allowCredentials = true
-        corsConfiguration.addAllowedOrigin("https://waflog-web.kro.kr")
+        corsConfiguration.addAllowedOrigin("*")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("GET")
         corsConfiguration.addAllowedMethod("POST")

@@ -1,10 +1,14 @@
 package com.wafflestudio.waflog.global.auth.model
 
+import com.wafflestudio.waflog.domain.user.model.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class VerificationTokenPrincipal(val verificationToken: VerificationToken) : UserDetails {
+class VerificationTokenPrincipal(
+    val user: User,
+    val verificationToken: VerificationToken
+) : UserDetails {
     override fun getUsername(): String { return verificationToken.email }
 
     override fun getPassword(): String { return verificationToken.token }

@@ -17,7 +17,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
-      show-sql: true
+    show-sql: true
 ---
 spring:
   config:

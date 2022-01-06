@@ -76,7 +76,8 @@ class PostService(
         }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
-            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found") }
+            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+        }
         val post = Post(
             user = user,
             title = title,

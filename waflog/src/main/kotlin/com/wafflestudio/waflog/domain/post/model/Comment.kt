@@ -11,7 +11,7 @@ class Comment(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    val user: User?,
+    var user: User?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
@@ -26,6 +26,6 @@ class Comment(
     val depth: Int = 0,
 
     @field:NotBlank
-    val content: String,
+    var content: String,
 
 ) : BaseTimeEntity()

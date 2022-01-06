@@ -3,6 +3,7 @@ package com.wafflestudio.waflog.domain.post.dto
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.tag.dto.TagDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.global.common.dto.ListResponse
 import java.time.LocalDateTime
 
 class PostDto {
@@ -40,7 +41,7 @@ class PostDto {
         val likes: Int,
         val thumbnail: String,
         val tags: List<TagDto.TagResponse>,
-        val comments: List<CommentDto.RootCommentResponse>,
+        val comments: ListResponse<CommentDto.RootCommentResponse>,
         val prevPost: IdAndTitleResponse?,
         val nextPost: IdAndTitleResponse?,
         val createdAt: LocalDateTime?
@@ -55,14 +56,16 @@ class PostDto {
             likes = post.likes,
             thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
-            comments = post.comments
-                .filter { it.depth == 0 }
-                .map { root ->
-                    CommentDto.RootCommentResponse(
-                        root,
-                        post.comments.filter { it.rootComment == root.id }
-                    )
-                },
+            comments = ListResponse(
+                post.comments
+                    .filter { it.depth == 0 }
+                    .map { root ->
+                        CommentDto.RootCommentResponse(
+                            root,
+                            post.comments.filter { it.rootComment == root.id }
+                        )
+                    }
+            ),
             prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
             nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) },
             createdAt = post.createdAt

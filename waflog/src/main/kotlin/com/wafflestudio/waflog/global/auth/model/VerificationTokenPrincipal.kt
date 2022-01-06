@@ -6,7 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class VerificationTokenPrincipal(
-    val user: User,
+    val user: User?,
     val verificationToken: VerificationToken
 ) : UserDetails {
     override fun getUsername(): String { return verificationToken.email }

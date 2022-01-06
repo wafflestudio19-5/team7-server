@@ -74,15 +74,16 @@ class SecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        var corsConfiguration = CorsConfiguration()
-        corsConfiguration.addAllowedOrigin("*")
+        val corsConfiguration = CorsConfiguration()
+        corsConfiguration.allowCredentials = true
+        corsConfiguration.addAllowedOrigin("https://waflog-web.kro.kr")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("GET")
         corsConfiguration.addAllowedMethod("POST")
         corsConfiguration.addAllowedMethod("DELETE")
         corsConfiguration.addAllowedMethod("PUT")
         corsConfiguration.addExposedHeader("Authentication")
-        var source = UrlBasedCorsConfigurationSource()
+        val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)
         return source
     }

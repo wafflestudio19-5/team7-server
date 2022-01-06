@@ -8,9 +8,12 @@ import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.model.VerificationToken
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,7 +22,9 @@ class DataLoader(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
-    private val seriesRepository: SeriesRepository
+    private val seriesRepository: SeriesRepository,
+    private val verificationTokenRepository: VerificationTokenRepository,
+    private val passwordEncoder: PasswordEncoder
 ) : ApplicationRunner {
     // test data in local
     override fun run(args: ApplicationArguments?) {
@@ -59,9 +64,26 @@ class DataLoader(
             posts = mutableListOf()
         )
 
+        val tokenA = VerificationToken(
+            "waffle@nsnu.ac.kr",
+            passwordEncoder.encode("waffle-password")
+        )
+
+        val tokenB = VerificationToken(
+            "studio@nsnu.ac.kr",
+            passwordEncoder.encode("studio-password")
+        )
+
         userRepository.save(userA)
         userRepository.save(userB)
         userRepository.save(userC)
+
+        verificationTokenRepository.save(tokenA)
+        verificationTokenRepository.save(tokenB)
+
+        // val userA = userRepository.getById(1)
+        // val userB = userRepository.getById(2)
+        // val userC = userRepository.getById(3)
 
         val series1 = Series(
             name = "A_s1",

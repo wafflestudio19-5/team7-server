@@ -75,8 +75,9 @@ class PostService(
             else title.replace(" ", "-")
         }
         val seriesName = createRequest.seriesName
-        val series = seriesRepository.findByName(seriesName)
-            ?: throw SeriesNotFoundException("series not found")
+        val series = seriesName?.let {
+            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+        }
         val post = Post(
             user = user,
             title = title,

@@ -91,6 +91,6 @@ class PostDto {
         val summary: String,
         val private: Boolean,
         val url: String,
-        val seriesName: String
+        val seriesName: String?
     )
 }

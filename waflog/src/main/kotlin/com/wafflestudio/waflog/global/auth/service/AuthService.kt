@@ -27,7 +27,7 @@ class AuthService(
         userRepository.findByEmail(email)
             ?: return run {
                 val token = generateVerificationToken(email)
-                val link = "https://waflog-web.kro.kr/register?code=$token"
+                val link = "https://waflog-web.kro.kr/register?email=$email&code=$token"
                 val message = mailContentBuilder.build(link)
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
                 mailService.sendMail(mail)
@@ -42,7 +42,7 @@ class AuthService(
             ?: return signUpEmail(joinEmailRequest)
         return run {
             val token = generateVerificationToken(user)
-            val link = "https://waflog-web.kro.kr/email-login?code=$token"
+            val link = "https://waflog-web.kro.kr/email-login?email=$email&code=$token"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
             mailService.sendMail(mail)

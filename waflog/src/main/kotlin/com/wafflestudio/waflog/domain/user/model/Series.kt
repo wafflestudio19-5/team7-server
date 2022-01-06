@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @Entity
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "name"])])
 class Series(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

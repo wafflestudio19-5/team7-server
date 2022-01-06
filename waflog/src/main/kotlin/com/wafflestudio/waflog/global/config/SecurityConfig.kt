@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.global.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
@@ -28,7 +29,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val userPrincipalDetailService: VerificationTokenPrincipalDetailService
+    private val userPrincipalDetailService: VerificationTokenPrincipalDetailService,
+    private val objectMapper: ObjectMapper
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.authenticationProvider(daoAuthenticationProvider())
@@ -56,7 +58,7 @@ class SecurityConfig(
             .and()
             .addFilter(
                 SignInAuthenticationFilter(
-                    authenticationManager(), jwtTokenProvider
+                    authenticationManager(), jwtTokenProvider, objectMapper
                 )
             )
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))

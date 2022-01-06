@@ -72,8 +72,16 @@ class AuthService(
 
     private fun generateVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
-        val verificationToken = VerificationToken(email, token)
-        verificationTokenRepository.save(verificationToken)
+        val existingToken = verificationTokenRepository.findByEmail(email)
+
+        existingToken?.also {
+            it.token = token
+            verificationTokenRepository.save(it)
+        } ?: run {
+            val verificationToken = VerificationToken(email, token)
+            verificationTokenRepository.save(verificationToken)
+        }
+
         return token
     }
 

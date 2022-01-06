@@ -30,8 +30,8 @@ class SignInAuthenticationFilter(
         chain: FilterChain,
         authResult: Authentication
     ) {
-        val jwtToken = jwtTokenProvider.generateToken(authResult)
-        response.addHeader("Authentication", jwtToken)
+        val jwt = jwtTokenProvider.generateToken(authResult)
+        response.addHeader("Authentication", jwt)
         response.status = HttpServletResponse.SC_OK
         response.contentType = "application/json"
         response.characterEncoding = "utf-8"
@@ -39,7 +39,7 @@ class SignInAuthenticationFilter(
         val out = response.writer
 
         val principal = authResult.principal as VerificationTokenPrincipal
-        val userJsonString = objectMapper.writeValueAsString(VerificationTokenPrincipalDto(principal, jwtToken))
+        val userJsonString = objectMapper.writeValueAsString(VerificationTokenPrincipalDto(principal, jwt))
         out.print(userJsonString)
 
         out.flush()

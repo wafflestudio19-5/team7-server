@@ -4,7 +4,6 @@ import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.SignInAuthenticationFilter
-import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import com.wafflestudio.waflog.global.auth.service.VerificationTokenPrincipalDetailService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
-import org.springframework.web.cors.CorsUtils.isPreFlightRequest
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
@@ -30,9 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val verificationTokenRepository: VerificationTokenRepository,
     private val userPrincipalDetailService: VerificationTokenPrincipalDetailService
-
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.authenticationProvider(daoAuthenticationProvider())
@@ -60,7 +56,7 @@ class SecurityConfig(
             .and()
             .addFilter(
                 SignInAuthenticationFilter(
-                    authenticationManager(), jwtTokenProvider, verificationTokenRepository
+                    authenticationManager(), jwtTokenProvider
                 )
             )
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
@@ -78,15 +74,16 @@ class SecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        var corsConfiguration = CorsConfiguration()
-        corsConfiguration.addAllowedOrigin("*")
+        val corsConfiguration = CorsConfiguration()
+        corsConfiguration.allowCredentials = true
+        corsConfiguration.addAllowedOrigin("https://waflog-web.kro.kr")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("GET")
         corsConfiguration.addAllowedMethod("POST")
         corsConfiguration.addAllowedMethod("DELETE")
         corsConfiguration.addAllowedMethod("PUT")
         corsConfiguration.addExposedHeader("Authentication")
-        var source = UrlBasedCorsConfigurationSource()
+        val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)
         return source
     }

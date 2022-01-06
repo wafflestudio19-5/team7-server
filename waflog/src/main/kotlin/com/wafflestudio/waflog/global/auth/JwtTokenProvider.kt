@@ -1,5 +1,7 @@
 package com.wafflestudio.waflog.global.auth
 
+import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
+import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.VerificationTokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.AuthenticationToken
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
@@ -13,6 +15,7 @@ import java.util.*
 
 @Component
 class JwtTokenProvider(
+    private val userRepository: UserRepository,
     private val verificationTokenRepository: VerificationTokenRepository
 ) {
     private val logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
@@ -84,9 +87,11 @@ class JwtTokenProvider(
             .body
         // Recover User class from JWT
         val email = claims.get("email", String::class.java)
+        val user = userRepository.findByEmail(email)
+            ?: throw UserNotFoundException("User with $email does not exist")
         val currentToken = verificationTokenRepository.findByEmail(email)
             ?: throw VerificationTokenNotFoundException("$email is not valid email, check token is expired")
-        val userPrincipal = VerificationTokenPrincipal(currentToken)
+        val userPrincipal = VerificationTokenPrincipal(user, currentToken)
         val authorises = userPrincipal.authorities
         // Make token with parsed data
         return AuthenticationToken(userPrincipal, null, authorises)

@@ -18,6 +18,8 @@ spring:
     hibernate:
       ddl-auto: create
       show-sql: true
+
+
 ---
 spring:
   config:
@@ -31,6 +33,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+
 ---
 spring:
   mail:
@@ -44,3 +47,4 @@ spring:
           auth: true
           starttls:
             enable: true
+

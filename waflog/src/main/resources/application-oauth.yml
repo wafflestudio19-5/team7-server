@@ -1,0 +1,23 @@
+spring:
+    security:
+        oauth2:
+            client:
+                registration:
+                    github:
+                        client-id: 2c3c786f2658eab707be
+                        client-secret: wafflogteam7
+                        scope:
+                            - user:email
+                            - read:user
+                    google:
+                        client-id: 144115158910-6borbv01b4pkd51rt0g7uol3qbcg5gn9.apps.googleusercontent.com
+                        client-secret: wafflogteam7
+                        scope:
+                            - email
+                            - profile
+                    facebook:
+                        client-id: 446154757050817
+                        client-secret: wafflogteam7
+                        scope:
+                            - email
+                            - public_profile

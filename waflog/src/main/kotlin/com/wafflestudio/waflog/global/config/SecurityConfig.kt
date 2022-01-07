@@ -86,6 +86,7 @@ class SecurityConfig(
         val corsConfiguration = CorsConfiguration()
         corsConfiguration.allowCredentials = true
         corsConfiguration.addAllowedOrigin("https://waflog-web.kro.kr")
+        corsConfiguration.addAllowedOrigin("http://waflog-local.kro.kr")
         corsConfiguration.addAllowedHeader("*")
         corsConfiguration.addAllowedMethod("GET")
         corsConfiguration.addAllowedMethod("POST")

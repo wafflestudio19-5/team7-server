@@ -8,6 +8,7 @@ import com.wafflestudio.waflog.global.auth.SignInAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.service.VerificationTokenPrincipalDetailService
 import com.wafflestudio.waflog.global.oauth2.OAuth2SuccessHandler
 import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -69,8 +70,9 @@ class SecurityConfig(
             )
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
             .authorizeRequests()
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .antMatchers(HttpMethod.GET, "/ping").permitAll() // SignUp user
+            .antMatchers(HttpMethod.GET, "/ping").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/user/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/auth/verify").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/verify/login").permitAll()

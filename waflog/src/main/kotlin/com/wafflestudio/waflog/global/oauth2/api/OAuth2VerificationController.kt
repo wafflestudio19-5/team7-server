@@ -1,6 +1,5 @@
 package com.wafflestudio.waflog.global.oauth2.api
 
-import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
 import com.wafflestudio.waflog.global.oauth2.service.OAuth2VerificationService
 import org.springframework.http.HttpStatus

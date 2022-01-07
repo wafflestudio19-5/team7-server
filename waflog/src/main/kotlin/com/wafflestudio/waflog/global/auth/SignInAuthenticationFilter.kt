@@ -2,6 +2,8 @@ package com.wafflestudio.waflog.global.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.waflog.global.auth.dto.LoginRequest
+import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
+import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -15,7 +17,8 @@ import javax.servlet.http.HttpServletResponse
 
 class SignInAuthenticationFilter(
     authenticationManager: AuthenticationManager?,
-    private val jwtTokenProvider: JwtTokenProvider
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val objectMapper: ObjectMapper
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
         setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/api/v1/auth/verify/login", "POST"))
@@ -27,8 +30,19 @@ class SignInAuthenticationFilter(
         chain: FilterChain,
         authResult: Authentication
     ) {
-        response.addHeader("Authentication", jwtTokenProvider.generateToken(authResult))
-        response.status = HttpServletResponse.SC_NO_CONTENT
+        val jwt = jwtTokenProvider.generateToken(authResult)
+        response.addHeader("Authentication", jwt)
+        response.status = HttpServletResponse.SC_OK
+        response.contentType = "application/json"
+        response.characterEncoding = "utf-8"
+
+        val out = response.writer
+
+        val principal = authResult.principal as VerificationTokenPrincipal
+        val userJsonString = objectMapper.writeValueAsString(VerificationTokenPrincipalDto(principal, jwt))
+        out.print(userJsonString)
+
+        out.flush()
     }
 
     override fun unsuccessfulAuthentication(

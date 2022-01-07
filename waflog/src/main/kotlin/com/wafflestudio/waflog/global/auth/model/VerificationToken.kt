@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.global.auth.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 import javax.validation.constraints.Email
@@ -8,10 +9,11 @@ import javax.validation.constraints.Email
 @Entity
 @Table(name = "verify_token")
 class VerificationToken(
+    @Column(unique = true)
     @field:Email
     val email: String,
 
-    val token: String,
+    var token: String,
 
     val role: String = "user"
 

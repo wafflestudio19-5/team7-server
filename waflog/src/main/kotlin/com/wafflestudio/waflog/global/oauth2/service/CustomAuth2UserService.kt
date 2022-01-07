@@ -30,6 +30,8 @@ class CustomAuth2UserService(
             email = saveGithubUser(oauth2User, userRequest)
         } else if (userRequest?.clientRegistration?.registrationId == "facebook") {
             email = saveFacebookUser(oauth2User, userRequest)
+        } else if (userRequest?.clientRegistration?.registrationId == "google") {
+            email = saveGoogleUser(oauth2User, userRequest)
         }
         val token: String = generateSignInVerificationToken(email)
         httpSession.setAttribute("token", token)
@@ -94,6 +96,18 @@ class CustomAuth2UserService(
             email = oauth2User.attributes["email"] as String,
             userId = oauth2User.attributes["name"] as String,
             name = oauth2User.attributes["name"] as String,
+            pageTitle = oauth2User.attributes["name"] as String + ".log"
+        )
+        saveIfAbsent(user)
+        return user.email
+    }
+
+    fun saveGoogleUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): String {
+        val user: User = User(
+            email = oauth2User.attributes["email"] as String,
+            userId = oauth2User.attributes["name"] as String,
+            name = oauth2User.attributes["name"] as String,
+            image = oauth2User.attributes["picture"] as String,
             pageTitle = oauth2User.attributes["name"] as String + ".log"
         )
         saveIfAbsent(user)

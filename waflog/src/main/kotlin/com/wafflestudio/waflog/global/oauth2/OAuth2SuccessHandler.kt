@@ -1,11 +1,9 @@
 package com.wafflestudio.waflog.global.oauth2
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
-import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository
 import org.springframework.security.core.Authentication
@@ -57,20 +55,8 @@ class OAuth2SuccessHandler(
 
         // write JWT token to response
         val jwt = jwtTokenProvider.generateToken(email)
-        response.addHeader("Authentication", jwt)
-        response.addHeader("Location", "https://waflog-web.kro.kr/social")
+        response.addHeader("Location", "https://waflog-web.kro.kr/social?token=$jwt")
         response.status = HttpServletResponse.SC_TEMPORARY_REDIRECT
-        response.contentType = "application/json"
-        response.characterEncoding = "utf-8"
-
-        val out = response.writer
-
-        val userJsonString = objectMapper.writeValueAsString(
-            VerificationTokenPrincipalDto(UserDto.SimpleResponse(user), jwt)
-        )
-        out.print(userJsonString)
-
-        out.flush()
     }
 
     private fun generateOAuth2UserToken(email: String): String {

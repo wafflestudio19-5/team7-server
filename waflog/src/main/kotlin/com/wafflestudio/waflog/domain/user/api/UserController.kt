@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.domain.user.api
 
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
+import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.service.UserService
 import com.wafflestudio.waflog.global.auth.CurrentUser
@@ -16,5 +17,11 @@ class UserController(
     @ResponseStatus(HttpStatus.CREATED)
     fun addSeries(@RequestBody createRequest: SeriesDto.CreateRequest, @CurrentUser user: User) {
         userService.addSeries(createRequest, user)
+    }
+
+    @GetMapping("/me")
+    @ResponseStatus(HttpStatus.OK)
+    fun getSimpleInfo(@CurrentUser user: User): UserDto.SimpleResponse {
+        return UserDto.SimpleResponse(user)
     }
 }

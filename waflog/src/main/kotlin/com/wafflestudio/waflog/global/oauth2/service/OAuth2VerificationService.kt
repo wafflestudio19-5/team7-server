@@ -4,7 +4,6 @@ import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
-import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository
 import org.springframework.stereotype.Service
 

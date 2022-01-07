@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession
 class OAuth2VerificationController(
     private val oAuth2VerificationService: OAuth2VerificationService,
     private val httpSession: HttpSession,
-    private val jwtTokenProvider: JwtTokenProvider
 ) {
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
@@ -26,8 +25,8 @@ class OAuth2VerificationController(
         httpSession.removeAttribute("token")
         val userTokenPair = oAuth2VerificationService.verifyAccount(token)
         val returnResponse = VerificationTokenPrincipalDto(
-            userTokenPair.first,        // Simple response of user
-            userTokenPair.second        // JWT token
+            userTokenPair.first,
+            userTokenPair.second
         )
         return ResponseEntity.ok()
             .body(returnResponse)

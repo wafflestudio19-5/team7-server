@@ -3,7 +3,6 @@ package com.wafflestudio.waflog.global.auth
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.exception.VerificationTokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.AuthenticationToken
-import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository

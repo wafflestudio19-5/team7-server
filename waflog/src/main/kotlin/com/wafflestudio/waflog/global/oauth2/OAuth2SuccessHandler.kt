@@ -33,10 +33,11 @@ class OAuth2SuccessHandler(
         val oAuth2User = authentication?.principal as OAuth2User
         val email = oAuth2User.attributes["email"] as String
 
-        val existingUser = userRepository.findByEmail(email)
-
         if (request == null || response == null)
             throw ServletException()
+
+        // register user if not exists
+        val existingUser = userRepository.findByEmail(email)
 
         val user = existingUser ?: run {
             userRepository.save(
@@ -51,8 +52,10 @@ class OAuth2SuccessHandler(
             )
         }
 
+        // generate verification token for JWT authentication
         val token = generateOAuth2UserToken(email)
 
+        // write JWT token to response
         val jwt = jwtTokenProvider.generateToken(email)
         response.addHeader("Authentication", jwt)
         response.status = HttpServletResponse.SC_OK
@@ -74,7 +77,7 @@ class OAuth2SuccessHandler(
 
         val existingToken = oAuth2UserTokenRepository.findByEmail(email)
 
-        existingToken?.also {
+        existingToken?.also { // reuse token if exists: unique OAuth2UserToken
             it.token = token
             oAuth2UserTokenRepository.save(it)
         } ?: run {

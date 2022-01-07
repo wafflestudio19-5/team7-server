@@ -22,6 +22,7 @@ class CustomAuth2UserService : DefaultOAuth2UserService() {
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         val oauth2User: OAuth2User = super.loadUser(userRequest)
 
+        // get well-formatted user from different resource servers
         return when (userRequest?.clientRegistration?.registrationId) {
             "github" -> getGithubUser(oauth2User, userRequest)
             "facebook" -> getFacebookUser(oauth2User, userRequest)

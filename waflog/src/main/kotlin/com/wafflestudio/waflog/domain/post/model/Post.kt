@@ -2,6 +2,7 @@ package com.wafflestudio.waflog.domain.post.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.tag.model.PostTag
+import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import org.hibernate.annotations.Formula
@@ -27,8 +28,8 @@ class Post(
     @field:Min(0)
     val views: Int = 0,
 
-    @field:Min(0)
-    val likes: Int = 0,
+    @OneToMany(mappedBy = "likedPost")
+    var likedUser: MutableList<Likes> = mutableListOf(),
 
     val thumbnail: String, // thumbnail image file url
 

@@ -4,10 +4,13 @@ import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
+import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.boot.ApplicationArguments
@@ -24,6 +27,8 @@ class DataLoader(
     private val commentRepository: CommentRepository,
     private val seriesRepository: SeriesRepository,
     private val verificationTokenRepository: VerificationTokenRepository,
+    private val likesRepository: LikesRepository,
+    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) : ApplicationRunner {
     // test data in local
@@ -66,12 +71,12 @@ class DataLoader(
 
         val tokenA = VerificationToken(
             "waffle@nsnu.ac.kr",
-            passwordEncoder.encode("waffle-password")
+            jwtTokenProvider.generateToken("waffle@nsnu.ac.kr")
         )
 
         val tokenB = VerificationToken(
             "studio@nsnu.ac.kr",
-            passwordEncoder.encode("studio-password")
+            jwtTokenProvider.generateToken("studio@nsnu.ac.kr")
         )
 
         userRepository.save(userA)
@@ -102,7 +107,6 @@ class DataLoader(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
@@ -115,7 +119,6 @@ class DataLoader(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
@@ -128,7 +131,6 @@ class DataLoader(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
@@ -141,7 +143,6 @@ class DataLoader(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
@@ -155,7 +156,6 @@ class DataLoader(
             user = userB,
             title = "Studio's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of B",
             private = true, // private post
@@ -168,7 +168,6 @@ class DataLoader(
             user = userC,
             title = "Team7's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of C",
             private = false,
@@ -183,7 +182,6 @@ class DataLoader(
             title = "1st Trending Spring",
             content = "This is the most trending post",
             views = 8,
-            likes = 10,
             thumbnail = "",
             summary = "summary of D",
             private = false,
@@ -198,7 +196,6 @@ class DataLoader(
             title = "2nd Trending Spring",
             content = "This is the second most trending post",
             views = 8,
-            likes = 10,
             thumbnail = "",
             summary = "summary of E",
             private = false,
@@ -213,7 +210,6 @@ class DataLoader(
             title = "3rd Trending Spring",
             content = "This is the third most trending post",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of F",
             private = false,
@@ -228,7 +224,6 @@ class DataLoader(
             title = "Post with content",
             content = "content to search",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of F",
             private = false,
@@ -243,7 +238,6 @@ class DataLoader(
             title = "Post with comments",
             content = "content of the post",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of the post",
             private = false,
@@ -378,5 +372,7 @@ class DataLoader(
         commentList.forEach {
             commentRepository.save(it)
         }
+
+        likesRepository.save(Likes(userA, postB))
     }
 }

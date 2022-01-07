@@ -110,4 +110,23 @@ class PostController(
     ): ListResponse<CommentDto.RootCommentResponse> {
         return postService.deleteComment(postId, commentId, user)
     }
+
+    @PostMapping("/{post_id}/like")
+    @ResponseStatus(HttpStatus.OK)
+    fun likeOrDislikePost(
+        @PathVariable("post_id") postId: Long,
+        @CurrentUser user: User
+    ): PostDto.PageDetailResponse {
+        postService.addLikeInPost(postId, user)
+        return postService.getPostDetail(postId)
+    }
+
+    @GetMapping("/{post_id}/like/current")
+    @ResponseStatus(HttpStatus.OK)
+    fun isLikedPost(
+        @PathVariable("post_id") postId: Long,
+        @CurrentUser user: User
+    ): Boolean {
+        return postService.isLikedPost(postId, user)
+    }
 }

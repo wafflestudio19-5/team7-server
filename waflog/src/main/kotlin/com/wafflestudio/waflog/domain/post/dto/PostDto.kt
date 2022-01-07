@@ -26,7 +26,7 @@ class PostDto {
             thumbnail = post.thumbnail,
             summary = post.summary,
             createAt = post.createdAt,
-            likes = post.likes,
+            likes = post.likedUser.size,
             comments = post.comments.size
         )
     }
@@ -53,7 +53,7 @@ class PostDto {
             seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
             title = post.title,
             content = post.content,
-            likes = post.likes,
+            likes = post.likedUser.size,
             thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
             comments = ListResponse(

@@ -11,7 +11,9 @@ import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
+import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
@@ -24,7 +26,8 @@ import java.time.LocalDate
 class PostService(
     private val postRepository: PostRepository,
     private val seriesRepository: SeriesRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val likesRepository: LikesRepository
 ) {
     fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
@@ -82,7 +85,6 @@ class PostService(
             user = user,
             title = title,
             content = content,
-            likes = 0,
             thumbnail = thumbnail,
             summary = summary,
             private = private,
@@ -237,5 +239,23 @@ class PostService(
                     )
                 }
         )
+    }
+
+    fun addLikeInPost(postId: Long, user: User) {
+        val post: Post = postRepository.findByIdOrNull(postId)
+            ?: throw PostNotFoundException("Post with id $postId does not exist")
+        val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
+        if (likes == null) {
+            likesRepository.save(Likes(user, post))
+        } else {
+            likesRepository.deleteById(likes.id)
+        }
+    }
+
+    fun isLikedPost(postId: Long, user: User): Boolean {
+        val post: Post = postRepository.findByIdOrNull(postId)
+            ?: throw PostNotFoundException("Post with id $postId does not exist")
+        val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
+        return likes != null
     }
 }

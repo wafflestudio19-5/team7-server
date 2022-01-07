@@ -24,22 +24,22 @@ class CustomAuth2UserService(
     private val oAuth2UserTokenRepository: OAuth2UserTokenRepository
 ) : DefaultOAuth2UserService() {
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
-        var oauth2User: OAuth2User = super.loadUser(userRequest)
-        var email: String = ""
-        if (userRequest?.clientRegistration?.registrationId == "github") {
-            email = saveGithubUser(oauth2User, userRequest)
-        } else if (userRequest?.clientRegistration?.registrationId == "facebook") {
-            email = saveFacebookUser(oauth2User, userRequest)
-        } else if (userRequest?.clientRegistration?.registrationId == "google") {
-            email = saveGoogleUser(oauth2User, userRequest)
+        val oauth2User: OAuth2User = super.loadUser(userRequest)
+
+        val email = when (userRequest?.clientRegistration?.registrationId) {
+            "github" -> saveGithubUser(oauth2User, userRequest)
+            "facebook" -> saveFacebookUser(oauth2User, userRequest)
+            "google" -> saveGoogleUser(oauth2User, userRequest)
+            else -> ""
         }
+
         val token: String = generateSignInVerificationToken(email)
         httpSession.setAttribute("token", token)
         return oauth2User
     }
 
     fun saveIfAbsent(user: User) {
-        var userByEmail: User? = userRepository.findByEmail(user.email)
+        val userByEmail: User? = userRepository.findByEmail(user.email)
         if (userByEmail == null) {
             userRepository.save(user)
         }
@@ -58,13 +58,13 @@ class CustomAuth2UserService(
 
         val result: ResponseEntity<List<*>> =
             restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, List::class.java)
-        var mainEmailResponse: LinkedHashMap<*, *> = result.body?.filter {
+        val mainEmailResponse: LinkedHashMap<*, *> = result.body?.filter {
             it as LinkedHashMap<*, *>
             it["primary"] == true
         }?.get(0) as LinkedHashMap<*, *>
 
-        var email: String = mainEmailResponse["email"] as String
-        val user: User = User(
+        val email: String = mainEmailResponse["email"] as String
+        val user = User(
             email = email,
             userId = oauth2User.attributes["login"] as String,
             name = oauth2User.attributes["login"] as String,
@@ -92,7 +92,7 @@ class CustomAuth2UserService(
         /*
         TODO: saving imageResponse(Bytearray) in S3 and return url
          */
-        val user: User = User(
+        val user = User(
             email = oauth2User.attributes["email"] as String,
             userId = oauth2User.attributes["name"] as String,
             name = oauth2User.attributes["name"] as String,
@@ -103,7 +103,7 @@ class CustomAuth2UserService(
     }
 
     fun saveGoogleUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): String {
-        val user: User = User(
+        val user = User(
             email = oauth2User.attributes["email"] as String,
             userId = oauth2User.attributes["name"] as String,
             name = oauth2User.attributes["name"] as String,
@@ -116,8 +116,17 @@ class CustomAuth2UserService(
 
     private fun generateSignInVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
-        val verificationToken = VerificationToken(email, token)
-        oAuth2UserTokenRepository.save(verificationToken)
+
+        val existingToken = oAuth2UserTokenRepository.findByEmail(email)
+
+        existingToken?.also {
+            it.token = token
+            oAuth2UserTokenRepository.save(it)
+        } ?: run {
+            val verificationToken = VerificationToken(email, token)
+            oAuth2UserTokenRepository.save(verificationToken)
+        }
+
         return token
     }
 }

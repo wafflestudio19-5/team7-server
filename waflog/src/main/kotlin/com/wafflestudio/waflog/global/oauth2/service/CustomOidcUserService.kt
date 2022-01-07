@@ -2,7 +2,7 @@ package com.wafflestudio.waflog.global.oauth2.service
 
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
-import com.wafflestudio.waflog.global.oauth2.model.OAuth2VerificationToken
+import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService
@@ -49,8 +49,8 @@ class CustomOidcUserService(
 
     private fun generateSignInVerificationToken(email: String): String {
         val token = UUID.randomUUID().toString()
-        val oAuth2VerificationToken = OAuth2VerificationToken(email, token)
-        oAuth2UserTokenRepository.save(oAuth2VerificationToken)
+        val verificationToken = VerificationToken(email, token)
+        oAuth2UserTokenRepository.save(verificationToken)
         return token
     }
 }

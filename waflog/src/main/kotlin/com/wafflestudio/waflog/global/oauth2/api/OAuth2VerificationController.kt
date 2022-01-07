@@ -1,7 +1,7 @@
 package com.wafflestudio.waflog.global.oauth2.api
 
-import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
+import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
 import com.wafflestudio.waflog.global.oauth2.service.OAuth2VerificationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,13 +21,15 @@ class OAuth2VerificationController(
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
     fun verifySocialLogin():
-        ResponseEntity<UserDto.SimpleResponse> {
+        ResponseEntity<VerificationTokenPrincipalDto> {
         val token = httpSession.getAttribute("token") as String
         httpSession.removeAttribute("token")
-        val oAuth2VerificationToken = oAuth2VerificationService.verifyAccount(token)
-        oAuth2VerificationService.deleteToken(oAuth2VerificationToken)
-        return ResponseEntity.noContent()
-            .header("Authentication", jwtTokenProvider.generateToken(oAuth2VerificationToken.email))
-            .build()
+        val userTokenPair = oAuth2VerificationService.verifyAccount(token)
+        val returnResponse = VerificationTokenPrincipalDto(
+            userTokenPair.first,        // Simple response of user
+            userTokenPair.second        // JWT token
+        )
+        return ResponseEntity.ok()
+            .body(returnResponse)
     }
 }

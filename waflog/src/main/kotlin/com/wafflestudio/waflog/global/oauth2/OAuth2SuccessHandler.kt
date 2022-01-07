@@ -58,7 +58,7 @@ class OAuth2SuccessHandler(
         // write JWT token to response
         val jwt = jwtTokenProvider.generateToken(email)
         response.addHeader("Authentication", jwt)
-        response.addHeader("Location", "https://waflog-web.kro.kr/social-login")
+        response.addHeader("Location", "https://waflog-web.kro.kr/social")
         response.status = HttpServletResponse.SC_TEMPORARY_REDIRECT
         response.contentType = "application/json"
         response.characterEncoding = "utf-8"

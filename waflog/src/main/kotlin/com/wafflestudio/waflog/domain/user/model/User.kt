@@ -19,7 +19,7 @@ class User(
 
     var name: String,
 
-    val shortIntro: String,
+    val shortIntro: String = "",
 
     val longIntro: String = "",
 

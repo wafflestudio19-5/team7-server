@@ -21,18 +21,39 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: github_oauth_client_id
+            client-secret: waflogteam7
+            scope:
+              - user:email
+              - read:user
+          google:
+            client-id: google_oauth_client_id
+            client-secret: waflogteam7
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: facebook_oauth_client_id
+            client-secret: waflogteam7
+            scope:
+              - email
+              - public_profile
+
 ---
 spring:
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: waflog.register@gmail.com
-        password: wafflestudio123
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
-
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: waflog.register@gmail.com
+    password: wafflestudio123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

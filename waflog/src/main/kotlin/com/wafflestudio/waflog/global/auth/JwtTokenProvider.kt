@@ -5,6 +5,7 @@ import com.wafflestudio.waflog.global.auth.exception.VerificationTokenNotFoundEx
 import com.wafflestudio.waflog.global.auth.model.AuthenticationToken
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
+import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository
 import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +16,8 @@ import java.util.*
 @Component
 class JwtTokenProvider(
     private val userRepository: UserRepository,
-    private val verificationTokenRepository: VerificationTokenRepository
+    private val verificationTokenRepository: VerificationTokenRepository,
+    private val oAuth2UserTokenRepository: OAuth2UserTokenRepository
 ) {
     private val logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
     val tokenPrefix = "Bearer "
@@ -87,9 +89,10 @@ class JwtTokenProvider(
         // Recover User class from JWT
         val email = claims.get("email", String::class.java)
         val currentUser = userRepository.findByEmail(email)
-        val currentToken = verificationTokenRepository.findByEmail(email)
+        val currentAuthToken = verificationTokenRepository.findByEmail(email)
+            ?: oAuth2UserTokenRepository.findByEmail(email)
             ?: throw VerificationTokenNotFoundException("$email is not valid email, check token is expired")
-        val userPrincipal = VerificationTokenPrincipal(currentUser, currentToken)
+        val userPrincipal = VerificationTokenPrincipal(currentUser, currentAuthToken)
         val authorises = userPrincipal.authorities
         // Make token with parsed data
         return AuthenticationToken(userPrincipal, null, authorises)

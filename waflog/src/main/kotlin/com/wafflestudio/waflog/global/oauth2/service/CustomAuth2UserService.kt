@@ -102,13 +102,13 @@ class CustomAuth2UserService(
         return user.email
     }
 
-    fun saveGoogleUser(oidcUser: OAuth2User, userRequest: OAuth2UserRequest?): String {
+    fun saveGoogleUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): String {
         val user: User = User(
-            email = oidcUser.attributes["email"] as String,
-            userId = oidcUser.attributes["name"] as String,
-            name = oidcUser.attributes["name"] as String,
-            image = oidcUser.attributes["picture"] as String,
-            pageTitle = oidcUser.attributes["name"] as String + ".log"
+            email = oauth2User.attributes["email"] as String,
+            userId = oauth2User.attributes["name"] as String,
+            name = oauth2User.attributes["name"] as String,
+            image = oauth2User.attributes["picture"] as String,
+            pageTitle = oauth2User.attributes["name"] as String + ".log"
         )
         saveIfAbsent(user)
         return user.email

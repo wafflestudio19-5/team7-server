@@ -5,8 +5,9 @@ import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.SignInAuthenticationFilter
-import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
 import com.wafflestudio.waflog.global.auth.service.VerificationTokenPrincipalDetailService
+import com.wafflestudio.waflog.global.oauth2.OAuth2SuccessHandler
+import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -30,6 +31,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val oAuth2SuccessHandler: OAuth2SuccessHandler,
     private val customAuth2UserService: CustomAuth2UserService,
     private val userPrincipalDetailService: VerificationTokenPrincipalDetailService,
     private val objectMapper: ObjectMapper
@@ -39,7 +41,9 @@ class SecurityConfig(
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder { return BCryptPasswordEncoder() }
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
 
     @Bean
     fun daoAuthenticationProvider(): DaoAuthenticationProvider {
@@ -68,7 +72,7 @@ class SecurityConfig(
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .antMatchers(HttpMethod.GET, "/ping").permitAll() // SignUp user
             .antMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/user/login").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/v1/auth/verify", "/api/v1/oauth2/verify").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/auth/verify").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/verify/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/recent", "/api/v1/post/trend").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}", "/api/v1/post/search").permitAll()
@@ -77,7 +81,7 @@ class SecurityConfig(
             .anyRequest().authenticated()
             .and()
             .oauth2Login()
-            .defaultSuccessUrl("/api/v1/oauth2/verify")
+            .successHandler(oAuth2SuccessHandler)
             .userInfoEndpoint().userService(customAuth2UserService)
     }
 

@@ -5,8 +5,8 @@ import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
 import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.SignInAuthenticationFilter
-import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
 import com.wafflestudio.waflog.global.auth.service.VerificationTokenPrincipalDetailService
+import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

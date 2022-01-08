@@ -46,4 +46,9 @@ spring:
           auth: true
           starttls:
             enable: true
+---
+spring:
+    profiles:
+        include:
+            - aws
 

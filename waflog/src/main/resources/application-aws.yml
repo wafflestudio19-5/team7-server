@@ -1,0 +1,11 @@
+cloud:
+    aws:
+        credentials:
+            accessKey: AKIA3ATOH2PW6QUVXOUN
+            secretKey: 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
+        s3:
+            bucket: waflog-image
+        region:
+            static: ap-northeast-2
+        stack:
+            auto: false

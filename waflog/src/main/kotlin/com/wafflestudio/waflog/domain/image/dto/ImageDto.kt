@@ -5,8 +5,4 @@ class ImageDto {
     data class S3URL(
         val url: String
     )
-
-    data class Token(
-        val token: String
-    )
 }

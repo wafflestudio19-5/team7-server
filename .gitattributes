@@ -3,3 +3,5 @@
 *.bat text eol=crlf
 
 *.jar binary
+*.ico binary
+

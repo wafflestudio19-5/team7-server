@@ -35,4 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-waflog/src/main/resources/application-aws.yml

@@ -24,4 +24,4 @@ hs_err_pid*
 
 .idea
 waflog/src/main/resources/application-oauth.yml
-
+waflog/src/main/resources/application-aws.yml

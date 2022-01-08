@@ -22,6 +22,7 @@ class Post(
     @field:NotBlank
     val title: String,
 
+    @Column(columnDefinition = "TEXT")
     val content: String,
 
     @field:Min(0)

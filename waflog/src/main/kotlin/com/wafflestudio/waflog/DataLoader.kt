@@ -113,7 +113,8 @@ class DataLoader(
             url = "waffle-spring",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
         )
         val postA2 = Post(
             user = userA,
@@ -125,7 +126,8 @@ class DataLoader(
             url = "waffle-spring-2",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
         )
         val postA3 = Post(
             user = userA,
@@ -137,7 +139,9 @@ class DataLoader(
             url = "waffle-spring-3",
             series = series2,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
         val postA4 = Post(
             user = userA,
@@ -149,7 +153,9 @@ class DataLoader(
             url = "waffle-spring-4",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postB = Post(
@@ -162,7 +168,9 @@ class DataLoader(
             url = "studio-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
         val postC = Post(
             user = userC,
@@ -174,7 +182,9 @@ class DataLoader(
             url = "team7-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postD = Post(
@@ -188,7 +198,9 @@ class DataLoader(
             url = "1st-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postE = Post(
@@ -202,7 +214,9 @@ class DataLoader(
             url = "2nd-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postF = Post(
@@ -216,7 +230,9 @@ class DataLoader(
             url = "3rd-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postG = Post(
@@ -230,7 +246,9 @@ class DataLoader(
             url = "post-with-content",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postWithComments = Post(
@@ -244,7 +262,9 @@ class DataLoader(
             url = "post-with-comments",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         postRepository.save(postA1)

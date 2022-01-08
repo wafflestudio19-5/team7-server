@@ -29,7 +29,7 @@ class Post(
     val views: Int = 0,
 
     @OneToMany(mappedBy = "likedPost")
-    var likedUser: MutableList<Likes> = mutableListOf(),
+    var likedUser: MutableList<Likes>,
 
     val thumbnail: String, // thumbnail image file url
 
@@ -37,7 +37,11 @@ class Post(
 
     val private: Boolean,
 
-    @Formula(value = "10 * views + 7 * likes + 3 * (SELECT count(1) FROM comment c WHERE c.post_id = id)")
+    @Formula(
+        value = "10 * views " +
+            "+ 7 * (SELECT count(1) FROM likes l WHERE l.post_id = id) " +
+            "+ 3 * (SELECT count(1) FROM comment c WHERE c.post_id = id)"
+    )
     val trending: Int = 0,
 
     @field:NotBlank

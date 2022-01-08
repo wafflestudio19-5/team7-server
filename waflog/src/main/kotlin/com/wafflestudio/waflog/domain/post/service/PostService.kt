@@ -91,7 +91,9 @@ class PostService(
             url = url,
             series = series,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         postRepository.save(post)

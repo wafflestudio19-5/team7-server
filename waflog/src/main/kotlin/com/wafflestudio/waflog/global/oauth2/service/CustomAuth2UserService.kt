@@ -1,49 +1,37 @@
 package com.wafflestudio.waflog.global.oauth2.service
 
-import com.wafflestudio.waflog.domain.user.model.User
-import com.wafflestudio.waflog.domain.user.repository.UserRepository
-import com.wafflestudio.waflog.global.auth.model.VerificationToken
-import com.wafflestudio.waflog.global.oauth2.repository.OAuth2UserTokenRepository
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponents
 import org.springframework.web.util.UriComponentsBuilder
-import java.util.*
-import javax.servlet.http.HttpSession
-import kotlin.collections.LinkedHashMap
+import java.util.Collections
 
 @Service
-class CustomAuth2UserService(
-    private val userRepository: UserRepository,
-    private val httpSession: HttpSession,
-    private val oAuth2UserTokenRepository: OAuth2UserTokenRepository
-) : DefaultOAuth2UserService() {
+class CustomAuth2UserService : DefaultOAuth2UserService() {
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
-        var oauth2User: OAuth2User = super.loadUser(userRequest)
-        var email: String = ""
-        if (userRequest?.clientRegistration?.registrationId == "github") {
-            email = saveGithubUser(oauth2User, userRequest)
-        } else if (userRequest?.clientRegistration?.registrationId == "facebook") {
-            email = saveFacebookUser(oauth2User, userRequest)
-        }
-        val token: String = generateSignInVerificationToken(email)
-        httpSession.setAttribute("token", token)
-        return oauth2User
-    }
+        val oauth2User: OAuth2User = super.loadUser(userRequest)
 
-    fun saveIfAbsent(user: User) {
-        var userByEmail: User? = userRepository.findByEmail(user.email)
-        if (userByEmail == null) {
-            userRepository.save(user)
+        // get well-formatted user from different resource servers
+        return when (userRequest?.clientRegistration?.registrationId) {
+            "github" -> getGithubUser(oauth2User, userRequest)
+            "facebook" -> getFacebookUser(oauth2User, userRequest)
+            "google" -> getGoogleUser(oauth2User, userRequest)
+            else -> oauth2User
         }
     }
 
-    fun saveGithubUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): String {
+    fun getGithubUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): OAuth2User {
         val factory = HttpComponentsClientHttpRequestFactory()
         val restTemplate = RestTemplate(factory)
 
@@ -56,24 +44,28 @@ class CustomAuth2UserService(
 
         val result: ResponseEntity<List<*>> =
             restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, List::class.java)
-        var mainEmailResponse: LinkedHashMap<*, *> = result.body?.filter {
+        val mainEmailResponse: LinkedHashMap<*, *> = result.body?.filter {
             it as LinkedHashMap<*, *>
             it["primary"] == true
         }?.get(0) as LinkedHashMap<*, *>
 
-        var email: String = mainEmailResponse["email"] as String
-        val user: User = User(
-            email = email,
-            userId = oauth2User.attributes["login"] as String,
-            name = oauth2User.attributes["login"] as String,
-            image = oauth2User.attributes["avatar_url"] as String,
-            pageTitle = oauth2User.attributes["login"] as String + ".log"
+        val email: String = mainEmailResponse["email"] as String
+        val memberAttributes: HashMap<String, Any?> = hashMapOf(
+            "email" to email,
+            "userId" to oauth2User.attributes["login"],
+            "name" to oauth2User.attributes["login"],
+            "image" to oauth2User.attributes["avatar_url"],
+            "pageTitle" to "${oauth2User.attributes["login"]}.log"
         )
-        saveIfAbsent(user)
-        return user.email
+
+        return DefaultOAuth2User(
+            Collections.singleton(SimpleGrantedAuthority("ROLE_USER")),
+            memberAttributes,
+            "email"
+        )
     }
 
-    private fun saveFacebookUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): String {
+    private fun getFacebookUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): OAuth2User {
         val factory = HttpComponentsClientHttpRequestFactory()
         val restTemplate = RestTemplate(factory)
 
@@ -90,20 +82,41 @@ class CustomAuth2UserService(
         /*
         TODO: saving imageResponse(Bytearray) in S3 and return url
          */
-        val user: User = User(
-            email = oauth2User.attributes["email"] as String,
-            userId = oauth2User.attributes["name"] as String,
-            name = oauth2User.attributes["name"] as String,
-            pageTitle = oauth2User.attributes["name"] as String + ".log"
+
+        val emailId = (oauth2User.attributes["email"] as String).substringBefore("@")
+
+        val memberAttributes: HashMap<String, Any?> = hashMapOf(
+            "email" to oauth2User.attributes["email"],
+            "userId" to emailId,
+            "name" to oauth2User.attributes["name"],
+            "pageTitle" to "$emailId.log"
         )
-        saveIfAbsent(user)
-        return user.email
+
+        return DefaultOAuth2User(
+            Collections.singleton(
+                SimpleGrantedAuthority("ROLE_USER")
+            ),
+            memberAttributes,
+            "email"
+        )
     }
 
-    private fun generateSignInVerificationToken(email: String): String {
-        val token = UUID.randomUUID().toString()
-        val verificationToken = VerificationToken(email, token)
-        oAuth2UserTokenRepository.save(verificationToken)
-        return token
+    fun getGoogleUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): OAuth2User {
+
+        val emailId = (oauth2User.attributes["email"] as String).substringBefore("@")
+
+        val memberAttributes: HashMap<String, Any?> = hashMapOf(
+            "email" to oauth2User.attributes["email"],
+            "userId" to emailId,
+            "name" to oauth2User.attributes["name"],
+            "image" to oauth2User.attributes["picture"],
+            "pageTitle" to "$emailId.log"
+        )
+
+        return DefaultOAuth2User(
+            Collections.singleton(SimpleGrantedAuthority("ROLE_USER")),
+            memberAttributes,
+            "email"
+        )
     }
 }

@@ -4,10 +4,13 @@ import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
+import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.boot.ApplicationArguments
@@ -24,6 +27,8 @@ class DataLoader(
     private val commentRepository: CommentRepository,
     private val seriesRepository: SeriesRepository,
     private val verificationTokenRepository: VerificationTokenRepository,
+    private val likesRepository: LikesRepository,
+    private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) : ApplicationRunner {
     // test data in local
@@ -66,12 +71,12 @@ class DataLoader(
 
         val tokenA = VerificationToken(
             "waffle@nsnu.ac.kr",
-            passwordEncoder.encode("waffle-password")
+            jwtTokenProvider.generateToken("waffle@nsnu.ac.kr")
         )
 
         val tokenB = VerificationToken(
             "studio@nsnu.ac.kr",
-            passwordEncoder.encode("studio-password")
+            jwtTokenProvider.generateToken("studio@nsnu.ac.kr")
         )
 
         userRepository.save(userA)
@@ -102,80 +107,84 @@ class DataLoader(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
             url = "waffle-spring",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
         )
         val postA2 = Post(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
             url = "waffle-spring-2",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
         )
         val postA3 = Post(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
             url = "waffle-spring-3",
             series = series2,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
         val postA4 = Post(
             user = userA,
             title = "Waffle's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of A",
             private = false,
             url = "waffle-spring-4",
             series = series1,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postB = Post(
             user = userB,
             title = "Studio's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of B",
             private = true, // private post
             url = "studio-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
         val postC = Post(
             user = userC,
             title = "Team7's Spring",
             content = "blah blah",
-            likes = 0,
             thumbnail = "",
             summary = "summary of C",
             private = false,
             url = "team7-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postD = Post(
@@ -183,14 +192,15 @@ class DataLoader(
             title = "1st Trending Spring",
             content = "This is the most trending post",
             views = 8,
-            likes = 10,
             thumbnail = "",
             summary = "summary of D",
             private = false,
             url = "1st-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postE = Post(
@@ -198,14 +208,15 @@ class DataLoader(
             title = "2nd Trending Spring",
             content = "This is the second most trending post",
             views = 8,
-            likes = 10,
             thumbnail = "",
             summary = "summary of E",
             private = false,
             url = "2nd-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postF = Post(
@@ -213,14 +224,15 @@ class DataLoader(
             title = "3rd Trending Spring",
             content = "This is the third most trending post",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of F",
             private = false,
             url = "3rd-trending-spring",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postG = Post(
@@ -228,14 +240,15 @@ class DataLoader(
             title = "Post with content",
             content = "content to search",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of F",
             private = false,
             url = "post-with-content",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         val postWithComments = Post(
@@ -243,14 +256,15 @@ class DataLoader(
             title = "Post with comments",
             content = "content of the post",
             views = 7,
-            likes = 11,
             thumbnail = "",
             summary = "summary of the post",
             private = false,
             url = "post-with-comments",
             series = null,
             comments = mutableListOf(),
-            postTags = mutableListOf()
+            postTags = mutableListOf(),
+            likedUser = mutableListOf()
+
         )
 
         postRepository.save(postA1)
@@ -378,5 +392,7 @@ class DataLoader(
         commentList.forEach {
             commentRepository.save(it)
         }
+
+        likesRepository.save(Likes(userA, postB))
     }
 }

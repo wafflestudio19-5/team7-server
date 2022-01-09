@@ -117,8 +117,7 @@ class PostController(
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User
     ): PostDto.PageDetailResponse {
-        postService.addLikeInPost(postId, user)
-        return postService.getPostDetail(postId)
+        return postService.addLikeInPost(postId, user)
     }
 
     @GetMapping("/{post_id}/like/current")

@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Configuration
 class AWSConfig {
     @Bean
     fun assetS3Client(
-        @Value("\${cloud.aws.credentials.access-key}")
+        @Value("\${cloud.aws.credentials.accessKey}")
         accessKey: String,
-        @Value("\${cloud.aws.credentials.secret-key}")
+        @Value("\${cloud.aws.credentials.secretKey}")
         secretKey: String
 
     ): AmazonS3 {

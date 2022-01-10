@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE")
     implementation("org.apache.httpcomponents:httpclient")
     implementation("commons-io:commons-io:2.6")
     implementation("io.jsonwebtoken:jjwt:0.9.1")

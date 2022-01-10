@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.domain.image.service
 
 import com.wafflestudio.waflog.domain.image.exception.ImageNotFoundException
+import com.wafflestudio.waflog.domain.image.exception.InvalidImageFormException
 import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository
 import com.wafflestudio.waflog.domain.user.model.User
@@ -18,6 +19,8 @@ class ImageService(
     fun uploadImage(image: MultipartFile, @CurrentUser user: User): String {
         val fileToken = UUID.randomUUID().toString()
         val fileName = image.originalFilename!!
+        if(listOf("jpg", "JPG", "jpeg", "JPEG").none { it == fileName.split(".").last() })
+            throw InvalidImageFormException("this format is not allowed to upload")
         val uploadImage = Image(user.email, fileToken, fileName)
         val folderName = user.email.split("@").first()
         imageRepository.save(uploadImage)

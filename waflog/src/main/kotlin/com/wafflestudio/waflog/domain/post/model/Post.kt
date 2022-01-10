@@ -62,11 +62,13 @@ class Post(
 
     fun getPrevPost(): Post? {
         val userPosts: List<Post> = this.user.posts
-        return userPosts.lastOrNull { it.id < this.id }
+        val userNotPrivatePosts: List<Post> = userPosts.filter { p -> !p.private }
+        return userNotPrivatePosts.lastOrNull { it.id < this.id }
     }
 
     fun getNextPost(): Post? {
         val userPosts: List<Post> = this.user.posts
-        return userPosts.firstOrNull { it.id > this.id }
+        val userNotPrivatePosts: List<Post> = userPosts.filter { p -> !p.private }
+        return userNotPrivatePosts.firstOrNull { it.id > this.id }
     }
 }

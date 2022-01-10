@@ -61,14 +61,12 @@ class Post(
 ) : BaseTimeEntity() {
 
     fun getPrevPost(): Post? {
-        val userPosts: List<Post> = this.user.posts
-        val userNotPrivatePosts: List<Post> = userPosts.filter { p -> !p.private }
+        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
         return userNotPrivatePosts.lastOrNull { it.id < this.id }
     }
 
     fun getNextPost(): Post? {
-        val userPosts: List<Post> = this.user.posts
-        val userNotPrivatePosts: List<Post> = userPosts.filter { p -> !p.private }
+        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
         return userNotPrivatePosts.firstOrNull { it.id > this.id }
     }
 }

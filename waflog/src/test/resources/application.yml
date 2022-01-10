@@ -57,3 +57,16 @@ spring:
           auth: true
           starttls:
             enable: true
+
+---
+cloud:
+    aws:
+        credentials:
+            accessKey: dummy-access-key
+            secretKey: dummy-secret-key
+        s3:
+            bucket: dummy-bucket
+        region:
+            static: ap-northeast-2
+        stack:
+            auto: false

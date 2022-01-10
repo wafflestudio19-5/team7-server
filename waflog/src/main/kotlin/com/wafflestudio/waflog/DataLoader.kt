@@ -58,7 +58,7 @@ class DataLoader(
         )
 
         val userC = User(
-            email = "yeonsumia@snu.ac.kr",
+            email = "team7@nsnu.ac.kr",
             userId = "annie",
             name = "Team7",
             shortIntro = "",

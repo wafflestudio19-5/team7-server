@@ -45,6 +45,7 @@ class DataLoader(
             posts = mutableListOf()
         )
 
+
         val userB = User(
             email = "studio@nsnu.ac.kr",
             userId = "peter",

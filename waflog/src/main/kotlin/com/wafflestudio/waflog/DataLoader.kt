@@ -45,7 +45,6 @@ class DataLoader(
             posts = mutableListOf()
         )
 
-
         val userB = User(
             email = "studio@nsnu.ac.kr",
             userId = "peter",
@@ -85,6 +84,7 @@ class DataLoader(
         userRepository.save(userC)
 
         verificationTokenRepository.save(tokenA)
+
         verificationTokenRepository.save(tokenB)
 
         // val userA = userRepository.getById(1)

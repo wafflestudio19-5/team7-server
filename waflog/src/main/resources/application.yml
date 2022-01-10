@@ -1,7 +1,7 @@
 spring:
   profiles:
     active: local
-    include: oauth
+    include: oauth, aws
 ---
 spring:
   config:
@@ -46,8 +46,3 @@ spring:
           auth: true
           starttls:
             enable: true
----
-spring:
-    profiles:
-        include:
-            - aws

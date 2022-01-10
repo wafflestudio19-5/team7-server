@@ -14,15 +14,15 @@ import org.springframework.web.multipart.MultipartFile
 class ImageController(
     private val imageService: ImageService
 ) {
-    @PostMapping("/upload")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun uploadImage(@RequestPart image: MultipartFile, @CurrentUser user: User): ImageDto.S3URL {
         return ImageDto.S3URL(imageService.uploadImage(image, user))
     }
 
-    @DeleteMapping("/remove")
+    @DeleteMapping("")
     @ResponseStatus(HttpStatus.OK)
-    fun removeImage(@RequestBody imageToken: String, @CurrentUser user: User) {
-        imageService.removeImage(imageToken, user)
+    fun removeImage(@RequestBody removeRequest: ImageDto.RemoveRequest, @CurrentUser user: User) {
+        imageService.removeImage(removeRequest, user)
     }
 }

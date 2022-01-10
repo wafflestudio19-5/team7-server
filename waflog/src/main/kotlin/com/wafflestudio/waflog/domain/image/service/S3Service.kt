@@ -18,6 +18,7 @@ class S3Service(
         val uploadFile = File(System.getProperty("user.dir") + "/" + fileName)
         file.transferTo(uploadFile)
         amazonS3.putObject(bucketName, keyName, uploadFile)
+        uploadFile.delete()
         return "https://image-waflog.kro.kr/$keyName"
     }
 

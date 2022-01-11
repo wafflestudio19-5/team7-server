@@ -35,7 +35,7 @@ class CommentDto {
     }
 
     data class CreateRequest(
-        val parentComment: Long = 0,
+        val parentComment: Long? = null,
 
         @field:NotBlank
         val content: String,

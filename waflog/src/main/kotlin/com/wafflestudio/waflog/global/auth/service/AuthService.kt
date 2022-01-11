@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.global.auth.service
 
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.domain.user.exception.UserIdAlreadyExistException
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
@@ -69,17 +70,20 @@ class AuthService(
         val jwtEmail = jwtTokenProvider.getEmailFromJwt(jwt)
         if (attempt.email != jwtEmail)
             throw JWTInvalidException("JWT does not correspond to the email")
+        if (userRepository.existsByUserId(userId))
+            throw UserIdAlreadyExistException("User with this id already exists")
 
-        signUpAttemptRepository.deleteById(attempt.id)
         val user = userRepository.save(
             User(
                 email = email,
                 userId = userId,
                 name = name,
+                image = attempt.image,
                 shortIntro = shortIntro,
                 pageTitle = "$userId.log"
             )
         )
+        signUpAttemptRepository.deleteById(attempt.id)
 
         val token = generateVerificationToken(user)
 
@@ -94,7 +98,7 @@ class AuthService(
             it.jwt = jwt
             signUpAttemptRepository.save(it)
         } ?: run {
-            signUpAttemptRepository.save(SignUpAttempt(email, jwt))
+            signUpAttemptRepository.save(SignUpAttempt(email = email, jwt = jwt))
         }
 
         return jwt

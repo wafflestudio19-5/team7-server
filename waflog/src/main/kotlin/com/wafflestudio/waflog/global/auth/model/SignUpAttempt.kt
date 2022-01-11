@@ -13,5 +13,7 @@ class SignUpAttempt(
     @field:Email
     val email: String,
 
+    val image: String = "",
+
     var jwt: String
 ) : BaseEntity()

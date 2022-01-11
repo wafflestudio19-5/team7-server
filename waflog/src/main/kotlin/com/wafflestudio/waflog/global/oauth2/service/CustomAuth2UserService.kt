@@ -52,10 +52,7 @@ class CustomAuth2UserService : DefaultOAuth2UserService() {
         val email: String = mainEmailResponse["email"] as String
         val memberAttributes: HashMap<String, Any?> = hashMapOf(
             "email" to email,
-            "userId" to oauth2User.attributes["login"],
-            "name" to oauth2User.attributes["login"],
-            "image" to oauth2User.attributes["avatar_url"],
-            "pageTitle" to "${oauth2User.attributes["login"]}.log"
+            "image" to oauth2User.attributes["avatar_url"]
         )
 
         return DefaultOAuth2User(
@@ -83,13 +80,8 @@ class CustomAuth2UserService : DefaultOAuth2UserService() {
         TODO: saving imageResponse(Bytearray) in S3 and return url
          */
 
-        val emailId = (oauth2User.attributes["email"] as String).substringBefore("@")
-
         val memberAttributes: HashMap<String, Any?> = hashMapOf(
-            "email" to oauth2User.attributes["email"],
-            "userId" to emailId,
-            "name" to oauth2User.attributes["name"],
-            "pageTitle" to "$emailId.log"
+            "email" to oauth2User.attributes["email"]
         )
 
         return DefaultOAuth2User(
@@ -103,14 +95,9 @@ class CustomAuth2UserService : DefaultOAuth2UserService() {
 
     fun getGoogleUser(oauth2User: OAuth2User, userRequest: OAuth2UserRequest?): OAuth2User {
 
-        val emailId = (oauth2User.attributes["email"] as String).substringBefore("@")
-
         val memberAttributes: HashMap<String, Any?> = hashMapOf(
             "email" to oauth2User.attributes["email"],
-            "userId" to emailId,
-            "name" to oauth2User.attributes["name"],
-            "image" to oauth2User.attributes["picture"],
-            "pageTitle" to "$emailId.log"
+            "image" to oauth2User.attributes["picture"]
         )
 
         return DefaultOAuth2User(

@@ -85,8 +85,7 @@ class PostService(
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
-        postRepository.save(
-            Post(
+        val post = Post(
             user = user,
             title = title,
             content = content,
@@ -98,7 +97,8 @@ class PostService(
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
-        ))
+        )
+        postRepository.save(post)
     }
 
     fun writeComment(

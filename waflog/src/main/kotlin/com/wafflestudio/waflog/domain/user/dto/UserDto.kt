@@ -51,6 +51,7 @@ class UserDto {
         val email: String,
         val name: String,
         val userId: String,
-        val shortIntro: String
+        val shortIntro: String,
+        val token: String
     )
 }

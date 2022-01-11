@@ -30,7 +30,7 @@ class ImageService(
 
     fun removeImage(removeRequest: ImageDto.RemoveRequest, @CurrentUser user: User) {
         val fileToken = removeRequest.token
-        val image = imageRepository.findByEmailAndToken(user.email, fileToken)
+        val image = imageRepository.findByUserIdAndToken(user.userId, fileToken)
             ?: throw ImageNotFoundException("image not found")
         val folderName = user.userId
         imageRepository.deleteById(image.id)

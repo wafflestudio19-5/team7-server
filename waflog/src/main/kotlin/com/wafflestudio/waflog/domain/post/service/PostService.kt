@@ -67,16 +67,20 @@ class PostService(
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {
         val title = createRequest.title
-        if (title == "") throw InvalidPostTitleException("제목이 비어있습니다.")
+        if (title.isBlank()) throw InvalidPostTitleException("제목이 비어있습니다.")
         val content = createRequest.content
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary
         val private = createRequest.private
         var url = createRequest.url.replace(" ", "-")
-        if (url == "") {
-            url = if (title.length == 1) title + "-" + getRandomString(8)
-            else title.replace(" ", "-")
+        if (url.isBlank()) {
+            url = if (url == "") {
+                if (title.length == 1) title + "-" + getRandomString(8)
+                else title.replace(" ", "-")
+            } else getRandomString(8)
         }
+        postRepository.findByUser_UserIdAndUrl(user.userId, url)
+            ?.let { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
@@ -93,9 +97,7 @@ class PostService(
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
-
         )
-
         postRepository.save(post)
     }
 

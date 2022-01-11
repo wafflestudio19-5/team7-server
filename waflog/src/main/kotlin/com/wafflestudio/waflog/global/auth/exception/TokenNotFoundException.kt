@@ -4,4 +4,4 @@ import com.wafflestudio.waflog.global.common.exception.DataNotFoundException
 import com.wafflestudio.waflog.global.common.exception.ErrorType
 
 class TokenNotFoundException(detail: String = "") :
-    DataNotFoundException(ErrorType.DATA_NOT_FOUND, detail)
+    DataNotFoundException(ErrorType.TOKEN_NOT_FOUND, detail)

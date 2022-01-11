@@ -1,6 +1,8 @@
 package com.wafflestudio.waflog.domain.image.service
 
+import com.wafflestudio.waflog.domain.image.dto.ImageDto
 import com.wafflestudio.waflog.domain.image.exception.ImageNotFoundException
+import com.wafflestudio.waflog.domain.image.exception.InvalidImageFormException
 import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository
 import com.wafflestudio.waflog.domain.user.model.User
@@ -18,16 +20,20 @@ class ImageService(
     fun uploadImage(image: MultipartFile, @CurrentUser user: User): String {
         val fileToken = UUID.randomUUID().toString()
         val fileName = image.originalFilename!!
-        val uploadImage = Image(user.email, fileToken, fileName)
-        val folderName = user.email.split("@").first()
+        if (listOf("jpg", "JPG", "jpeg", "JPEG", "gif", "GIF").none { it == fileName.split(".").last() })
+            throw InvalidImageFormException("this format is not allowed to upload")
+        val uploadImage = Image(user.userId, fileToken, fileName)
+        val folderName = user.userId
         imageRepository.save(uploadImage)
         return s3Service.uploadTo(image, folderName, fileToken, fileName)
     }
 
-    fun removeImage(token: String, @CurrentUser user: User) {
-        val image = imageRepository.findByEmailAndToken(user.email, token)
+    fun removeImage(removeRequest: ImageDto.RemoveRequest, @CurrentUser user: User) {
+        val fileToken = removeRequest.token
+        val image = imageRepository.findByUserIdAndToken(user.userId, fileToken)
             ?: throw ImageNotFoundException("image not found")
+        val folderName = user.userId
         imageRepository.deleteById(image.id)
-        s3Service.remove(user.email, token, image.originalName)
+        s3Service.remove(folderName, fileToken, image.originalName)
     }
 }

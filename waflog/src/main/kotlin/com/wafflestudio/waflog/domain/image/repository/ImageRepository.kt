@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param
 
 interface ImageRepository : JpaRepository<Image, Long?> {
 
-    @Query("SELECT i FROM Image i WHERE i.email = :email AND i.token = :token")
-    fun findByEmailAndToken(@Param("email") email: String, @Param("token") token: String): Image?
+    @Query("SELECT i FROM Image i WHERE i.userId = :userId AND i.token = :token")
+    fun findByUserIdAndToken(@Param("userId") userId: String, @Param("token") token: String): Image?
 }

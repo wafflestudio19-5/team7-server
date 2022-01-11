@@ -23,6 +23,7 @@ enum class ErrorType(
     TOKEN_NOT_FOUND(4006),
 
     CONFLICT(9000),
+    USER_ID_CONFLICT(9011),
 
     SERVER_ERROR(10000)
 }

@@ -1,7 +1,7 @@
 package com.wafflestudio.waflog.domain.user.service
 
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
-import com.wafflestudio.waflog.domain.user.exception.SeriesExistException
+import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
@@ -19,6 +19,6 @@ class UserService(
                 seriesRepository.save(newSeries)
                 return
             }
-        throw SeriesExistException("이미 존재하는 URL입니다.")
+        throw SeriesUrlExistException("이미 존재하는 URL입니다.")
     }
 }

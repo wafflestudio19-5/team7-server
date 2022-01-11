@@ -4,7 +4,7 @@ import com.wafflestudio.waflog.domain.post.dto.CommentDto
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.exception.CommentNotFoundException
 import com.wafflestudio.waflog.domain.post.exception.CommentNotWrittenByUserException
-import com.wafflestudio.waflog.domain.post.exception.InvalidPostFormException
+import com.wafflestudio.waflog.domain.post.exception.InvalidPostTITLEException
 import com.wafflestudio.waflog.domain.post.exception.PostNotFoundException
 import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
@@ -67,7 +67,7 @@ class PostService(
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {
         val title = createRequest.title
-        if (title == "") throw InvalidPostFormException("제목이 비어있습니다.")
+        if (title == "") throw InvalidPostTITLEException("제목이 비어있습니다.")
         val content = createRequest.content
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary

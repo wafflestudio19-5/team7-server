@@ -50,7 +50,9 @@ class OAuth2SuccessHandler(
             val jwt = jwtTokenProvider.generateToken(email, signup = true)
 
             // save image URL if exists
-            val image = oAuth2User.attributes["image"]?.let(Any::toString) ?: ""
+            val image = oAuth2User.attributes["image"]
+                ?.let(Any::toString)
+                ?: "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75"
 
             signUpAttemptRepository.save(SignUpAttempt(email, image, jwt))
 

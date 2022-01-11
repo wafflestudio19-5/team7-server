@@ -13,7 +13,8 @@ class SignUpAttempt(
     @field:Email
     val email: String,
 
-    val image: String = "",
+    val image: String =
+        "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75",
 
     var jwt: String
 ) : BaseEntity()

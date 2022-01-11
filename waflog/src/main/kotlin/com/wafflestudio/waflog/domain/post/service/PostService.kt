@@ -196,7 +196,8 @@ class PostService(
             throw CommentNotWrittenByUserException("You did not write this comment")
 
         if (comment.depth == 0) { // if comment to delete is root
-            if (post.comments.any { it.depth > 0 && it.rootComment == comment.id }) { // if comment has replies, mark as deleted
+            if (post.comments.any { it.depth > 0 && it.rootComment == comment.id }) {
+                // if comment has replies, mark as deleted
                 comment.user = null
                 commentRepository.save(comment)
             } else {

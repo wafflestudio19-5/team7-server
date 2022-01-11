@@ -29,7 +29,7 @@ class JwtTokenProvider(
     @Value("\${app.jwt.jwt-expiration-in-ms}")
     private val jwtExpirationInMs: Long? = null
 
-    @Value("\${app.jwt.jwt-signup-expiration-in-ms")
+    @Value("\${app.jwt.jwt-signup-expiration-in-ms}")
     private val jwtSignUpExpirationInMs: Long? = null
 
     // For Register

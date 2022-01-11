@@ -5,6 +5,7 @@ app:
   jwt:
     jwt-secret-key: waffle-team7-velog
     jwt-expiration-in-ms: 3600000
+    jwt-signup-expiration-in-ms: 86400000
 
 ---
 
@@ -60,13 +61,13 @@ spring:
 
 ---
 cloud:
-    aws:
-        credentials:
-            accessKey: dummy-access-key
-            secretKey: dummy-secret-key
-        s3:
-            bucket: dummy-bucket
-        region:
-            static: ap-northeast-2
-        stack:
-            auto: false
+  aws:
+    credentials:
+      accessKey: dummy-access-key
+      secretKey: dummy-secret-key
+    s3:
+      bucket: dummy-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

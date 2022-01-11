@@ -70,16 +70,17 @@ class AuthService(
         if (attempt.email != jwtEmail)
             throw JWTInvalidException("JWT does not correspond to the email")
 
-        signUpAttemptRepository.deleteById(attempt.id)
         val user = userRepository.save(
             User(
                 email = email,
                 userId = userId,
                 name = name,
+                image = attempt.image,
                 shortIntro = shortIntro,
                 pageTitle = "$userId.log"
             )
         )
+        signUpAttemptRepository.deleteById(attempt.id)
 
         val token = generateVerificationToken(user)
 
@@ -94,7 +95,7 @@ class AuthService(
             it.jwt = jwt
             signUpAttemptRepository.save(it)
         } ?: run {
-            signUpAttemptRepository.save(SignUpAttempt(email, jwt))
+            signUpAttemptRepository.save(SignUpAttempt(email = email, jwt = jwt))
         }
 
         return jwt

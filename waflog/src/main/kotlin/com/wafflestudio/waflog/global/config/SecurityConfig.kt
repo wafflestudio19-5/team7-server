@@ -19,7 +19,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -35,21 +34,17 @@ class SecurityConfig(
     private val oAuth2SuccessHandler: OAuth2SuccessHandler,
     private val customAuth2UserService: CustomAuth2UserService,
     private val userPrincipalDetailService: VerificationTokenPrincipalDetailService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val passwordEncoder: PasswordEncoder
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.authenticationProvider(daoAuthenticationProvider())
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
-
-    @Bean
     fun daoAuthenticationProvider(): DaoAuthenticationProvider {
         val provider = DaoAuthenticationProvider()
-        provider.setPasswordEncoder(passwordEncoder())
+        provider.setPasswordEncoder(passwordEncoder)
         provider.setUserDetailsService(userPrincipalDetailService)
         return provider
     }

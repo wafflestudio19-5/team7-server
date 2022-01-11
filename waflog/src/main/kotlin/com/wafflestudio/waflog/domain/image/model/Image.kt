@@ -6,10 +6,10 @@ import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["email", "token"])])
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["userId", "token"])])
 class Image(
     @field:NotNull
-    val email: String,
+    val userId: String,
 
     @field:NotBlank
     val token: String,

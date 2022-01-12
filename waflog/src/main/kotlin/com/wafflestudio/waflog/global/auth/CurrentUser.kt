@@ -4,5 +4,5 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@AuthenticationPrincipal(expression = "user")
+@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : user")
 annotation class CurrentUser(val require: Boolean = true)

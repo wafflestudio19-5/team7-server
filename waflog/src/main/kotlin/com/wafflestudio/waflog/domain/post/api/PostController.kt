@@ -124,8 +124,8 @@ class PostController(
     @ResponseStatus(HttpStatus.OK)
     fun isLikedPost(
         @PathVariable("post_id") postId: Long,
-        @CurrentUser user: User
+        @CurrentUser user: User?
     ): Boolean {
-        return postService.isLikedPost(postId, user)
+        return user?.let { postService.isLikedPost(postId, it) } ?: false
     }
 }

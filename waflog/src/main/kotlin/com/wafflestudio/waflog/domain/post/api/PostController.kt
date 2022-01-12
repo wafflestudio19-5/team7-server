@@ -116,7 +116,7 @@ class PostController(
     fun likeOrDislikePost(
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User
-    ): PostDto.PageDetailResponse {
+    ): PostDto.PostLikesResponse {
         return postService.addLikeInPost(postId, user)
     }
 

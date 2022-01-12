@@ -93,4 +93,16 @@ class PostDto {
         val url: String,
         val seriesName: String?
     )
+
+    data class PostLikesResponse(
+        val id: Long,
+        val likes: Int,
+        val isLiked: Boolean
+    ) {
+        constructor(post: Post, isLiked: Boolean) : this(
+            id = post.id,
+            likes = post.likedUser.size,
+            isLiked = isLiked
+        )
+    }
 }

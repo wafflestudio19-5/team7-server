@@ -97,7 +97,9 @@ class PostDto {
             isLiked = isLiked
         )
 
-      companion object {
+    }
+
+    companion object {
         fun getCommentListResponse(comments: List<Comment>):
             ListResponse<CommentDto.RootCommentResponse> {
 

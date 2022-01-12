@@ -24,8 +24,9 @@ class ImageService(
             throw InvalidImageFormException("this format is not allowed to upload")
         val uploadImage = Image(user.userId, fileToken, fileName)
         val folderName = user.userId
-        imageRepository.save(uploadImage)
+
         return s3Service.uploadTo(image, folderName, fileToken, fileName)
+            .also { imageRepository.save(uploadImage) }
     }
 
     fun removeImage(removeRequest: ImageDto.RemoveRequest, @CurrentUser user: User) {
@@ -33,7 +34,8 @@ class ImageService(
         val image = imageRepository.findByUserIdAndToken(user.userId, fileToken)
             ?: throw ImageNotFoundException("image not found")
         val folderName = user.userId
-        imageRepository.deleteById(image.id)
+
         s3Service.remove(folderName, fileToken, image.originalName)
+            .also { imageRepository.deleteById(image.id) }
     }
 }

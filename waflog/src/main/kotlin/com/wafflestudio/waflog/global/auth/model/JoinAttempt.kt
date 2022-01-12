@@ -8,7 +8,7 @@ import javax.validation.constraints.Email
 
 @Entity
 @Table(name = "signup_attempt")
-class SignUpAttempt(
+class JoinAttempt(
     @Column(unique = true)
     @field:Email
     val email: String,

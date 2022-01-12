@@ -54,4 +54,9 @@ class UserDto {
         val shortIntro: String,
         val token: String
     )
+
+    data class SignInRequest(
+        val email: String,
+        val token: String
+    )
 }

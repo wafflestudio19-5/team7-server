@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.domain.image.service
 
 import com.wafflestudio.waflog.domain.image.dto.ImageDto
 import com.wafflestudio.waflog.domain.image.exception.ImageNotFoundException
-import com.wafflestudio.waflog.domain.image.exception.ImageNotUploadedException
 import com.wafflestudio.waflog.domain.image.exception.InvalidImageFormException
 import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository

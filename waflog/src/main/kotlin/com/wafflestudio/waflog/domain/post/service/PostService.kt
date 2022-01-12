@@ -48,8 +48,12 @@ class PostService(
     }
 
     fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.MainPageResponse> {
-        val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
-        return posts.map { post -> PostDto.MainPageResponse(post) }
+        return if (keyword != "") {
+            val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
+            posts.map { post -> PostDto.MainPageResponse(post) }
+        } else {
+            Page.empty()
+        }
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String): PostDto.PageDetailResponse {

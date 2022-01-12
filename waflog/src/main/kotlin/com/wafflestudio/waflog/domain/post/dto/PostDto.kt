@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.post.dto
 
+import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.tag.dto.TagDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
@@ -56,16 +57,7 @@ class PostDto {
             likes = post.likedUser.size,
             thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
-            comments = ListResponse(
-                post.comments
-                    .filter { it.depth == 0 }
-                    .map { root ->
-                        CommentDto.RootCommentResponse(
-                            root,
-                            post.comments.filter { it.rootComment == root.id }
-                        )
-                    }
-            ),
+            comments = getCommentListResponse(post.comments),
             prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
             nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) },
             createdAt = post.createdAt
@@ -104,5 +96,24 @@ class PostDto {
             likes = post.likedUser.size,
             isLiked = isLiked
         )
+
+      companion object {
+        fun getCommentListResponse(comments: List<Comment>):
+            ListResponse<CommentDto.RootCommentResponse> {
+
+            val rootComments = comments.filter { it.depth == 0 }
+            val replies = comments.filter { it.depth > 0 }
+
+            return ListResponse(
+                comments.size,
+                rootComments
+                    .map { root ->
+                        CommentDto.RootCommentResponse(
+                            root,
+                            replies.filter { it.rootComment == root.id }
+                        )
+                    }
+            )
+        }
     }
 }

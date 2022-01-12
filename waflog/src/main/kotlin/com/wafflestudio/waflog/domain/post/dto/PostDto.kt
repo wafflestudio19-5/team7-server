@@ -96,7 +96,6 @@ class PostDto {
             likes = post.likedUser.size,
             isLiked = isLiked
         )
-
     }
 
     companion object {

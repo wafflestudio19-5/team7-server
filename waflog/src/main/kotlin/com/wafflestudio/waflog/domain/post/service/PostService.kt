@@ -48,8 +48,12 @@ class PostService(
     }
 
     fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.MainPageResponse> {
-        val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
-        return posts.map { post -> PostDto.MainPageResponse(post) }
+        return if (keyword != "") {
+            val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
+            posts.map { post -> PostDto.MainPageResponse(post) }
+        } else {
+            Page.empty()
+        }
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String): PostDto.PageDetailResponse {
@@ -109,14 +113,7 @@ class PostService(
         val post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
 
-        if (createRequest.parentComment == 0L) {
-            val comment = Comment(
-                user = user,
-                post = post,
-                content = createRequest.content
-            )
-            commentRepository.save(comment)
-        } else {
+        createRequest.parentComment?.also { // if the comment is a reply
             val parentId = createRequest.parentComment
 
             val parentComment = commentRepository.findByIdOrNull(parentId)
@@ -124,7 +121,7 @@ class PostService(
             if (parentComment.post.id != post.id)
                 throw CommentNotFoundException("Parent comment with id $parentId does not exist in the post")
 
-            val rootComment = if (parentComment.depth == 0) parentComment.id else parentComment.rootComment
+            val rootComment = parentComment.rootComment
 
             // Nested set adjustment
             val right = parentComment.rgt
@@ -142,19 +139,20 @@ class PostService(
             )
 
             commentRepository.save(comment)
+        } ?: run { // if the comment is a root
+            val comment = commentRepository.save(
+                Comment(
+                    user = user,
+                    post = post,
+                    content = createRequest.content
+                )
+            )
+
+            comment.rootComment = comment.id // set root comment of the comment to itself
+            commentRepository.save(comment)
         }
 
-        return ListResponse(
-            post.comments.size,
-            post.comments
-                .filter { it.depth == 0 }
-                .map { root ->
-                    CommentDto.RootCommentResponse(
-                        root,
-                        post.comments.filter { it.rootComment == root.id }
-                    )
-                }
-        )
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun modifyComment(
@@ -180,17 +178,7 @@ class PostService(
 
         commentRepository.save(comment)
 
-        return ListResponse(
-            post.comments.size,
-            post.comments
-                .filter { it.depth == 0 }
-                .map { root ->
-                    CommentDto.RootCommentResponse(
-                        root,
-                        post.comments.filter { it.rootComment == root.id }
-                    )
-                }
-        )
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun deleteComment(
@@ -212,7 +200,8 @@ class PostService(
             throw CommentNotWrittenByUserException("You did not write this comment")
 
         if (comment.depth == 0) { // if comment to delete is root
-            if (post.comments.any { it.rootComment == comment.id }) { // if comment has replies, mark as deleted
+            if (post.comments.any { it.depth > 0 && it.rootComment == comment.id }) {
+                // if comment has replies, mark as deleted
                 comment.user = null
                 commentRepository.save(comment)
             } else {
@@ -232,17 +221,7 @@ class PostService(
             commentRepository.updateRight(rootComment, right, -width)
         }
 
-        return ListResponse(
-            post.comments.size,
-            post.comments
-                .filter { it.depth == 0 }
-                .map { root ->
-                    CommentDto.RootCommentResponse(
-                        root,
-                        post.comments.filter { it.rootComment == root.id }
-                    )
-                }
-        )
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun addLikeInPost(postId: Long, user: User): PostDto.PageDetailResponse {

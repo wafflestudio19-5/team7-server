@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
@@ -28,15 +26,11 @@ class SecurityConfig(
     private val customAuth2UserService: CustomAuth2UserService,
 //    private val userPrincipalDetailService: VerificationTokenPrincipalDetailService,
 //    private val objectMapper: ObjectMapper
+//    private val passwordEncoder: PasswordEncoder
 ) : WebSecurityConfigurerAdapter() {
 //    override fun configure(auth: AuthenticationManagerBuilder) {
 //        auth.authenticationProvider(daoAuthenticationProvider())
 //    }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
 
 //    @Bean
 //    fun daoAuthenticationProvider(): DaoAuthenticationProvider {
@@ -71,7 +65,8 @@ class SecurityConfig(
             .antMatchers(HttpMethod.POST, "/api/v1/auth/verify/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/recent", "/api/v1/post/trend").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}", "/api/v1/post/search").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/v1/post/@**/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/post/@**/**",).permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}/like/current").permitAll()
             .antMatchers(HttpMethod.GET, "/").permitAll()
             .anyRequest().authenticated()
             .and()

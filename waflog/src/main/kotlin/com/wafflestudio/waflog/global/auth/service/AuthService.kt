@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.global.auth.service
 
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.domain.user.exception.UserIdAlreadyExistException
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
@@ -61,12 +62,13 @@ class AuthService(
         val shortIntro = signUpRequest.shortIntro
         val jwt = signUpRequest.token
 
-        verifyJWT(email, jwt)
+        val attempt = verifyJWT(email, jwt)
         val user = userRepository.save(
             User(
                 email = email,
                 userId = userId,
                 name = name,
+                image = attempt.image,
                 shortIntro = shortIntro,
                 pageTitle = "$userId.log"
             )
@@ -87,7 +89,7 @@ class AuthService(
         return VerificationTokenPrincipalDto(UserDto.SimpleResponse(user), token)
     }
 
-    private fun verifyJWT(email: String, jwt: String) {
+    private fun verifyJWT(email: String, jwt: String, userId: String? = null): JoinAttempt {
         if (!jwtTokenProvider.validateToken(jwt))
             throw JWTInvalidException("JWT is invalid")
         jwtTokenProvider.getEmailFromJwt(jwt)
@@ -95,12 +97,17 @@ class AuthService(
                 if (it != email)
                     throw JWTInvalidException("JWT does not correspond to the email")
             }
-        joinAttemptRepository.findByEmail(email)
+        val attempt = joinAttemptRepository.findByEmail(email)!!
             .also {
-                if (!passwordEncoder.matches(jwt, it!!.jwt))
+                if (!passwordEncoder.matches(jwt, it.jwt))
                     throw JWTInvalidException("JWT does not correspond to any sign up request")
             }
-            .let { joinAttemptRepository.deleteById(it!!.id) }
+            .also { joinAttemptRepository.deleteById(it.id) }
+        userId?.let {
+            if (userRepository.existsByUserId(userId))
+                throw UserIdAlreadyExistException("User with this id already exists")
+        }
+        return attempt
     }
 
     private fun generateJoinJWT(email: String): String {
@@ -111,7 +118,7 @@ class AuthService(
             it.jwt = passwordEncoder.encode(jwt)
             joinAttemptRepository.save(it)
         } ?: run {
-            joinAttemptRepository.save(JoinAttempt(email, passwordEncoder.encode(jwt)))
+            joinAttemptRepository.save(JoinAttempt(email = email, jwt = passwordEncoder.encode(jwt)))
         }
 
         return jwt

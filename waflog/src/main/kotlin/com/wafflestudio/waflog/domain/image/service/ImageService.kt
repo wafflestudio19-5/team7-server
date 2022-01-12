@@ -20,7 +20,7 @@ class ImageService(
     fun uploadImage(image: MultipartFile, @CurrentUser user: User): String {
         val fileToken = UUID.randomUUID().toString()
         val fileName = image.originalFilename!!
-        if (listOf("jpg", "JPG", "jpeg", "JPEG", "gif", "GIF").none { it == fileName.split(".").last() })
+        if (listOf("jpg", "JPG", "jpeg", "JPEG", "gif", "GIF", "png", "PNG").none { it == fileName.split(".").last() })
             throw InvalidImageFormException("this format is not allowed to upload")
         val uploadImage = Image(user.userId, fileToken, fileName)
         val folderName = user.userId

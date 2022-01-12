@@ -152,7 +152,7 @@ class PostService(
             commentRepository.save(comment)
         }
 
-        return getCommentListResponse(post.comments)
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun modifyComment(
@@ -178,7 +178,7 @@ class PostService(
 
         commentRepository.save(comment)
 
-        return getCommentListResponse(post.comments)
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun deleteComment(
@@ -221,25 +221,7 @@ class PostService(
             commentRepository.updateRight(rootComment, right, -width)
         }
 
-        return getCommentListResponse(post.comments)
-    }
-
-    private fun getCommentListResponse(comments: List<Comment>):
-        ListResponse<CommentDto.RootCommentResponse> {
-
-        val rootComments = comments.filter { it.depth == 0 }
-        val replies = comments.filter { it.depth > 0 }
-
-        return ListResponse(
-            comments.size,
-            rootComments
-                .map { root ->
-                    CommentDto.RootCommentResponse(
-                        root,
-                        replies.filter { it.rootComment == root.id }
-                    )
-                }
-        )
+        return PostDto.getCommentListResponse(post.comments)
     }
 
     fun addLikeInPost(postId: Long, user: User): PostDto.PageDetailResponse {

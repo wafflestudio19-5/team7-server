@@ -3,6 +3,8 @@ package com.wafflestudio.waflog.global.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.waflog.global.auth.dto.LoginRequest
 import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
+import com.wafflestudio.waflog.global.auth.exception.JWTInvalidException
+import com.wafflestudio.waflog.global.auth.exception.TokenNotFoundException
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -56,6 +58,15 @@ class SignInAuthenticationFilter(
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val parsedRequest: LoginRequest = parseRequest(request)
+        val email = parsedRequest.email
+        val jwt = parsedRequest.token
+        if (!jwtTokenProvider.validateToken(jwt))
+            throw JWTInvalidException("JWT is invalid")
+        jwtTokenProvider.getEmailFromJwt(jwt!!)
+            .let {
+                if (it != email)
+                    throw JWTInvalidException("JWT does not correspond to the email")
+            }
         val authRequest: Authentication =
             UsernamePasswordAuthenticationToken(parsedRequest.email, parsedRequest.token)
         return authenticationManager.authenticate(authRequest)

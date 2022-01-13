@@ -55,7 +55,7 @@ class UserDto {
         val token: String
     )
 
-    data class SignInRequest(
+    data class VerifyRequest(
         val email: String,
         val token: String
     )

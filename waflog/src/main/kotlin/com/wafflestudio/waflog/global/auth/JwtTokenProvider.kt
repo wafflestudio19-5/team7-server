@@ -35,7 +35,6 @@ class JwtTokenProvider(
     @Value("\${app.jwt.jwt-signup-expiration-in-ms}")
     private val jwtJoinExpirationInMs: Long? = null
 
-    // For Register
     fun generateToken(email: String, join: Boolean = false): String {
         val claims: MutableMap<String, Any> = hashMapOf("email" to email)
         val now = Date()
@@ -48,7 +47,6 @@ class JwtTokenProvider(
             .compact()
     }
 
-    // For Login
     fun generateToken(authentication: Authentication): String {
         val verificationTokenPrincipal = authentication.principal as VerificationTokenPrincipal
         return generateToken(verificationTokenPrincipal.verificationToken.email)

@@ -28,17 +28,13 @@ class AuthController(
 
     @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
-    fun verifySignUp() {}
+    fun verifySignUp(@RequestBody verifyRequest: UserDto.VerifyRequest) {
+        authService.verifySignUp(verifyRequest)
+    }
 
     @PostMapping("/user/info")
     @ResponseStatus(HttpStatus.CREATED)
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest): VerificationTokenPrincipalDto {
         return authService.signUp(signupRequest)
-    }
-
-    @PostMapping("/verify/login")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun signIn(@RequestBody signInRequest: UserDto.SignInRequest): VerificationTokenPrincipalDto {
-        return authService.signIn(signInRequest)
     }
 }

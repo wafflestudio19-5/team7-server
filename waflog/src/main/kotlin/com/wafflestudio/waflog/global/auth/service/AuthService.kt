@@ -62,7 +62,7 @@ class AuthService(
         val shortIntro = signUpRequest.shortIntro
         val jwt = signUpRequest.token
 
-        val attempt = verifyJWT(email, jwt)
+        val attempt = verifyJWT(email, jwt, userId)
         val user = userRepository.save(
             User(
                 email = email,

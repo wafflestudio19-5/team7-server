@@ -67,8 +67,11 @@ class PostController(
 
     @GetMapping("/{post_id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getPostDetail(@PathVariable("post_id") postId: Long): PostDto.PageDetailResponse {
-        return postService.getPostDetail(postId)
+    fun getPostDetail(
+        @PathVariable("post_id") postId: Long,
+        @CurrentUser user: User?
+    ): PostDto.PageDetailResponse {
+        return postService.getPostDetail(postId, user)
     }
 
     @GetMapping("/@{user_id}/{post_url}")
@@ -76,8 +79,9 @@ class PostController(
     fun getPostDetailWithURL(
         @PathVariable("user_id") userId: String,
         @PathVariable("post_url") postURL: String,
+        @CurrentUser user: User?
     ): PostDto.PageDetailResponse {
-        return postService.getPostDetailWithURL(userId, postURL)
+        return postService.getPostDetailWithURL(userId, postURL, user)
     }
 
     @PostMapping("/{post_id}/comment")

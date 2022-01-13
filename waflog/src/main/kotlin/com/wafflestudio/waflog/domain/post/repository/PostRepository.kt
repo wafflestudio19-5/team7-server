@@ -4,8 +4,10 @@ import com.wafflestudio.waflog.domain.post.model.Post
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 interface PostRepository : JpaRepository<Post, Long?> {
@@ -26,4 +28,9 @@ interface PostRepository : JpaRepository<Post, Long?> {
     fun findByPrivateIsFalseAndUser_UserIdAndUrl(userId: String, url: String): Post?
 
     fun findByUser_UserIdAndUrl(userId: String, url: String): Post?
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Post p SET p.views = p.views + 1 WHERE p.id = :postId")
+    fun increaseViews(@Param("postId") postId: Long)
 }

@@ -60,6 +60,6 @@ class UserService(
     }
 
     private fun postFilter(post: Post, keyword: String): Boolean {
-        return post.title.contains(keyword) || post.content.contains(keyword)
+        return (post.title.contains(keyword) || post.content.contains(keyword)) && !post.private
     }
 }

@@ -2,6 +2,8 @@ package com.wafflestudio.waflog.domain.user.dto
 
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.user.model.User
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 class UserDto {
     data class SimpleResponse(
@@ -61,14 +63,12 @@ class UserDto {
         val name: String,
         val image: String,
         val shortIntro: String,
-        val posts: List<PostDto.MainPageResponse>
     ) {
         constructor(user: User) : this(
             id = user.id,
             name = user.name,
             image = user.image,
             shortIntro = user.shortIntro,
-            posts = user.posts.map { p -> PostDto.MainPageResponse(p) }
         )
     }
 }

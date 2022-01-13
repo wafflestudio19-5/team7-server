@@ -105,4 +105,26 @@ class PostDto {
             )
         }
     }
+
+    data class PostInUserPostsResponse(
+        val id: Long,
+        val title: String,
+        val url: String,
+        val thumbnail: String, // thumbnail file url
+        val summary: String,
+        val tags: List<TagDto.TagResponse>,
+        val createAt: LocalDateTime?,
+        val comments: Int // num of comments
+    ) {
+        constructor(post:Post):this(
+            id = post.id,
+            title = post.title,
+            url = post.url,
+            thumbnail = post.thumbnail,
+            summary = post.summary,
+            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
+            createAt = post.createdAt,
+            comments = post.comments.size
+        )
+    }
 }

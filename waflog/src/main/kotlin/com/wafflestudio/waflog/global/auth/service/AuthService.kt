@@ -86,7 +86,7 @@ class AuthService(
         verifyJWT(email, jwt)
     }
 
-     fun verifyJWT(email: String, jwt: String): VerificationToken {
+    fun verifyJWT(email: String, jwt: String): VerificationToken {
         if (!jwtTokenProvider.validateToken(jwt))
             throw JWTInvalidException("JWT is invalid")
         jwtTokenProvider.getEmailFromJwt(jwt)

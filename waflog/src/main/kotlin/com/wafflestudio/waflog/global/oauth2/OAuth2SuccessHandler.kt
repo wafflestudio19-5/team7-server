@@ -2,9 +2,7 @@ package com.wafflestudio.waflog.global.oauth2
 
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.JwtTokenProvider
-import com.wafflestudio.waflog.global.auth.model.JoinAttempt
 import com.wafflestudio.waflog.global.auth.model.VerificationToken
-import com.wafflestudio.waflog.global.auth.repository.JoinAttemptRepository
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletResponse
 class OAuth2SuccessHandler(
     private val userRepository: UserRepository,
     private val verificationTokenRepository: VerificationTokenRepository,
-    private val joinAttemptRepository: JoinAttemptRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) : AuthenticationSuccessHandler {
@@ -38,21 +35,19 @@ class OAuth2SuccessHandler(
         // register user if not exists
         userRepository.findByEmail(email)?.run {
             // generate verification token for JWT authentication
-            val jwt = generateOAuth2UserToken(email)
+            val jwt = jwtTokenProvider.generateToken(email, join = false)
 
             // return redirect response
             response.addHeader("Location", "https://waflog-web.kro.kr/social?token=$jwt")
             response.status = HttpServletResponse.SC_TEMPORARY_REDIRECT
         } ?: run {
-            // generate JWT for register
-            val jwt = jwtTokenProvider.generateToken(email, join = true)
-
             // save image URL if exists
             val image = oAuth2User.attributes["image"]
                 ?.let(Any::toString)
                 ?: "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75"
 
-            joinAttemptRepository.save(JoinAttempt(email, image, jwt))
+            // generate JWT for register
+            val jwt = generateOAuth2UserToken(email, image)
 
             // return redirect response
             response.addHeader(
@@ -63,16 +58,15 @@ class OAuth2SuccessHandler(
         }
     }
 
-    private fun generateOAuth2UserToken(email: String): String {
-        val token = jwtTokenProvider.generateToken(email, join = false)
-
+    private fun generateOAuth2UserToken(email: String, image: String): String {
+        val token = jwtTokenProvider.generateToken(email, join = true)
         val existingToken = verificationTokenRepository.findByEmail(email)
 
         existingToken?.also { // reuse token if exists: unique OAuth2UserToken
             it.token = passwordEncoder.encode(token)
             verificationTokenRepository.save(it)
         } ?: run {
-            val verificationToken = VerificationToken(email, passwordEncoder.encode(token))
+            val verificationToken = VerificationToken(email, passwordEncoder.encode(token), image)
             verificationTokenRepository.save(verificationToken)
         }
 

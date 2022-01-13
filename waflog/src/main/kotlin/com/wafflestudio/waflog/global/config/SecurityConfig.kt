@@ -1,5 +1,8 @@
 package com.wafflestudio.waflog.global.config
 
+import com.wafflestudio.waflog.global.auth.JwtAuthenticationEntryPoint
+import com.wafflestudio.waflog.global.auth.JwtAuthenticationFilter
+import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.oauth2.OAuth2SuccessHandler
 import com.wafflestudio.waflog.global.oauth2.service.CustomAuth2UserService
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
@@ -20,25 +23,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 class SecurityConfig(
-//    private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
-//    private val jwtTokenProvider: JwtTokenProvider,
+    private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
+    private val jwtTokenProvider: JwtTokenProvider,
     private val oAuth2SuccessHandler: OAuth2SuccessHandler,
-    private val customAuth2UserService: CustomAuth2UserService,
-//    private val userPrincipalDetailService: VerificationTokenPrincipalDetailService,
-//    private val objectMapper: ObjectMapper
-//    private val passwordEncoder: PasswordEncoder
+    private val customAuth2UserService: CustomAuth2UserService
 ) : WebSecurityConfigurerAdapter() {
-//    override fun configure(auth: AuthenticationManagerBuilder) {
-//        auth.authenticationProvider(daoAuthenticationProvider())
-//    }
-
-//    @Bean
-//    fun daoAuthenticationProvider(): DaoAuthenticationProvider {
-//        val provider = DaoAuthenticationProvider()
-//        provider.setPasswordEncoder(passwordEncoder())
-//        provider.setUserDetailsService(userPrincipalDetailService)
-//        return provider
-//    }
 
     override fun configure(http: HttpSecurity) {
         http
@@ -46,15 +35,10 @@ class SecurityConfig(
             .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//            .and()
-//            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
             .and()
-//            .addFilter(
-//                SignInAuthenticationFilter(
-//                    authenticationManager(), jwtTokenProvider, objectMapper
-//                )
-//            )
-//            .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
             .authorizeRequests()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()

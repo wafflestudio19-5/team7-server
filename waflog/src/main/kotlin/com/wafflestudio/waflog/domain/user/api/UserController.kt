@@ -24,4 +24,10 @@ class UserController(
     fun getSimpleInfo(@CurrentUser user: User): UserDto.SimpleResponse {
         return UserDto.SimpleResponse(user)
     }
+
+    @GetMapping("/@{user_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserDetail(@PathVariable("user_id") userId: String): UserDto.UserDetailResponse {
+        return userService.getUserDetail(userId)
+    }
 }

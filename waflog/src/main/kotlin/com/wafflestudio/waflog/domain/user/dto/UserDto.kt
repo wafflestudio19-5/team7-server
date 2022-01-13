@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.user.dto
 
+import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.user.model.User
 
 class UserDto {
@@ -54,4 +55,20 @@ class UserDto {
         val shortIntro: String,
         val token: String
     )
+
+    data class UserDetailResponse(
+        val id: Long,
+        val name: String,
+        val image: String,
+        val shortIntro: String,
+        val posts: List<PostDto.MainPageResponse>
+    ) {
+        constructor(user: User) : this(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            shortIntro = user.shortIntro,
+            posts = user.posts.map { p -> PostDto.MainPageResponse(p) }
+        )
+    }
 }

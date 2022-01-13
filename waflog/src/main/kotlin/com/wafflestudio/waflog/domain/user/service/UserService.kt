@@ -50,16 +50,33 @@ class UserService(
             user.posts.filter { post -> postFilter(post, keyword) }
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }
-        val start: Int = pageable.offset.toInt()
-        val end: Int = (start + pageable.pageSize).coerceAtMost(searchedPostsResponse.size)
-        return PageImpl(
-            searchedPostsResponse.subList(start, end),
-            pageable,
-            searchedPostsResponse.size.toLong()
-        )
+        return makePage(pageable, searchedPostsResponse)
     }
 
     private fun postFilter(post: Post, keyword: String): Boolean {
         return (post.title.contains(keyword) || post.content.contains(keyword)) && !post.private
+    }
+
+    fun getUserLongIntro(userId: String): UserDto.UserLongIntroResponse {
+        val user = userRepository.findByUserId(userId)
+            ?: throw UserNotFoundException("There is no user id $userId")
+        return UserDto.UserLongIntroResponse(user)
+    }
+
+    fun getUserSeries(userId: String, pageable: Pageable): Page<SeriesDto.SimpleResponse> {
+        val user = userRepository.findByUserId(userId)
+            ?: throw UserNotFoundException("There is no user id $userId")
+        val userSeries = user.series.map { series -> SeriesDto.SimpleResponse(series) }
+        return makePage(pageable, userSeries)
+    }
+
+    private fun <T> makePage(pageable: Pageable, contents: List<T>): Page<T> {
+        val start: Int = pageable.offset.toInt()
+        val end: Int = (start + pageable.pageSize).coerceAtMost(contents.size)
+        return PageImpl(
+            contents.subList(start, end),
+            pageable,
+            contents.size.toLong()
+        )
     }
 }

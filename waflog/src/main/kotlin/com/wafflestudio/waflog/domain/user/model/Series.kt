@@ -1,6 +1,6 @@
 package com.wafflestudio.waflog.domain.user.model
 
-import com.wafflestudio.waflog.domain.model.BaseEntity
+import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -19,4 +19,4 @@ class Series(
 
     @OneToMany(mappedBy = "series")
     var posts: MutableList<Post>
-) : BaseEntity()
+) : BaseTimeEntity()

@@ -56,6 +56,9 @@ class User(
     var posts: MutableList<Post> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
-    var likedPosts: MutableList<Likes> = mutableListOf()
+    var likedPosts: MutableList<Likes> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user")
+    var series: MutableList<Series> = mutableListOf()
 
 ) : BaseTimeEntity()

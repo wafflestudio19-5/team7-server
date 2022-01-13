@@ -47,4 +47,21 @@ class UserController(
     ): Page<PostDto.PostInUserPostsResponse> {
         return userService.searchUserPosts(userId, keyword, pageable)
     }
+
+    @GetMapping("/@{user_id}/about")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserLongIntro(@PathVariable("user_id") userId: String): UserDto.UserLongIntroResponse {
+        return userService.getUserLongIntro(userId)
+    }
+
+    @GetMapping("/@{user_id}/series")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserSeries(
+        @PageableDefault(
+            size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @PathVariable("user_id") userId: String
+    ): Page<SeriesDto.SimpleResponse> {
+        return userService.getUserSeries(userId, pageable)
+    }
 }

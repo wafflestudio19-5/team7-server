@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.domain.user.dto
 
 import com.wafflestudio.waflog.domain.user.model.User
 
-
 class UserDto {
     data class SimpleResponse(
         val id: Long,

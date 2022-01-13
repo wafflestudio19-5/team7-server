@@ -116,7 +116,7 @@ class PostDto {
         val createAt: LocalDateTime?,
         val comments: Int // num of comments
     ) {
-        constructor(post:Post):this(
+        constructor(post: Post) : this(
             id = post.id,
             title = post.title,
             url = post.url,

@@ -1,9 +1,7 @@
 package com.wafflestudio.waflog.domain.user.dto
 
-import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.user.model.User
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+
 
 class UserDto {
     data class SimpleResponse(

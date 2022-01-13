@@ -219,7 +219,7 @@ class PostService(
         return PostDto.getCommentListResponse(post.comments)
     }
 
-    fun addLikeInPost(postId: Long, user: User): PostDto.PageDetailResponse {
+    fun addLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
         val post: Post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
         val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
@@ -228,7 +228,7 @@ class PostService(
         } else {
             likesRepository.deleteById(likes.id)
         }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PostLikesResponse(post, likes == null)
     }
 
     fun isLikedPost(postId: Long, user: User): Boolean {

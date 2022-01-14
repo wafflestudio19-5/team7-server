@@ -41,12 +41,6 @@ class PostService(
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 
-    fun getPostDetail(id: Long): PostDto.PageDetailResponse {
-        val post = postRepository.findByIdOrNull(id)
-        post?.let { p -> return PostDto.PageDetailResponse(p) }
-        throw PostNotFoundException("There is no post id $id")
-    }
-
     fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.MainPageResponse> {
         return if (keyword != "") {
             val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
@@ -56,17 +50,18 @@ class PostService(
         }
     }
 
-    fun getPostDetailWithURL(userId: String, postURL: String): PostDto.PageDetailResponse {
-        val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
-            ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+    fun getPostDetail(id: Long, user: User?): PostDto.PageDetailResponse {
+        val post = postRepository.findByIdOrNull(id)
+            ?: throw PostNotFoundException("There is no post id $id")
+        user?.also { postRepository.increaseViews(post.id) }
         return PostDto.PageDetailResponse(post)
     }
 
-    private fun getRandomString(length: Int): String {
-        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-        return (1..length)
-            .map { allowedChars.random() }
-            .joinToString("")
+    fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
+        val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
+            ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+        user?.also { postRepository.increaseViews(post.id) }
+        return PostDto.PageDetailResponse(post)
     }
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {
@@ -224,7 +219,7 @@ class PostService(
         return PostDto.getCommentListResponse(post.comments)
     }
 
-    fun addLikeInPost(postId: Long, user: User): PostDto.PageDetailResponse {
+    fun addLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
         val post: Post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
         val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
@@ -233,7 +228,7 @@ class PostService(
         } else {
             likesRepository.deleteById(likes.id)
         }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PostLikesResponse(post, likes == null)
     }
 
     fun isLikedPost(postId: Long, user: User): Boolean {
@@ -241,5 +236,12 @@ class PostService(
             ?: throw PostNotFoundException("Post with id $postId does not exist")
         val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
         return likes != null
+    }
+
+    private fun getRandomString(length: Int): String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }

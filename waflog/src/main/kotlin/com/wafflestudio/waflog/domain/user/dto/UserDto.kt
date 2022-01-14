@@ -55,6 +55,7 @@ class UserDto {
         val token: String
     )
 
+<<<<<<< HEAD
     data class UserDetailResponse(
         val id: Long,
         val name: String,
@@ -88,4 +89,9 @@ class UserDto {
             longIntro = user.longIntro
         )
     }
+
+    data class VerifyRequest(
+        val email: String,
+        val token: String
+    )
 }

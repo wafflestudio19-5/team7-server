@@ -93,4 +93,42 @@ class UserDto {
         val email: String,
         val token: String
     )
+
+    data class ImageDto(
+        val image: String
+    )
+
+    data class ProfileDto(
+        val name: String,
+        val shortIntro: String = ""
+    ) {
+        constructor(user: User) : this(
+            name = user.name,
+            shortIntro = user.shortIntro
+        )
+    }
+
+    data class TitleDto(
+        val title: String
+    ) {
+        constructor(user: User) : this(
+            title = user.pageTitle
+        )
+    }
+
+    data class SocialInfoDto(
+        val publicEmail: String = "",
+        val githubId: String = "",
+        val facebookId: String = "",
+        val twitterId: String = "",
+        val homepage: String = ""
+    ) {
+        constructor(user: User) : this(
+            publicEmail = user.publicEmail,
+            githubId = user.githubId,
+            facebookId = user.facebookId,
+            twitterId = user.twitterId,
+            homepage = user.homepage
+        )
+    }
 }

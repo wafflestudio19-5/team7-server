@@ -19,31 +19,31 @@ class User(
 
     var name: String,
 
-    val shortIntro: String = "",
+    var shortIntro: String = "",
 
     val longIntro: String = "",
 
-    val image: String =
+    var image: String =
         "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75", // image file url
 
     @Column(name = "page_title")
     @field:NotBlank
-    val pageTitle: String = "",
+    var pageTitle: String = "",
 
     @Column(name = "public_email")
     @field:Email
-    val publicEmail: String = "",
+    var publicEmail: String = "",
 
     @Column(name = "github_id")
-    val githubId: String = "",
+    var githubId: String = "",
 
     @Column(name = "facebook_id")
-    val facebookId: String = "",
+    var facebookId: String = "",
 
     @Column(name = "twitter_id")
-    val twitterId: String = "",
+    var twitterId: String = "",
 
-    val homepage: String = "",
+    var homepage: String = "",
 
     @Column(name = "comment_noti")
     val commentNotification: Boolean = false,

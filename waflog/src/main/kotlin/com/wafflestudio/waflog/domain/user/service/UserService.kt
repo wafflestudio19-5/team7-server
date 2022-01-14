@@ -4,6 +4,8 @@ import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
 import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
 import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Series
@@ -68,6 +70,59 @@ class UserService(
             ?: throw UserNotFoundException("There is no user id $userId")
         val userSeries = user.series.map { series -> SeriesDto.SimpleResponse(series) }
         return makePage(pageable, userSeries)
+    }
+
+    fun updateUserImage(
+        imageUpdateRequest: UserDto.ImageDto,
+        user: User
+    ): UserDto.ImageDto {
+        user.image = imageUpdateRequest.image
+        return UserDto.ImageDto(userRepository.save(user).image)
+    }
+
+    fun deleteUserImage(user: User): UserDto.ImageDto {
+        user.image =
+            "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75"
+        return UserDto.ImageDto(userRepository.save(user).image)
+    }
+
+    fun updateUserProfile(
+        profileDto: UserDto.ProfileDto,
+        user: User
+    ): UserDto.ProfileDto {
+        val name = profileDto.name
+        val shortIntro = profileDto.shortIntro
+        if (name.isEmpty()) throw InvalidUserNameException("User name must not be empty")
+
+        user.name = name
+        user.shortIntro = shortIntro
+
+        return UserDto.ProfileDto(userRepository.save(user))
+    }
+
+    fun updateUserPageTitle(
+        titleDto: UserDto.TitleDto,
+        user: User
+    ): UserDto.TitleDto {
+        val pageTitle = titleDto.title
+        if (pageTitle.isEmpty()) throw InvalidUserPageTitleException("User page title must not be empty")
+
+        user.pageTitle = pageTitle
+
+        return UserDto.TitleDto(userRepository.save(user))
+    }
+
+    fun updateUserSocialInfo(
+        socialInfoDto: UserDto.SocialInfoDto,
+        user: User
+    ): UserDto.SocialInfoDto {
+        user.publicEmail = socialInfoDto.publicEmail
+        user.githubId = socialInfoDto.githubId
+        user.facebookId = socialInfoDto.facebookId
+        user.twitterId = socialInfoDto.twitterId
+        user.homepage = socialInfoDto.homepage
+
+        return UserDto.SocialInfoDto(userRepository.save(user))
     }
 
     private fun <T> makePage(pageable: Pageable, contents: List<T>): Page<T> {

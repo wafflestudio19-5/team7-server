@@ -6,6 +6,7 @@ import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
 import com.wafflestudio.waflog.global.auth.exception.JWTInvalidException
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
@@ -60,11 +61,11 @@ class SignInAuthenticationFilter(
         val email = parsedRequest.email
         val jwt = parsedRequest.token
         if (!jwtTokenProvider.validateToken(jwt))
-            throw JWTInvalidException("JWT is invalid")
+            throw BadCredentialsException("JWT is invalid")
         jwtTokenProvider.getEmailFromJwt(jwt!!)
             .let {
                 if (it != email)
-                    throw JWTInvalidException("JWT does not correspond to the email")
+                    throw BadCredentialsException("JWT does not correspond to the email")
             }
         val authRequest: Authentication =
             UsernamePasswordAuthenticationToken(parsedRequest.email, parsedRequest.token)

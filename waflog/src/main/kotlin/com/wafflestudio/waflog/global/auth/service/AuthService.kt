@@ -28,7 +28,7 @@ class AuthService(
         val email = joinEmailRequest.email
         userRepository.findByEmail(email)
             ?: return run {
-                val jwt = generateJoinJWT(email)
+                val jwt = generateJWT(email)
                 val link = "https://waflog-web.kro.kr/register?email=$email&token=$jwt"
                 val message = mailContentBuilder.build(link)
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
@@ -43,7 +43,7 @@ class AuthService(
         userRepository.findByEmail(email)
             ?: return signUpEmail(joinEmailRequest)
         return run {
-            val jwt = generateJoinJWT(email)
+            val jwt = generateJWT(email)
             val link = "https://waflog-web.kro.kr/email-login?email=$email&token=$jwt"
             val message = mailContentBuilder.build(link)
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
@@ -102,7 +102,7 @@ class AuthService(
         return verificationToken
     }
 
-    private fun generateJoinJWT(email: String): String {
+    private fun generateJWT(email: String): String {
         val jwt = jwtTokenProvider.generateToken(email, join = true)
         val existingToken = verificationTokenRepository.findByEmail(email)
 

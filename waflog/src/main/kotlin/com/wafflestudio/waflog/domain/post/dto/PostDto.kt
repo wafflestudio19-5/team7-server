@@ -86,6 +86,17 @@ class PostDto {
         val seriesName: String?
     )
 
+    data class PutRequest(
+        val token: String,
+        val title: String,
+        val content: String,
+        val thumbnail: String,
+        val summary: String,
+        val private: Boolean,
+        val url: String,
+        val seriesName: String?
+    )
+
     data class PostLikesResponse(
         val id: Long,
         val likes: Int,

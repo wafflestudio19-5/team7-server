@@ -15,6 +15,9 @@ class VerificationToken(
 
     var token: String,
 
+    val image: String =
+        "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75",
+
     val role: String = "user"
 
 ) : BaseTimeEntity()

@@ -12,7 +12,7 @@ class SeriesDto {
         val id: Long,
         val name: String,
         val thumbnail: String,
-        val posts: Int,
+        val postsCount: Int,
         val updatedAt: LocalDateTime?
     ) {
         constructor(series: Series) : this(
@@ -23,7 +23,7 @@ class SeriesDto {
             } else {
                 "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75"
             },
-            posts = series.posts.size,
+            postsCount = series.posts.size,
             updatedAt = series.updatedAt
         )
     }

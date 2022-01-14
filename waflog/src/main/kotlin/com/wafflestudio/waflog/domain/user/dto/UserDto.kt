@@ -55,6 +55,40 @@ class UserDto {
         val token: String
     )
 
+    data class UserDetailResponse(
+        val id: Long,
+        val name: String,
+        val image: String,
+        val shortIntro: String,
+        val publicEmail: String,
+        val githubId: String,
+        val facebookId: String,
+        val twitterId: String,
+        val homepage: String
+    ) {
+        constructor(user: User) : this(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            shortIntro = user.shortIntro,
+            publicEmail = user.publicEmail,
+            githubId = user.githubId,
+            facebookId = user.facebookId,
+            twitterId = user.twitterId,
+            homepage = user.homepage
+        )
+    }
+
+    data class UserLongIntroResponse(
+        val id: Long,
+        val longIntro: String
+    ) {
+        constructor(user: User) : this(
+            id = user.id,
+            longIntro = user.longIntro
+        )
+    }
+
     data class VerifyRequest(
         val email: String,
         val token: String

@@ -3,7 +3,6 @@ package com.wafflestudio.waflog.global.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.waflog.global.auth.dto.LoginRequest
 import com.wafflestudio.waflog.global.auth.dto.VerificationTokenPrincipalDto
-import com.wafflestudio.waflog.global.auth.exception.JWTInvalidException
 import com.wafflestudio.waflog.global.auth.model.VerificationTokenPrincipal
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException

@@ -55,7 +55,6 @@ class UserDto {
         val token: String
     )
 
-<<<<<<< HEAD
     data class UserDetailResponse(
         val id: Long,
         val name: String,

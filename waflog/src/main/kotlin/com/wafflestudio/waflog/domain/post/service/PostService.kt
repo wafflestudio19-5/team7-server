@@ -64,14 +64,14 @@ class PostService(
         val post = postRepository.findByIdOrNull(id)
             ?: throw PostNotFoundException("There is no post id $id")
         user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PageDetailResponse(post, user)
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
             ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
         user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PageDetailResponse(post, user)
     }
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {

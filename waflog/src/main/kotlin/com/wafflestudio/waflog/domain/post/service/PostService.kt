@@ -29,9 +29,10 @@ class PostService(
     private val commentRepository: CommentRepository,
     private val likesRepository: LikesRepository
 ) {
-    fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
+    fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
-            postRepository.findAllByPrivateIsFalse(pageable)
+            user?.let { postRepository.findRecentPosts(pageable, it.userId) }
+                ?: postRepository.findAllByPrivateIsFalse(pageable)
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 

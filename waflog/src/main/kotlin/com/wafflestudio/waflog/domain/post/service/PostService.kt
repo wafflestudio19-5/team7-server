@@ -1,5 +1,8 @@
 package com.wafflestudio.waflog.domain.post.service
 
+import com.wafflestudio.waflog.domain.image.dto.ImageDto
+import com.wafflestudio.waflog.domain.image.repository.ImageRepository
+import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.CommentDto
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.exception.CommentNotFoundException
@@ -8,8 +11,10 @@ import com.wafflestudio.waflog.domain.post.exception.InvalidPostTitleException
 import com.wafflestudio.waflog.domain.post.exception.PostNotFoundException
 import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.post.model.PostToken
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
+import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.User
@@ -21,13 +26,17 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.util.*
 
 @Service
 class PostService(
     private val postRepository: PostRepository,
+    private val postTokenRepository: PostTokenRepository,
     private val seriesRepository: SeriesRepository,
     private val commentRepository: CommentRepository,
-    private val likesRepository: LikesRepository
+    private val likesRepository: LikesRepository,
+    private val imageRepository: ImageRepository,
+    private val imageService: ImageService
 ) {
     fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
@@ -72,13 +81,7 @@ class PostService(
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary
         val private = createRequest.private
-        var url = createRequest.url.replace(" ", "-")
-        if (url.isBlank()) {
-            url = if (url == "") {
-                if (title.length == 1) title + "-" + getRandomString(8)
-                else title.replace(" ", "-")
-            } else getRandomString(8)
-        }
+        var url = formatUrl(createRequest.url, title)
         postRepository.findByUser_UserIdAndUrl(user.userId, url)
             ?.let { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
@@ -99,6 +102,58 @@ class PostService(
             likedUser = mutableListOf()
         )
         postRepository.save(post)
+    }
+
+    fun modifyPost(putRequest: PostDto.PutRequest, user: User) {
+        val token = putRequest.token
+        val title = putRequest.title
+        if (title.isBlank()) throw InvalidPostTitleException("제목이 비어있습니다.")
+        var url = formatUrl(putRequest.url, title)
+        val seriesName = putRequest.seriesName
+        val series = seriesName?.let {
+            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+        }
+
+        postTokenRepository.findByToken(token)?.post
+            ?.also {
+                if (it.url != url) {
+                    postRepository.findByUser_UserIdAndUrl(user.userId, url)
+                        ?.let { url += "-" + getRandomString(8) }
+                }
+            }
+            ?.apply {
+                this.title = title
+                this.content = putRequest.content
+                this.thumbnail = putRequest.thumbnail
+                this.summary = putRequest.summary
+                this.private = putRequest.private
+                this.url = url
+                this.series = series
+            }
+            ?.also { postRepository.save(it) }
+            ?: throw PostNotFoundException("There is no post with token <$token>")
+    }
+
+    fun generatePostToken(url: String, user: User): String {
+        val post = postRepository.findByUser_UserIdAndUrl(user.userId, url)!!
+        val token = UUID.randomUUID().toString()
+
+        postTokenRepository.findByPost_Id(post.id)
+            ?.apply { this.token = token }
+            ?.also { postTokenRepository.save(it) }
+            ?: run { postTokenRepository.save(PostToken(post, token)) }
+        return token
+    }
+
+    fun deletePost(url: String, user: User) {
+        postRepository.findByUser_UserIdAndUrl(user.userId, url)
+            ?.let { post ->
+                postTokenRepository.findByPost_Id(post.id)
+                    ?.let { postTokenRepository.deleteById(it.id) }
+                postRepository.deleteById(post.id)
+                deletePostImage(post.id, user)
+            }
+            ?: throw PostNotFoundException("post not found with url '$url'")
     }
 
     fun writeComment(
@@ -244,5 +299,22 @@ class PostService(
         return (1..length)
             .map { allowedChars.random() }
             .joinToString("")
+    }
+
+    private fun formatUrl(url: String, title: String): String {
+        url.replace(" ", "-")
+            .let {
+                return it.ifBlank {
+                    return if (it == "") {
+                        return if (title.length == 1) title + "-" + getRandomString(8)
+                        else title.replace(" ", "-")
+                    } else getRandomString(8)
+                }
+            }
+    }
+
+    private fun deletePostImage(postId: Long, user: User) {
+        imageRepository.findAllByUser_UserIdAndPost_Id(user.userId, postId)
+            .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
     }
 }

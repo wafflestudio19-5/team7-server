@@ -2,6 +2,7 @@ package com.wafflestudio.waflog.domain.post.api
 
 import com.wafflestudio.waflog.domain.post.dto.CommentDto
 import com.wafflestudio.waflog.domain.post.dto.PostDto
+import com.wafflestudio.waflog.domain.post.dto.PostTokenDto
 import com.wafflestudio.waflog.domain.post.service.PostService
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.global.auth.CurrentUser
@@ -31,6 +32,24 @@ class PostController(
     @ResponseStatus(HttpStatus.CREATED)
     fun writePost(@RequestBody createRequest: PostDto.CreateRequest, @CurrentUser user: User) {
         postService.writePost(createRequest, user)
+    }
+
+    @PutMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun modifyPost(@RequestBody putRequest: PostDto.PutRequest, @CurrentUser user: User) {
+        postService.modifyPost(putRequest, user)
+    }
+
+    @PostMapping("/token")
+    @ResponseStatus(HttpStatus.OK)
+    fun generatePostToken(@RequestParam url: String, @CurrentUser user: User): PostTokenDto.EncodedId {
+        return PostTokenDto.EncodedId(postService.generatePostToken(url, user))
+    }
+
+    @DeleteMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun deletePost(@RequestParam url: String, @CurrentUser user: User) {
+        postService.deletePost(url, user)
     }
 
     @GetMapping("/recent")

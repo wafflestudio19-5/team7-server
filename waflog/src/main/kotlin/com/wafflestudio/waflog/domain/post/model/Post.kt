@@ -21,10 +21,10 @@ class Post(
     val user: User,
 
     @field:NotBlank
-    val title: String,
+    var title: String,
 
     @Column(columnDefinition = "TEXT")
-    val content: String,
+    var content: String,
 
     @field:Min(0)
     val views: Int = 0,
@@ -32,11 +32,11 @@ class Post(
     @OneToMany(mappedBy = "likedPost")
     var likedUser: MutableList<Likes>,
 
-    val thumbnail: String, // thumbnail image file url
+    var thumbnail: String, // thumbnail image file url
 
-    val summary: String,
+    var summary: String,
 
-    val private: Boolean,
+    var private: Boolean,
 
     @Formula(
         value = "10 * views " +
@@ -46,11 +46,11 @@ class Post(
     val trending: Int = 0,
 
     @field:NotBlank
-    val url: String,
+    var url: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id", referencedColumnName = "id")
-    val series: Series?,
+    var series: Series?,
 
     @OneToMany(mappedBy = "post")
     @OrderBy("root_comment ASC, lft ASC")

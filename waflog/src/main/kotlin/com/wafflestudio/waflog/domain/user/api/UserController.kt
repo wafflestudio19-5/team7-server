@@ -64,4 +64,54 @@ class UserController(
     ): Page<SeriesDto.SimpleResponse> {
         return userService.getUserSeries(userId, pageable)
     }
+
+    @GetMapping("/setting")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserSetting(
+        @CurrentUser user: User
+    ): UserDto.UserDetailResponse {
+        return UserDto.UserDetailResponse(user)
+    }
+
+    @PutMapping("/image")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserImage(
+        imageUpdateRequest: UserDto.ImageDto,
+        @CurrentUser user: User
+    ): UserDto.ImageDto {
+        return userService.updateUserImage(imageUpdateRequest, user)
+    }
+
+    @DeleteMapping("/image")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteUserImage(@CurrentUser user: User): UserDto.ImageDto {
+        return userService.deleteUserImage(user)
+    }
+
+    @PutMapping("/profile")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserProfile(
+        profileDto: UserDto.ProfileDto,
+        @CurrentUser user: User
+    ): UserDto.ProfileDto {
+        return userService.updateUserProfile(profileDto, user)
+    }
+
+    @PutMapping("/title")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserPageTitle(
+        titleDto: UserDto.TitleDto,
+        @CurrentUser user: User
+    ): UserDto.TitleDto {
+        return userService.updateUserPageTitle(titleDto, user)
+    }
+
+    @PutMapping("/social")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserSocialInfo(
+        socialInfoDto: UserDto.SocialInfoDto,
+        @CurrentUser user: User
+    ): UserDto.SocialInfoDto {
+        return userService.updateUserSocialInfo(socialInfoDto, user)
+    }
 }

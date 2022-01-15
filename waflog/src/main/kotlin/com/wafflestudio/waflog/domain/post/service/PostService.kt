@@ -1,5 +1,8 @@
 package com.wafflestudio.waflog.domain.post.service
 
+import com.wafflestudio.waflog.domain.image.dto.ImageDto
+import com.wafflestudio.waflog.domain.image.repository.ImageRepository
+import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.CommentDto
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.exception.CommentNotFoundException
@@ -31,7 +34,9 @@ class PostService(
     private val postTokenRepository: PostTokenRepository,
     private val seriesRepository: SeriesRepository,
     private val commentRepository: CommentRepository,
-    private val likesRepository: LikesRepository
+    private val likesRepository: LikesRepository,
+    private val imageRepository: ImageRepository,
+    private val imageService: ImageService
 ) {
     fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
@@ -145,6 +150,7 @@ class PostService(
                 postTokenRepository.findByPost_Id(post.id)
                     ?.let { postTokenRepository.deleteById(it.id) }
                 postRepository.deleteById(post.id)
+                deletePostImage(post.id, user)
             }
             ?: throw PostNotFoundException("post not found with url '$url'")
     }
@@ -304,5 +310,10 @@ class PostService(
                     } else getRandomString(8)
                 }
             }
+    }
+
+    private fun deletePostImage(postId: Long, user: User) {
+        imageRepository.findAllByUser_UserIdAndPost_Id(user.userId, postId)
+            .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
     }
 }

@@ -41,7 +41,7 @@ class PostController(
     }
 
     @PostMapping("/token")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     fun generatePostToken(@RequestParam url: String, @CurrentUser user: User): PostTokenDto.EncodedId {
         return PostTokenDto.EncodedId(postService.generatePostToken(url, user))
     }

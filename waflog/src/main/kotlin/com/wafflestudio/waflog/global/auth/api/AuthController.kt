@@ -26,7 +26,7 @@ class AuthController(
         return ExistUserDto.Response(authService.signInEmail(joinEmailRequest))
     }
 
-    @GetMapping("/verify")
+    @PostMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
     fun verifySignUp(@RequestBody verifyRequest: UserDto.VerifyRequest) {
         authService.verifySignUp(verifyRequest)

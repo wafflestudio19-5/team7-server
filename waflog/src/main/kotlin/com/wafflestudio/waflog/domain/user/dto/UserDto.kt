@@ -94,6 +94,10 @@ class UserDto {
         val token: String
     )
 
+    data class LogoutRequest(
+        val token: String
+    )
+
     data class ImageDto(
         val image: String
     )

@@ -79,6 +79,13 @@ class AuthService(
         return VerificationTokenPrincipalDto(UserDto.SimpleResponse(user), token)
     }
 
+    fun autoLogout(logoutRequest: UserDto.LogoutRequest) {
+        val jwt = logoutRequest.token
+
+        if (!jwtTokenProvider.validateToken(jwt))
+            throw JWTInvalidException("JWT is invalid")
+    }
+
     fun verifySignUp(verifyRequest: UserDto.VerifyRequest) {
         val email = verifyRequest.email
         val jwt = verifyRequest.token

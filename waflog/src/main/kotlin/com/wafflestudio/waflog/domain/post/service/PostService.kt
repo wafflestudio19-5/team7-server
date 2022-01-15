@@ -156,6 +156,11 @@ class PostService(
             ?: throw PostNotFoundException("post not found with url '$url'")
     }
 
+    fun getMyPosts(pageable: Pageable, user: User): Page<PostDto.MyPageResponse> {
+        return postRepository.findAllByUser_UserId(user.userId, pageable)
+            .map { PostDto.MyPageResponse(it) }
+    }
+
     fun writeComment(
         postId: Long,
         createRequest: CommentDto.CreateRequest,

@@ -47,18 +47,17 @@ class UserService(
     ): Page<PostDto.PostInUserPostsResponse> {
         val targetUser = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
-        var searchedPosts: List<Post> = mutableListOf()
-        searchedPosts = if (targetUser == user) { //my posts
+        var searchedPosts: List<Post> = if (targetUser == user) { // my posts
             if (keyword == null || keyword == "") {
-                targetUser.posts //all posts
+                targetUser.posts // all posts
             } else {
-                targetUser.posts.filter { post -> postFilter(post, keyword) } //searched posts
+                targetUser.posts.filter { post -> postFilter(post, keyword) } // searched posts
             }
-        } else { //other's posts
+        } else { // other's posts
             if (keyword == null || keyword == "") {
-                targetUser.posts.filter { post -> !post.private } //all posts
+                targetUser.posts.filter { post -> !post.private } // all posts
             } else {
-                targetUser.posts.filter { post -> postFilter(post, keyword) && !post.private } //searched posts
+                targetUser.posts.filter { post -> postFilter(post, keyword) && !post.private } // searched posts
             }
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }

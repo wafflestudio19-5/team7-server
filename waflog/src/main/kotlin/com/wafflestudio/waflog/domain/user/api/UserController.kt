@@ -39,13 +39,14 @@ class UserController(
     @GetMapping("/@{user_id}/search")
     @ResponseStatus(HttpStatus.OK)
     fun searchUserPosts(
+        @CurrentUser user: User?,
         @PageableDefault(
             size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
         ) pageable: Pageable,
         @PathVariable("user_id") userId: String,
         @RequestParam("keyword", required = false) keyword: String?
     ): Page<PostDto.PostInUserPostsResponse> {
-        return userService.searchUserPosts(userId, keyword, pageable)
+        return userService.searchUserPosts(user, userId, keyword, pageable)
     }
 
     @GetMapping("/@{user_id}/about")

@@ -132,6 +132,7 @@ class PostDto {
     data class PostInUserPostsResponse(
         val id: Long,
         val title: String,
+        val private: Boolean,
         val url: String,
         val thumbnail: String, // thumbnail file url
         val summary: String,
@@ -142,6 +143,7 @@ class PostDto {
         constructor(post: Post) : this(
             id = post.id,
             title = post.title,
+            private = post.private,
             url = post.url,
             thumbnail = post.thumbnail,
             summary = post.summary,

@@ -4,6 +4,7 @@ import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.tag.dto.TagDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
+import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.global.common.dto.ListResponse
 import java.time.LocalDateTime
 
@@ -47,7 +48,7 @@ class PostDto {
         val nextPost: IdAndTitleResponse?,
         val createdAt: LocalDateTime?
     ) {
-        constructor(post: Post) : this(
+        constructor(post: Post, user: User?) : this(
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
             url = post.url,
@@ -58,8 +59,8 @@ class PostDto {
             thumbnail = post.thumbnail,
             tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
             comments = getCommentListResponse(post.comments),
-            prevPost = post.getPrevPost()?.let { IdAndTitleResponse(it) },
-            nextPost = post.getNextPost()?.let { IdAndTitleResponse(it) },
+            prevPost = post.getPrevPost(user)?.let { IdAndTitleResponse(it) },
+            nextPost = post.getNextPost(user)?.let { IdAndTitleResponse(it) },
             createdAt = post.createdAt
         )
     }

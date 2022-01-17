@@ -38,9 +38,10 @@ class PostService(
     private val imageRepository: ImageRepository,
     private val imageService: ImageService
 ) {
-    fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
+    fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
-            postRepository.findAllByPrivateIsFalse(pageable)
+            user?.let { postRepository.findRecentPosts(pageable, it.userId) }
+                ?: postRepository.findAllByPrivateIsFalse(pageable)
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 
@@ -63,14 +64,14 @@ class PostService(
         val post = postRepository.findByIdOrNull(id)
             ?: throw PostNotFoundException("There is no post id $id")
         user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PageDetailResponse(post, user)
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
             ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
         user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        return PostDto.PageDetailResponse(post, user)
     }
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {

@@ -60,13 +60,11 @@ class Post(
     var postTags: MutableList<PostTag>
 ) : BaseTimeEntity() {
 
-    fun getPrevPost(): Post? {
-        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
-        return userNotPrivatePosts.lastOrNull { it.id < this.id }
+    fun getPrevPost(user: User?): Post? {
+        return this.user.posts.filter { p -> !p.private || this.user == user }.lastOrNull { it.id < this.id }
     }
 
-    fun getNextPost(): Post? {
-        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
-        return userNotPrivatePosts.firstOrNull { it.id > this.id }
+    fun getNextPost(user: User?): Post? {
+        return this.user.posts.filter { p -> !p.private || this.user == user }.firstOrNull { it.id > this.id }
     }
 }

@@ -81,7 +81,6 @@ class PostService(
         user?.also {
             postRepository.increaseViews(post.id)
             readsRepository.findByUser_UserIdAndReadPost_Id(user.userId, post.id)
-                ?.apply { this.updatedAt = LocalDateTime.now() }
                 ?: run { readsRepository.save(Reads(user, post)) }
         }
     }

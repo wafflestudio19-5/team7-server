@@ -18,14 +18,17 @@ import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.model.Reads
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
+import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -35,6 +38,7 @@ class PostService(
     private val seriesRepository: SeriesRepository,
     private val commentRepository: CommentRepository,
     private val likesRepository: LikesRepository,
+    private val readsRepository: ReadsRepository,
     private val imageRepository: ImageRepository,
     private val imageService: ImageService
 ) {
@@ -62,15 +66,24 @@ class PostService(
     fun getPostDetail(id: Long, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByIdOrNull(id)
             ?: throw PostNotFoundException("There is no post id $id")
-        user?.also { postRepository.increaseViews(post.id) }
+        applyUserReadPost(user, post)
         return PostDto.PageDetailResponse(post)
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
             ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
-        user?.also { postRepository.increaseViews(post.id) }
+        applyUserReadPost(user, post)
         return PostDto.PageDetailResponse(post)
+    }
+
+    private fun applyUserReadPost(user: User?, post: Post) {
+        user?.also {
+            postRepository.increaseViews(post.id)
+            readsRepository.findByUser_UserIdAndReadPost_Id(user.userId, post.id)
+                ?.apply { this.updatedAt = LocalDateTime.now() }
+                ?: run { readsRepository.save(Reads(user, post)) }
+        }
     }
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {
@@ -274,7 +287,7 @@ class PostService(
         return PostDto.getCommentListResponse(post.comments)
     }
 
-    fun addLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
+    fun clickLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
         val post: Post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
         val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }

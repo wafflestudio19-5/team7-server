@@ -55,6 +55,20 @@ class UserService(
         return makePage(pageable, searchedPostsResponse)
     }
 
+    fun getLikedPosts(pageable: Pageable, user: User): Page<PostDto.MainPageResponse> {
+        return user.likedPosts.filter { !it.likedPost.private || it.user == user }
+            .sortedByDescending { it.createdAt }
+            .map { PostDto.MainPageResponse(it.likedPost) }
+            .let { makePage(pageable, it) }
+    }
+
+    fun getReadPosts(pageable: Pageable, user: User): Page<PostDto.MainPageResponse> {
+        return user.readPosts.filter { !it.readPost.private || it.user == user }
+            .sortedByDescending { it.updatedAt }
+            .map { PostDto.MainPageResponse(it.readPost) }
+            .let { makePage(pageable, it) }
+    }
+
     private fun postFilter(post: Post, keyword: String): Boolean {
         return (post.title.contains(keyword) || post.content.contains(keyword)) && !post.private
     }

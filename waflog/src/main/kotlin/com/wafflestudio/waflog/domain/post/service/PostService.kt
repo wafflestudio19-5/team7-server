@@ -74,7 +74,6 @@ class PostService(
         val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
             ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
         applyUserReadPost(user, post)
-        return PostDto.PageDetailResponse(post)
         return PostDto.PageDetailResponse(post, user)
     }
 

@@ -65,6 +65,27 @@ class UserController(
         return userService.getUserSeries(userId, pageable)
     }
 
+    @GetMapping("/@{user_id}/series/@{series_name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserSeriesPosts(
+        @PageableDefault(size = 30, sort = ["order"]) pageable: Pageable,
+        @PathVariable("user_id") userId: String,
+        @PathVariable("series_name") seriesName: String,
+        @CurrentUser user: User?
+    ): Page<PostDto.SeriesResponse> {
+        return userService.getUserSeriesPosts(userId, seriesName, pageable, user)
+    }
+
+    @PutMapping("/series/@{series_name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun putUserSeries(
+        @PathVariable("series_name") seriesName: String,
+        @RequestBody putRequest: SeriesDto.PutRequest,
+        @CurrentUser user: User
+    ) {
+        return userService.putUserSeries(seriesName, putRequest, user)
+    }
+
     @GetMapping("/setting")
     @ResponseStatus(HttpStatus.OK)
     fun getUserSetting(

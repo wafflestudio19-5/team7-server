@@ -15,7 +15,7 @@ class Series(
     val user: User,
 
     @field:NotBlank
-    val name: String,
+    var name: String,
 
     @OneToMany(mappedBy = "series")
     var posts: MutableList<Post>

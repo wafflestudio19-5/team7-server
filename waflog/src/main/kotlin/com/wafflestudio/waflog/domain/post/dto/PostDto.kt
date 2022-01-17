@@ -150,4 +150,18 @@ class PostDto {
             comments = post.comments.size
         )
     }
+
+    data class SeriesResponse(
+        val order: Int,
+        val title: String,
+        val thumbnail: String,
+        val createAt: LocalDateTime?
+    ) {
+        constructor(post: Post) : this(
+            order = post.seriesOrder!!,
+            title = post.title,
+            thumbnail = post.thumbnail,
+            createAt = post.createdAt
+        )
+    }
 }

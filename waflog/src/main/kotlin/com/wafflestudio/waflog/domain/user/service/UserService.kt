@@ -40,16 +40,25 @@ class UserService(
     }
 
     fun searchUserPosts(
+        user: User?,
         userId: String,
         keyword: String?,
         pageable: Pageable
     ): Page<PostDto.PostInUserPostsResponse> {
-        val user = userRepository.findByUserId(userId)
+        val targetUser = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
-        val searchedPosts = if (keyword == null || keyword == "") {
-            user.posts
-        } else {
-            user.posts.filter { post -> postFilter(post, keyword) }
+        var searchedPosts: List<Post> = if (targetUser == user) { // my posts
+            if (keyword == null || keyword == "") {
+                targetUser.posts // all posts
+            } else {
+                targetUser.posts.filter { post -> postFilter(post, keyword) } // searched posts
+            }
+        } else { // other's posts
+            if (keyword == null || keyword == "") {
+                targetUser.posts.filter { post -> !post.private } // all posts
+            } else {
+                targetUser.posts.filter { post -> postFilter(post, keyword) && !post.private } // searched posts
+            }
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }
         return makePage(pageable, searchedPostsResponse)

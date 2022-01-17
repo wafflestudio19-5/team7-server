@@ -52,17 +52,6 @@ class PostController(
         postService.deletePost(url, user)
     }
 
-    @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    fun getMyPosts(
-        @PageableDefault(
-            size = 15, sort = ["createdAt"], direction = Sort.Direction.DESC
-        ) pageable: Pageable,
-        @CurrentUser user: User
-    ): Page<PostDto.MyPageResponse> {
-        return postService.getMyPosts(pageable, user)
-    }
-
     @GetMapping("/recent")
     @ResponseStatus(HttpStatus.OK)
     fun getRecentPosts(

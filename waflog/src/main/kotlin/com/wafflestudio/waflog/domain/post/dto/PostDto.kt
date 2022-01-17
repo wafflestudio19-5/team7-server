@@ -98,20 +98,6 @@ class PostDto {
         val seriesName: String?
     )
 
-    data class MyPageResponse(
-        val title: String,
-        val thumbnail: String,
-        val private: Boolean,
-        val url: String
-    ) {
-        constructor(post: Post) : this(
-            title = post.title,
-            thumbnail = post.thumbnail,
-            private = post.private,
-            url = post.url
-        )
-    }
-
     data class PostLikesResponse(
         val id: Long,
         val likes: Int,

@@ -16,7 +16,6 @@ interface PostRepository : JpaRepository<Post, Long?> {
     fun findRecentPosts(pageable: Pageable, @Param("userId") userId: String): Page<Post>
     fun findAllByPrivateIsFalse(pageable: Pageable): Page<Post>
     fun findAllByPrivateIsFalseAndCreatedAtAfter(pageable: Pageable, start: LocalDateTime): Page<Post>
-    fun findAllByUser_UserId(userId: String, pageable: Pageable): Page<Post>
 
     @Query(
         "SELECT p FROM Post p WHERE (p.private = false) AND " +

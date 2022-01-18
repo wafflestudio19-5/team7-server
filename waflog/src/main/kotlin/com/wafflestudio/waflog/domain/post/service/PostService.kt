@@ -114,12 +114,15 @@ class PostService(
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
-        val seriesOrder = series?.let { series.posts.size + 1 }
+        var seriesOrder = series?.let { series.posts.size + 1 }
         postTokenRepository.findByToken(token)?.post
             ?.also {
                 if (it.url != url) {
                     postRepository.findByUser_UserIdAndUrl(user.userId, url)
                         ?.let { url += "-" + getRandomString(8) }
+                }
+                if (it.series == series) {
+                    seriesOrder = it.seriesOrder
                 }
             }
             ?.apply {

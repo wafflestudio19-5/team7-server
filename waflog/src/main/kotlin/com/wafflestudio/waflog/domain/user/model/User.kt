@@ -56,9 +56,11 @@ class User(
     var posts: MutableList<Post> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
+    @OrderBy("createdAt DESC")
     var likedPosts: MutableList<Likes> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
+    @OrderBy("updatedAt DESC")
     var readPosts: MutableList<Reads> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")

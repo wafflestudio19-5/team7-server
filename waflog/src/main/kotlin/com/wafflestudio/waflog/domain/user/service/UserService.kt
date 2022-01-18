@@ -101,7 +101,6 @@ class UserService(
         seriesRepository.findByNameAndUser(seriesName, user)
             ?.apply { this.name = name }
             ?.also { seriesRepository.save(it) }?.posts
-            ?.sortedBy { it.seriesOrder }
             ?.zip(putList)
             ?.map {
                 it.first.seriesOrder = it.second.second

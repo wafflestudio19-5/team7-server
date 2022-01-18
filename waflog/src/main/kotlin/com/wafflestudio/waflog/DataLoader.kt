@@ -69,14 +69,18 @@ class DataLoader(
             posts = mutableListOf()
         )
 
+        val jwtA = jwtTokenProvider.generateToken("waffle@nsnu.ac.kr")
+        println(jwtA)
         val tokenA = VerificationToken(
             "waffle@nsnu.ac.kr",
-            jwtTokenProvider.generateToken("waffle@nsnu.ac.kr")
+            passwordEncoder.encode(jwtA)
         )
 
+        val jwtB = jwtTokenProvider.generateToken("studio@nsnu.ac.kr")
+        println(jwtB)
         val tokenB = VerificationToken(
             "studio@nsnu.ac.kr",
-            jwtTokenProvider.generateToken("studio@nsnu.ac.kr")
+            passwordEncoder.encode(jwtB)
         )
 
         userRepository.save(userA)

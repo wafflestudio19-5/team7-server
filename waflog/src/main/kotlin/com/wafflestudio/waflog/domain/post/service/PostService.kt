@@ -16,6 +16,10 @@ import com.wafflestudio.waflog.domain.post.model.PostToken
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
+import com.wafflestudio.waflog.domain.tag.model.PostTag
+import com.wafflestudio.waflog.domain.tag.model.Tag
+import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
+import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.User
@@ -40,7 +44,9 @@ class PostService(
     private val likesRepository: LikesRepository,
     private val readsRepository: ReadsRepository,
     private val imageRepository: ImageRepository,
-    private val imageService: ImageService
+    private val imageService: ImageService,
+    private val tagRepository: TagRepository,
+    private val postTagRepository: PostTagRepository
 ) {
     fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
@@ -102,6 +108,11 @@ class PostService(
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
         val seriesOrder = series?.let { series.posts.size + 1 }
+        val tags = createRequest.tags.map { formatTagNameUrl(it) }.map { (name, url) ->
+            tagRepository.findByUrl(url)
+                ?: tagRepository.save(Tag(name, url))
+        }
+
         val post = Post(
             user = user,
             title = title,
@@ -114,7 +125,6 @@ class PostService(
             seriesOrder = seriesOrder,
             images = mutableListOf(),
             comments = mutableListOf(),
-            postTags = mutableListOf(),
             likedUser = mutableListOf()
         )
         postRepository.save(post)
@@ -124,6 +134,10 @@ class PostService(
                     imageRepository.save(image)
                 }
             }
+
+        tags.forEach { tag ->
+            postTagRepository.save(PostTag(post, tag))
+        }
     }
 
     fun modifyPost(putRequest: PostDto.PutRequest, user: User) {
@@ -136,6 +150,9 @@ class PostService(
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
         var seriesOrder = series?.let { series.posts.size + 1 }
+
+        val newTagNames = putRequest.tags.toSet()
+
         postTokenRepository.findByToken(token)?.post
             ?.also {
                 if (it.url != url) {
@@ -156,15 +173,37 @@ class PostService(
                 this.series = series
                 this.seriesOrder = seriesOrder
             }
-            ?.also { postRepository.save(it) }
+            ?.also { post ->
+                postRepository.save(post)
+
+                // delete tag not in new tag list
+                post.postTags.filter { pt ->
+                    !newTagNames.contains(pt.tag.name)
+                }.forEach { pt ->
+                    postTagRepository.deleteMappingById(pt.id)
+                }
+
+                val oldTagNames = post.postTags.map { pt -> pt.tag.name }.toSet()
+
+                // create mapping for tag not in old tag list
+                (newTagNames subtract oldTagNames).map { name -> formatTagNameUrl(name) }
+                    .map { (name, url) ->
+                        tagRepository.findByUrl(url)
+                            ?: tagRepository.save(Tag(name, url))
+                    }.forEach { tag ->
+                        postTagRepository.save(PostTag(post, tag))
+                    }
+
+                tagRepository.deleteUnusedTags()
+            }
             ?.also {
                 modifyImageList(putRequest.images, it, user)
                     .map { image ->
                         image.post = it
                         imageRepository.save(image)
                     }
+                    ?: throw PostNotFoundException("There is no post with token <$token>")
             }
-            ?: throw PostNotFoundException("There is no post with token <$token>")
     }
 
     fun generatePostToken(url: String, user: User): String {
@@ -185,6 +224,7 @@ class PostService(
                     ?.let { postTokenRepository.deleteById(it.id) }
                 deletePostImage(post.id, user)
                 postRepository.deleteById(post.id)
+                tagRepository.deleteUnusedTags()
             }
             ?: throw PostNotFoundException("post not found with url '$url'")
     }
@@ -369,5 +409,14 @@ class PostService(
                 imageService.removeImage(ImageDto.RemoveRequest(it.token), user)
         }
         return formatImageList(images, user)
+    }
+
+    private fun formatTagNameUrl(name: String): Pair<String, String> {
+        val formattedName = if (name.contains("-")) """"$name"""" else name
+
+        val blacklist = """[?!]""".toRegex()
+        val url = name.replace(" ", "-").replace(blacklist, "")
+
+        return Pair(formattedName, url)
     }
 }

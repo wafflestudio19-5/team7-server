@@ -34,7 +34,7 @@ class Post(
     val views: Int = 0,
 
     @OneToMany(mappedBy = "likedPost")
-    var likedUser: MutableList<Likes>,
+    var likedUser: MutableList<Likes> = mutableListOf(),
 
     var thumbnail: String, // thumbnail image file url
 
@@ -60,10 +60,10 @@ class Post(
 
     @OneToMany(mappedBy = "post")
     @OrderBy("root_comment ASC, lft ASC")
-    var comments: MutableList<Comment>,
+    var comments: MutableList<Comment> = mutableListOf(),
 
     @OneToMany(mappedBy = "post")
-    var postTags: MutableList<PostTag>
+    var postTags: MutableList<PostTag> = mutableListOf()
 ) : BaseTimeEntity() {
 
     fun getPrevPost(user: User?): Post? {

@@ -15,7 +15,7 @@ class S3Service(
     @Value("\${cloud.aws.s3.bucket}")
     lateinit var bucketName: String
 
-    fun uploadTo(file: MultipartFile, folderName: String, fileToken: String, fileName: String): String {
+    fun uploadTo(file: MultipartFile, folderName: String, fileToken: String, fileName: String): Pair<String, String> {
         val keyName = "images/$folderName/$fileToken/$fileName"
         val inputStream = file.inputStream
         val contentType = file.contentType
@@ -25,7 +25,7 @@ class S3Service(
 
         val putObjectRequest = PutObjectRequest(bucketName, keyName, inputStream, meta)
         amazonS3.putObject(putObjectRequest)
-            ?.let { return "https://image-waflog.kro.kr/$keyName" }
+            ?.let { return Pair(fileToken, "https://image-waflog.kro.kr/$keyName") }
             ?: throw ImageNotUploadedException("image is not uploaded since S3 Server error occurred")
     }
 

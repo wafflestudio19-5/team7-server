@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.domain.user.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
-import org.springframework.core.annotation.Order
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

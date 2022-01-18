@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.post.dto
 
+import com.wafflestudio.waflog.domain.image.dto.ImageDto
 import com.wafflestudio.waflog.domain.post.model.Comment
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.tag.dto.TagDto
@@ -80,6 +81,7 @@ class PostDto {
     data class CreateRequest(
         val title: String,
         val content: String,
+        val images: List<ImageDto.S3Token>,
         val thumbnail: String,
         val summary: String,
         val private: Boolean,
@@ -91,6 +93,7 @@ class PostDto {
         val token: String,
         val title: String,
         val content: String,
+        val images: List<ImageDto.S3Token>,
         val thumbnail: String,
         val summary: String,
         val private: Boolean,

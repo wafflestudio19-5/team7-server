@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.domain.post.service
 
 import com.wafflestudio.waflog.domain.image.dto.ImageDto
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository
 import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.CommentDto
@@ -89,12 +90,13 @@ class PostService(
         val title = createRequest.title
         if (title.isBlank()) throw InvalidPostTitleException("제목이 비어있습니다.")
         val content = createRequest.content
+        val images = formatImageList(createRequest.images, user)
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary
         val private = createRequest.private
         var url = formatUrl(createRequest.url, title)
         postRepository.findByUser_UserIdAndUrl(user.userId, url)
-            ?.let { url += "-" + getRandomString(8) }
+            ?.also { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
@@ -108,11 +110,18 @@ class PostService(
             private = private,
             url = url,
             series = series,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
         )
         postRepository.save(post)
+            .also {
+                images.map { image ->
+                    image.post = it
+                    imageRepository.save(image)
+                }
+            }
     }
 
     fun modifyPost(putRequest: PostDto.PutRequest, user: User) {
@@ -142,6 +151,13 @@ class PostService(
                 this.series = series
             }
             ?.also { postRepository.save(it) }
+            ?.also {
+                modifyImageList(putRequest.images, it, user)
+                    .map { image ->
+                        image.post = it
+                        imageRepository.save(image)
+                    }
+            }
             ?: throw PostNotFoundException("There is no post with token <$token>")
     }
 
@@ -161,8 +177,8 @@ class PostService(
             ?.let { post ->
                 postTokenRepository.findByPost_Id(post.id)
                     ?.let { postTokenRepository.deleteById(it.id) }
-                postRepository.deleteById(post.id)
                 deletePostImage(post.id, user)
+                postRepository.deleteById(post.id)
             }
             ?: throw PostNotFoundException("post not found with url '$url'")
     }
@@ -327,5 +343,25 @@ class PostService(
     private fun deletePostImage(postId: Long, user: User) {
         imageRepository.findAllByUser_UserIdAndPost_Id(user.userId, postId)
             .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
+    }
+
+    private fun formatImageList(images: List<ImageDto.S3Token>, user: User): List<Image> {
+        val removeImageNotExistInContent = { token: String ->
+            imageService.removeImage(ImageDto.RemoveRequest(token), user)
+            null
+        }
+        return images
+            .mapNotNull {
+                imageRepository.findByUser_UserIdAndToken(user.userId, it.token)
+                    ?: removeImageNotExistInContent(it.token)
+            }
+    }
+
+    private fun modifyImageList(images: List<ImageDto.S3Token>, post: Post, user: User): List<Image> {
+        post.images.map {
+            if (!images.contains(ImageDto.S3Token(it.token)))
+                imageService.removeImage(ImageDto.RemoveRequest(it.token), user)
+        }
+        return formatImageList(images, user)
     }
 }

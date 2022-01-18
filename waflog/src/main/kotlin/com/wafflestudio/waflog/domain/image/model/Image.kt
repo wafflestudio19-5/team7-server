@@ -18,7 +18,7 @@ class Image(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
-    val post: Post?,
+    var post: Post?,
 
     @field:NotBlank
     val token: String,

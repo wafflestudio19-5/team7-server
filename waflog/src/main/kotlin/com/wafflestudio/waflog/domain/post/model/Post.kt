@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.post.model
 
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.tag.model.PostTag
 import com.wafflestudio.waflog.domain.user.model.Likes
@@ -25,6 +26,9 @@ class Post(
 
     @Column(columnDefinition = "TEXT")
     var content: String,
+
+    @OneToMany(mappedBy = "post")
+    var images: MutableList<Image>,
 
     @field:Min(0)
     val views: Int = 0,

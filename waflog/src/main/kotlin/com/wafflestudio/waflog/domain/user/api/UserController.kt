@@ -49,6 +49,24 @@ class UserController(
         return userService.searchUserPosts(user, userId, keyword, pageable)
     }
 
+    @GetMapping("/lists/liked")
+    @ResponseStatus(HttpStatus.OK)
+    fun getLikedPosts(
+        @PageableDefault(size = 22) pageable: Pageable,
+        @CurrentUser user: User
+    ): Page<PostDto.MainPageResponse> {
+        return userService.getLikedPosts(pageable, user)
+    }
+
+    @GetMapping("/lists/read")
+    @ResponseStatus(HttpStatus.OK)
+    fun getReadPosts(
+        @PageableDefault(size = 22) pageable: Pageable,
+        @CurrentUser user: User
+    ): Page<PostDto.MainPageResponse> {
+        return userService.getReadPosts(pageable, user)
+    }
+
     @GetMapping("/@{user_id}/about")
     @ResponseStatus(HttpStatus.OK)
     fun getUserLongIntro(@PathVariable("user_id") userId: String): UserDto.UserLongIntroResponse {

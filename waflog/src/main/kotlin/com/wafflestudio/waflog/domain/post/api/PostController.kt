@@ -141,7 +141,7 @@ class PostController(
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User
     ): PostDto.PostLikesResponse {
-        return postService.addLikeInPost(postId, user)
+        return postService.clickLikeInPost(postId, user)
     }
 
     @GetMapping("/{post_id}/like/current")

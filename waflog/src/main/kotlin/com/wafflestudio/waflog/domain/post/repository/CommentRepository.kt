@@ -31,4 +31,9 @@ interface CommentRepository : JpaRepository<Comment, Long?> {
         "DELETE FROM Comment c WHERE (c.rootComment = :rootComment AND (c.lft BETWEEN :lft AND :rgt))"
     )
     fun deleteReplies(@Param("rootComment") rootComment: Long, @Param("lft") left: Long, @Param("rgt") right: Long)
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Comment c WHERE c.post.id = :postId")
+    fun deleteCommentsByPostId(@Param("postId") postId: Long)
 }

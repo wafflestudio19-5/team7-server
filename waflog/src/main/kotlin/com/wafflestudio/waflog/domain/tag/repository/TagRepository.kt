@@ -11,6 +11,6 @@ interface TagRepository : JpaRepository<Tag, Long?> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Post p WHERE (SELECT count(pt) FROM PostToken pt WHERE pt.post.id = p.id) = 0")
+    @Query("DELETE FROM Tag t WHERE (SELECT count(pt) FROM PostTag pt WHERE pt.tag.id = t.id) = 0")
     fun deleteUnusedTags()
 }

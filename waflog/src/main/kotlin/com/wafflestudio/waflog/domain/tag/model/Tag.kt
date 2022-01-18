@@ -4,8 +4,6 @@ import com.wafflestudio.waflog.domain.model.BaseEntity
 import org.hibernate.annotations.Formula
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.OneToMany
-import javax.persistence.OrderBy
 import javax.validation.constraints.NotBlank
 
 @Entity

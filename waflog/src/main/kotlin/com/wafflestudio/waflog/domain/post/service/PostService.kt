@@ -22,18 +22,19 @@ import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
 import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Likes
-import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.model.Reads
+import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
-import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
+import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @Service
 class PostService(
@@ -140,6 +141,7 @@ class PostService(
         }
     }
 
+    @Transactional
     fun modifyPost(putRequest: PostDto.PutRequest, user: User) {
         val token = putRequest.token
         val title = putRequest.title
@@ -217,11 +219,17 @@ class PostService(
         return token
     }
 
+    @Transactional
     fun deletePost(url: String, user: User) {
         postRepository.findByUser_UserIdAndUrl(user.userId, url)
             ?.let { post ->
                 postTokenRepository.findByPost_Id(post.id)
                     ?.let { postTokenRepository.deleteById(it.id) }
+                likesRepository.deleteMappingByPostId(post.id)
+                readsRepository.deleteMappingByPostId(post.id)
+                commentRepository.deleteCommentsByPostId(post.id)
+                postTagRepository.deleteMappingByPostId(post.id)
+                postRepository.deleteById(post.id)
                 deletePostImage(post.id, user)
                 postRepository.deleteById(post.id)
                 tagRepository.deleteUnusedTags()

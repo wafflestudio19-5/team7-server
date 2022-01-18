@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.post.model
 
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.tag.model.PostTag
 import com.wafflestudio.waflog.domain.user.model.Likes
@@ -25,6 +26,9 @@ class Post(
 
     @Column(columnDefinition = "TEXT")
     var content: String,
+
+    @OneToMany(mappedBy = "post")
+    var images: MutableList<Image>,
 
     @field:Min(0)
     val views: Int = 0,
@@ -62,13 +66,11 @@ class Post(
     var postTags: MutableList<PostTag>
 ) : BaseTimeEntity() {
 
-    fun getPrevPost(): Post? {
-        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
-        return userNotPrivatePosts.lastOrNull { it.id < this.id }
+    fun getPrevPost(user: User?): Post? {
+        return this.user.posts.filter { p -> !p.private || this.user == user }.lastOrNull { it.id < this.id }
     }
 
-    fun getNextPost(): Post? {
-        val userNotPrivatePosts: List<Post> = this.user.posts.filter { p -> !p.private }
-        return userNotPrivatePosts.firstOrNull { it.id > this.id }
+    fun getNextPost(user: User?): Post? {
+        return this.user.posts.filter { p -> !p.private || this.user == user }.firstOrNull { it.id > this.id }
     }
 }

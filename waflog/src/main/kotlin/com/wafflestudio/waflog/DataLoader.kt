@@ -113,6 +113,7 @@ class DataLoader(
             url = "waffle-spring",
             series = series1,
             seriesOrder = series1.posts.size + 1,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -127,6 +128,7 @@ class DataLoader(
             url = "waffle-spring-2",
             series = series1,
             seriesOrder = series1.posts.size + 1,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -141,6 +143,7 @@ class DataLoader(
             url = "waffle-spring-3",
             series = series2,
             seriesOrder = series2.posts.size + 1,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -156,6 +159,7 @@ class DataLoader(
             url = "waffle-spring-4",
             series = series1,
             seriesOrder = series1.posts.size + 1,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -172,6 +176,7 @@ class DataLoader(
             url = "studio-spring",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -187,6 +192,7 @@ class DataLoader(
             url = "team7-spring",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -204,6 +210,7 @@ class DataLoader(
             url = "1st-trending-spring",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -221,6 +228,7 @@ class DataLoader(
             url = "2nd-trending-spring",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -238,6 +246,7 @@ class DataLoader(
             url = "3rd-trending-spring",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -255,6 +264,7 @@ class DataLoader(
             url = "post-with-content",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
@@ -272,6 +282,7 @@ class DataLoader(
             url = "post-with-comments",
             series = null,
             seriesOrder = null,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()

@@ -9,4 +9,8 @@ class ImageDto {
     data class RemoveRequest(
         val token: String
     )
+
+    data class S3Token(
+        val token: String
+    )
 }

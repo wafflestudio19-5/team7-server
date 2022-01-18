@@ -18,10 +18,9 @@ class ImageController(
     @ResponseStatus(HttpStatus.CREATED)
     fun uploadImage(
         @RequestPart image: MultipartFile,
-        @RequestParam(required = false) url: String,
         @CurrentUser user: User
     ): ImageDto.S3URL {
-        return ImageDto.S3URL(imageService.uploadImage(image, url, user))
+        return ImageDto.S3URL(imageService.uploadImage(image, user))
     }
 
     @DeleteMapping("")

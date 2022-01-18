@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 interface PostRepository : JpaRepository<Post, Long?> {
+
+    @Query("SELECT p FROM Post p WHERE (p.private = false) OR p.user.userId = :userId")
+    fun findRecentPosts(pageable: Pageable, @Param("userId") userId: String): Page<Post>
     fun findAllByPrivateIsFalse(pageable: Pageable): Page<Post>
     fun findAllByPrivateIsFalseAndCreatedAtAfter(pageable: Pageable, start: LocalDateTime): Page<Post>
 

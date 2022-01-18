@@ -37,4 +37,10 @@ class AuthController(
     fun signUp(@RequestBody signupRequest: UserDto.SignUpRequest): VerificationTokenPrincipalDto {
         return authService.signUp(signupRequest)
     }
+
+    @PostMapping("/verify/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun verifyLogout(@RequestBody logoutRequest: UserDto.LogoutRequest) {
+        authService.autoLogout(logoutRequest)
+    }
 }

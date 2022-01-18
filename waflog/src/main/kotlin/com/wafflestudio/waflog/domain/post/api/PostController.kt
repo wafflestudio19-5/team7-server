@@ -57,9 +57,10 @@ class PostController(
     fun getRecentPosts(
         @PageableDefault(
             size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
-        ) pageable: Pageable
+        ) pageable: Pageable,
+        @CurrentUser user: User?
     ): Page<PostDto.MainPageResponse> {
-        return postService.getRecentPosts(pageable)
+        return postService.getRecentPosts(pageable, user)
     }
 
     @GetMapping("/trend")
@@ -140,7 +141,7 @@ class PostController(
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User
     ): PostDto.PostLikesResponse {
-        return postService.addLikeInPost(postId, user)
+        return postService.clickLikeInPost(postId, user)
     }
 
     @GetMapping("/{post_id}/like/current")

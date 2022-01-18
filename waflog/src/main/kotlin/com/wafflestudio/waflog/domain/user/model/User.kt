@@ -1,5 +1,6 @@
 package com.wafflestudio.waflog.domain.user.model
 
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
 import javax.persistence.*
@@ -52,11 +53,19 @@ class User(
     val updateNotification: Boolean = false,
 
     @OneToMany(mappedBy = "user")
+    var images: MutableList<Image> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user")
     @OrderBy("id")
     var posts: MutableList<Post> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
+    @OrderBy("createdAt DESC")
     var likedPosts: MutableList<Likes> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user")
+    @OrderBy("updatedAt DESC")
+    var readPosts: MutableList<Reads> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
     var series: MutableList<Series> = mutableListOf()

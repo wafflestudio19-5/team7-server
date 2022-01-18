@@ -1,16 +1,15 @@
-package com.wafflestudio.waflog.domain.image.model
+package com.wafflestudio.waflog.domain.user.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
-import com.wafflestudio.waflog.domain.user.model.User
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.validation.constraints.NotNull
-import javax.persistence.*
-import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "token"])])
-class Image(
-
+class Reads(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @field:NotNull
@@ -18,11 +17,6 @@ class Image(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
-    var post: Post?,
-
-    @field:NotBlank
-    val token: String,
-
-    val originalName: String
-
+    @field:NotNull
+    val readPost: Post
 ) : BaseTimeEntity()

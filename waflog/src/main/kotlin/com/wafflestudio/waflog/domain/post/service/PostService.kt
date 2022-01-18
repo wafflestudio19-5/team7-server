@@ -1,6 +1,7 @@
 package com.wafflestudio.waflog.domain.post.service
 
 import com.wafflestudio.waflog.domain.image.dto.ImageDto
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository
 import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.CommentDto
@@ -18,8 +19,10 @@ import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Likes
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.model.Reads
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
+import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,12 +38,14 @@ class PostService(
     private val seriesRepository: SeriesRepository,
     private val commentRepository: CommentRepository,
     private val likesRepository: LikesRepository,
+    private val readsRepository: ReadsRepository,
     private val imageRepository: ImageRepository,
     private val imageService: ImageService
 ) {
-    fun getRecentPosts(pageable: Pageable): Page<PostDto.MainPageResponse> {
+    fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
-            postRepository.findAllByPrivateIsFalse(pageable)
+            user?.let { postRepository.findRecentPosts(pageable, it.userId) }
+                ?: postRepository.findAllByPrivateIsFalse(pageable)
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 
@@ -62,27 +67,36 @@ class PostService(
     fun getPostDetail(id: Long, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByIdOrNull(id)
             ?: throw PostNotFoundException("There is no post id $id")
-        user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        applyUserReadPost(user, post)
+        return PostDto.PageDetailResponse(post, user)
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
         val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
             ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
-        user?.also { postRepository.increaseViews(post.id) }
-        return PostDto.PageDetailResponse(post)
+        applyUserReadPost(user, post)
+        return PostDto.PageDetailResponse(post, user)
+    }
+
+    private fun applyUserReadPost(user: User?, post: Post) {
+        user?.also {
+            postRepository.increaseViews(post.id)
+            readsRepository.findByUser_UserIdAndReadPost_Id(user.userId, post.id)
+                ?: run { readsRepository.save(Reads(user, post)) }
+        }
     }
 
     fun writePost(createRequest: PostDto.CreateRequest, user: User) {
         val title = createRequest.title
         if (title.isBlank()) throw InvalidPostTitleException("제목이 비어있습니다.")
         val content = createRequest.content
+        val images = formatImageList(createRequest.images, user)
         val thumbnail = createRequest.thumbnail
         val summary = createRequest.summary
         val private = createRequest.private
         var url = formatUrl(createRequest.url, title)
         postRepository.findByUser_UserIdAndUrl(user.userId, url)
-            ?.let { url += "-" + getRandomString(8) }
+            ?.also { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
@@ -98,11 +112,18 @@ class PostService(
             url = url,
             series = series,
             seriesOrder = seriesOrder,
+            images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
             likedUser = mutableListOf()
         )
         postRepository.save(post)
+            .also {
+                images.map { image ->
+                    image.post = it
+                    imageRepository.save(image)
+                }
+            }
     }
 
     fun modifyPost(putRequest: PostDto.PutRequest, user: User) {
@@ -136,6 +157,13 @@ class PostService(
                 this.seriesOrder = seriesOrder
             }
             ?.also { postRepository.save(it) }
+            ?.also {
+                modifyImageList(putRequest.images, it, user)
+                    .map { image ->
+                        image.post = it
+                        imageRepository.save(image)
+                    }
+            }
             ?: throw PostNotFoundException("There is no post with token <$token>")
     }
 
@@ -155,8 +183,8 @@ class PostService(
             ?.let { post ->
                 postTokenRepository.findByPost_Id(post.id)
                     ?.let { postTokenRepository.deleteById(it.id) }
-                postRepository.deleteById(post.id)
                 deletePostImage(post.id, user)
+                postRepository.deleteById(post.id)
             }
             ?: throw PostNotFoundException("post not found with url '$url'")
     }
@@ -280,7 +308,7 @@ class PostService(
         return PostDto.getCommentListResponse(post.comments)
     }
 
-    fun addLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
+    fun clickLikeInPost(postId: Long, user: User): PostDto.PostLikesResponse {
         val post: Post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
         val likes = user.likedPosts.find { likes -> likes.likedPost.id == post.id }
@@ -321,5 +349,25 @@ class PostService(
     private fun deletePostImage(postId: Long, user: User) {
         imageRepository.findAllByUser_UserIdAndPost_Id(user.userId, postId)
             .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
+    }
+
+    private fun formatImageList(images: List<ImageDto.S3Token>, user: User): List<Image> {
+        val removeImageNotExistInContent = { token: String ->
+            imageService.removeImage(ImageDto.RemoveRequest(token), user)
+            null
+        }
+        return images
+            .mapNotNull {
+                imageRepository.findByUser_UserIdAndToken(user.userId, it.token)
+                    ?: removeImageNotExistInContent(it.token)
+            }
+    }
+
+    private fun modifyImageList(images: List<ImageDto.S3Token>, post: Post, user: User): List<Image> {
+        post.images.map {
+            if (!images.contains(ImageDto.S3Token(it.token)))
+                imageService.removeImage(ImageDto.RemoveRequest(it.token), user)
+        }
+        return formatImageList(images, user)
     }
 }

@@ -51,18 +51,8 @@ class UserService(
     ): Page<PostDto.PostInUserPostsResponse> {
         val targetUser = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
-        var searchedPosts: List<Post> = if (targetUser == user) { // my posts
-            if (keyword == null || keyword == "") {
-                targetUser.posts // all posts
-            } else {
-                targetUser.posts.filter { post -> postFilter(post, keyword) } // searched posts
-            }
-        } else { // other's posts
-            if (keyword == null || keyword == "") {
-                targetUser.posts.filter { post -> !post.private } // all posts
-            } else {
-                targetUser.posts.filter { post -> postFilter(post, keyword) && !post.private } // searched posts
-            }
+        var searchedPosts: List<Post> = targetUser.posts.filter {
+            postFilter(it, keyword) && (!it.private || it.user == user)
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }
         return makePage(pageable, searchedPostsResponse)
@@ -80,8 +70,10 @@ class UserService(
             .let { makePage(pageable, it) }
     }
 
-    private fun postFilter(post: Post, keyword: String): Boolean {
-        return (post.title.contains(keyword) || post.content.contains(keyword)) && !post.private
+    private fun postFilter(post: Post, keyword: String?): Boolean {
+        return keyword?.let {
+            post.title.contains(it) || post.content.contains(it)
+        } ?: true
     }
 
     fun getUserLongIntro(userId: String): UserDto.UserLongIntroResponse {

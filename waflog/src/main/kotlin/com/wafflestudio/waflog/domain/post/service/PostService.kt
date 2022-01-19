@@ -231,7 +231,6 @@ class PostService(
                 postTagRepository.deleteMappingByPostId(post.id)
                 postRepository.deleteById(post.id)
                 deletePostImage(post.id, user)
-                postRepository.deleteById(post.id)
                 tagRepository.deleteUnusedTags()
             }
             ?: throw PostNotFoundException("post not found with url '$url'")

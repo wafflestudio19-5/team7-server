@@ -5,13 +5,16 @@ import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
+import com.wafflestudio.waflog.domain.post.service.PostService
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.exception.*
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -22,8 +25,11 @@ class UserService(
     private val userRepository: UserRepository,
     private val seriesRepository: SeriesRepository,
     private val postRepository: PostRepository,
-    private val commentRepository: CommentRepository,
-    private val imageService: ImageService
+    private val imageService: ImageService,
+    private val postService: PostService,
+    private val likesRepository: LikesRepository,
+    private val verificationTokenRepository: VerificationTokenRepository,
+    private val commentRepository: CommentRepository
 ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
@@ -190,8 +196,13 @@ class UserService(
     }
 
     fun withdrawUser(user: User) {
-        user.posts.map { commentRepository.deleteCommentsByPostId(it.id) } // delete all comment in user's post
-        postRepository.deleteAllUserPosts(user.id) // delete all post of user
-        imageService.removeAllUserImages(user) // delete all image of user
+        user.posts.map { postService.deletePost(it.url, user) } // delete all user's post
+        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
+        imageService.removeAllUserImages(user) // delete all image in user's info
+        likesRepository.deleteMappingByUserId(user.id) // delete all likes by user
+        verificationTokenRepository.findByEmail(user.email)?.let {
+            verificationTokenRepository.deleteById(it.id) // delete user token
+        }
+        userRepository.deleteById(user.id) // delete user
     }
 }

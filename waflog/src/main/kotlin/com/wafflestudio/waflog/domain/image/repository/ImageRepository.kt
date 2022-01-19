@@ -8,4 +8,6 @@ interface ImageRepository : JpaRepository<Image, Long?> {
     fun findByUser_UserIdAndToken(userId: String, token: String): Image?
 
     fun findAllByUser_UserIdAndPost_Id(userId: String, id: Long): List<Image>
+
+    fun findAllByUser_Id(userId: Long): List<Image>
 }

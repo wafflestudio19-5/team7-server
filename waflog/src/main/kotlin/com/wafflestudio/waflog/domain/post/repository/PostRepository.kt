@@ -36,4 +36,11 @@ interface PostRepository : JpaRepository<Post, Long?> {
     @Modifying
     @Query("UPDATE Post p SET p.views = p.views + 1 WHERE p.id = :postId")
     fun increaseViews(@Param("postId") postId: Long)
+
+    @Transactional
+    @Modifying
+    @Query(
+        "DELETE FROM Post p WHERE (p.user.id = :user_id)"
+    )
+    fun deleteAllUserPosts(@Param("user_id") userId: Long)
 }

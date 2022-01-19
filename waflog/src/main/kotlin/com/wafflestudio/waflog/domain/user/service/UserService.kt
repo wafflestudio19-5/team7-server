@@ -1,7 +1,10 @@
 package com.wafflestudio.waflog.domain.user.service
 
+import com.wafflestudio.waflog.domain.image.repository.ImageRepository
+import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
@@ -19,7 +22,9 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val seriesRepository: SeriesRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val commentRepository: CommentRepository,
+    private val imageService: ImageService
 ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
@@ -191,5 +196,11 @@ class UserService(
             pageable,
             contents.size.toLong()
         )
+    }
+
+    fun withdrawUser(user: User) {
+        user.posts.map { commentRepository.deleteAllRepliesInPost(it.id) } // delete all comment in user's post
+        postRepository.deleteAllUserPosts(user.id) // delete all post of user
+        imageService.removeAllUserImages(user) // delete all image of user
     }
 }

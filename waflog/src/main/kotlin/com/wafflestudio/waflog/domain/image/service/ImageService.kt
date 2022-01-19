@@ -39,4 +39,12 @@ class ImageService(
         s3Service.remove(folderName, fileToken, image.originalName)
             .also { imageRepository.deleteById(image.id) }
     }
+
+    fun removeAllUserImages(user: User){
+        val images = imageRepository.findAllByUser_Id(user.id)
+        val folderName = user.userId
+
+        images.map { image -> s3Service.remove(folderName, image.token, image.originalName)
+            .also { imageRepository.deleteById(image.id) }}
+    }
 }

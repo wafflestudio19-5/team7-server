@@ -30,6 +30,12 @@ class UserController(
         return UserDto.SimpleResponse(user)
     }
 
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun withdrawUser(@CurrentUser user: User) {
+        userService.withdrawUser(user)
+    }
+
     @GetMapping("/@{user_id}")
     @ResponseStatus(HttpStatus.OK)
     fun getUserDetail(@PathVariable("user_id") userId: String): UserDto.UserDetailResponse {

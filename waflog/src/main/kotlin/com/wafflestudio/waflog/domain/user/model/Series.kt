@@ -15,8 +15,9 @@ class Series(
     val user: User,
 
     @field:NotBlank
-    val name: String,
+    var name: String,
 
     @OneToMany(mappedBy = "series")
+    @OrderBy("seriesOrder")
     var posts: MutableList<Post>
 ) : BaseTimeEntity()

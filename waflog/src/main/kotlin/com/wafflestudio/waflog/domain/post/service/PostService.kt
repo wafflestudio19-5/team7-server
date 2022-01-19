@@ -101,6 +101,7 @@ class PostService(
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
+        val seriesOrder = series?.let { series.posts.size + 1 }
         val post = Post(
             user = user,
             title = title,
@@ -110,6 +111,7 @@ class PostService(
             private = private,
             url = url,
             series = series,
+            seriesOrder = seriesOrder,
             images = mutableListOf(),
             comments = mutableListOf(),
             postTags = mutableListOf(),
@@ -133,12 +135,15 @@ class PostService(
         val series = seriesName?.let {
             seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
         }
-
+        var seriesOrder = series?.let { series.posts.size + 1 }
         postTokenRepository.findByToken(token)?.post
             ?.also {
                 if (it.url != url) {
                     postRepository.findByUser_UserIdAndUrl(user.userId, url)
                         ?.let { url += "-" + getRandomString(8) }
+                }
+                if (it.series == series) {
+                    seriesOrder = it.seriesOrder
                 }
             }
             ?.apply {
@@ -149,6 +154,7 @@ class PostService(
                 this.private = putRequest.private
                 this.url = url
                 this.series = series
+                this.seriesOrder = seriesOrder
             }
             ?.also { postRepository.save(it) }
             ?.also {

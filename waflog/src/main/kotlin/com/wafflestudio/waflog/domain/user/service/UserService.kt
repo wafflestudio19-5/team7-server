@@ -2,12 +2,10 @@ package com.wafflestudio.waflog.domain.user.service
 
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
-import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
-import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
-import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
+import com.wafflestudio.waflog.domain.user.exception.*
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
@@ -20,7 +18,8 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val seriesRepository: SeriesRepository
+    private val seriesRepository: SeriesRepository,
+    private val postRepository: PostRepository
 ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
@@ -91,6 +90,44 @@ class UserService(
             ?: throw UserNotFoundException("There is no user id $userId")
         val userSeries = user.series.map { series -> SeriesDto.SimpleResponse(series) }
         return makePage(pageable, userSeries)
+    }
+
+    fun getUserSeriesPosts(
+        userId: String,
+        seriesName: String,
+        pageable: Pageable,
+        user: User?
+    ): Page<PostDto.SeriesResponse> {
+        val seriesPosts = userRepository.findByUserId(userId)
+            ?.let {
+                seriesRepository.findByNameAndUser(seriesName, it)?.posts
+                    ?: throw SeriesNotFoundException("There is no series with user id <$userId> and name <$seriesName>")
+            }
+            ?.filter { !it.private || it.user == user }
+            ?.map { PostDto.SeriesResponse(it) }
+            ?: throw UserNotFoundException("There is no user id $userId")
+        return makePage(pageable, seriesPosts)
+    }
+
+    fun putUserSeries(
+        seriesName: String,
+        putRequest: SeriesDto.PutRequest,
+        user: User
+    ) {
+        val name = putRequest.name
+        if (name != seriesName)
+            seriesRepository.findByNameAndUser(name, user)
+                ?.also { throw SeriesUrlExistException("이미 존재하는 URL입니다.") }
+        val putList: List<Pair<String, Int>> = putRequest.putOrder.toSortedMap().toList()
+        seriesRepository.findByNameAndUser(seriesName, user)
+            ?.apply { this.name = name }
+            ?.also { seriesRepository.save(it) }?.posts
+            ?.zip(putList)
+            ?.map {
+                it.first.seriesOrder = it.second.second
+                postRepository.save(it.first)
+            }
+            ?: throw SeriesNotFoundException("There is no series with user id <${user.userId}> and name <$seriesName>")
     }
 
     fun updateUserImage(

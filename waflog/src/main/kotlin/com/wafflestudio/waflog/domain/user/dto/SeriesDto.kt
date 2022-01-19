@@ -8,6 +8,11 @@ class SeriesDto {
         val name: String
     )
 
+    data class PutRequest(
+        val name: String,
+        val putOrder: Map<String, Int>
+    )
+
     data class SimpleResponse(
         val id: Long,
         val name: String,

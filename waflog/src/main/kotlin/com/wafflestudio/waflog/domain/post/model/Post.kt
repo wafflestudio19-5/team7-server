@@ -56,6 +56,8 @@ class Post(
     @JoinColumn(name = "series_id", referencedColumnName = "id")
     var series: Series?,
 
+    var seriesOrder: Int?,
+
     @OneToMany(mappedBy = "post")
     @OrderBy("root_comment ASC, lft ASC")
     var comments: MutableList<Comment>,

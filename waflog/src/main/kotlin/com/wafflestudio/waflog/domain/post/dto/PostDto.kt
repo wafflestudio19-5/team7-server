@@ -43,7 +43,7 @@ class PostDto {
         val content: String,
         val likes: Int,
         val thumbnail: String,
-        val tags: List<TagDto.TagResponse>,
+        val tags: List<TagDto.TagInPostResponse>,
         val comments: ListResponse<CommentDto.RootCommentResponse>,
         val prevPost: IdAndTitleResponse?,
         val nextPost: IdAndTitleResponse?,
@@ -58,7 +58,7 @@ class PostDto {
             content = post.content,
             likes = post.likedUser.size,
             thumbnail = post.thumbnail,
-            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
+            tags = post.postTags.map { postTag -> TagDto.TagInPostResponse(postTag.tag) },
             comments = getCommentListResponse(post.comments),
             prevPost = post.getPrevPost(user)?.let { IdAndTitleResponse(it) },
             nextPost = post.getNextPost(user)?.let { IdAndTitleResponse(it) },
@@ -82,6 +82,7 @@ class PostDto {
         val title: String,
         val content: String,
         val images: List<ImageDto.S3Token>,
+        val tags: List<String> = listOf(),
         val thumbnail: String,
         val summary: String,
         val private: Boolean,
@@ -92,6 +93,7 @@ class PostDto {
     data class PutRequest(
         val token: String,
         val title: String,
+        val tags: List<String> = listOf(),
         val content: String,
         val images: List<ImageDto.S3Token>,
         val thumbnail: String,
@@ -140,7 +142,7 @@ class PostDto {
         val url: String,
         val thumbnail: String, // thumbnail file url
         val summary: String,
-        val tags: List<TagDto.TagResponse>,
+        val tags: List<TagDto.TagInPostResponse>,
         val createAt: LocalDateTime?,
         val comments: Int // num of comments
     ) {
@@ -151,7 +153,7 @@ class PostDto {
             url = post.url,
             thumbnail = post.thumbnail,
             summary = post.summary,
-            tags = post.postTags.map { postTag -> TagDto.TagResponse(postTag.tag) },
+            tags = post.postTags.map { postTag -> TagDto.TagInPostResponse(postTag.tag) },
             createAt = post.createdAt,
             comments = post.comments.size
         )

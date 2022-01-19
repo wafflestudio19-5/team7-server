@@ -34,8 +34,6 @@ interface CommentRepository : JpaRepository<Comment, Long?> {
 
     @Transactional
     @Modifying
-    @Query(
-        "DELETE FROM Comment c WHERE (c.post.id = :post_id)"
-    )
-    fun deleteAllRepliesInPost(@Param("post_id") postId: Long)
+    @Query("DELETE FROM Comment c WHERE c.post.id = :postId")
+    fun deleteCommentsByPostId(@Param("postId") postId: Long)
 }

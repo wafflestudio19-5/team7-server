@@ -19,7 +19,7 @@ class ImageService(
     private val s3Service: S3Service
 ) {
 
-    fun uploadImage(image: MultipartFile, @CurrentUser user: User): String {
+    fun uploadImage(image: MultipartFile, @CurrentUser user: User): Pair<String, String> {
         val fileToken = UUID.randomUUID().toString()
         val fileName = image.originalFilename!!
         if (listOf("jpg", "JPG", "jpeg", "JPEG", "gif", "GIF", "png", "PNG").none { it == fileName.split(".").last() })

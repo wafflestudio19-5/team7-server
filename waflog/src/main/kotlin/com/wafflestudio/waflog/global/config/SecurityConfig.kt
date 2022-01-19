@@ -81,6 +81,7 @@ class SecurityConfig(
             .antMatchers(HttpMethod.GET, "/api/v1/user/@**", "/api/v1/user/@**/search").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/user/@**/about", "/api/v1/user/@**/series").permitAll()
             .antMatchers(HttpMethod.GET, "/").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/tag", "/api/v1/tag/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .oauth2Login()

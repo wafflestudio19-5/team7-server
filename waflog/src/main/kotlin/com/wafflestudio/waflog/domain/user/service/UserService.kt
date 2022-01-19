@@ -1,6 +1,5 @@
 package com.wafflestudio.waflog.domain.user.service
 
-import com.wafflestudio.waflog.domain.image.repository.ImageRepository
 import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
@@ -191,7 +190,7 @@ class UserService(
     }
 
     fun withdrawUser(user: User) {
-        user.posts.map { commentRepository.deleteAllRepliesInPost(it.id) } // delete all comment in user's post
+        user.posts.map { commentRepository.deleteCommentsByPostId(it.id) } // delete all comment in user's post
         postRepository.deleteAllUserPosts(user.id) // delete all post of user
         imageService.removeAllUserImages(user) // delete all image of user
     }

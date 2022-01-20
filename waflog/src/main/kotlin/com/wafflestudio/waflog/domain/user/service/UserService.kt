@@ -5,7 +5,12 @@ import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.domain.user.exception.*
+import com.wafflestudio.waflog.domain.user.exception.InvalidPublicEmailException
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
+import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
+import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
+import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
@@ -14,7 +19,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import javax.validation.ConstraintViolationException
+import org.springframework.transaction.TransactionSystemException
 
 @Service
 class UserService(
@@ -177,7 +182,7 @@ class UserService(
 
         try {
             updatedUser = userRepository.save(user)
-        } catch (e: ConstraintViolationException) {
+        } catch (e: TransactionSystemException) {
             throw InvalidPublicEmailException("Public email is invalid")
         }
 

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import javax.validation.ConstraintViolationException
 
 @Service
 class UserService(
@@ -46,7 +47,7 @@ class UserService(
     ): Page<PostDto.PostInUserPostsResponse> {
         val targetUser = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
-        var searchedPosts: List<Post> = targetUser.posts.filter {
+        val searchedPosts: List<Post> = targetUser.posts.filter {
             postFilter(it, keyword) && (!it.private || it.user == user)
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }
@@ -172,7 +173,15 @@ class UserService(
         user.twitterId = socialInfoDto.twitterId
         user.homepage = socialInfoDto.homepage
 
-        return UserDto.SocialInfoDto(userRepository.save(user))
+        val updatedUser: User
+
+        try {
+            updatedUser = userRepository.save(user)
+        } catch (e: ConstraintViolationException) {
+            throw InvalidPublicEmailException("Public email is invalid")
+        }
+
+        return UserDto.SocialInfoDto(updatedUser)
     }
 
     private fun <T> makePage(pageable: Pageable, contents: List<T>): Page<T> {

@@ -109,8 +109,8 @@ class UserController(
     @ResponseStatus(HttpStatus.OK)
     fun getUserSetting(
         @CurrentUser user: User
-    ): UserDto.UserDetailResponse {
-        return UserDto.UserDetailResponse(user)
+    ): UserDto.UserSettingResponse {
+        return UserDto.UserSettingResponse(user)
     }
 
     @PutMapping("/image")

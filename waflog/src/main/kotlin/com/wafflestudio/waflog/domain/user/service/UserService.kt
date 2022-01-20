@@ -5,13 +5,16 @@ import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
-import com.wafflestudio.waflog.domain.post.service.PostService
+import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
+import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
+import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.exception.*
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
+import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
@@ -26,7 +29,10 @@ class UserService(
     private val seriesRepository: SeriesRepository,
     private val postRepository: PostRepository,
     private val imageService: ImageService,
-    private val postService: PostService,
+    private val postTokenRepository: PostTokenRepository,
+    private val readsRepository: ReadsRepository,
+    private val postTagRepository: PostTagRepository,
+    private val tagRepository: TagRepository,
     private val likesRepository: LikesRepository,
     private val verificationTokenRepository: VerificationTokenRepository,
     private val commentRepository: CommentRepository
@@ -196,7 +202,15 @@ class UserService(
     }
 
     fun withdrawUser(user: User) {
-        user.posts.map { postService.deletePost(it.url, user) } // delete all user's post
+        // delete user's post
+        postTokenRepository.deleteAllMappingByUserId(user.id)
+        likesRepository.deleteMappingByUserId(user.id)
+        readsRepository.deleteMappingByUserId(user.id)
+        commentRepository.deleteAllCommentMappingByUserId(user.id)
+        postTagRepository.deleteMappingByUserId(user.id)
+        postRepository.deleteAllUserPosts(user.id)
+        tagRepository.deleteUnusedTags()
+
         commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
         imageService.removeAllUserImages(user) // delete all image in user's info
         likesRepository.deleteMappingByUserId(user.id) // delete all likes by user

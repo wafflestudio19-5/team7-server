@@ -116,7 +116,7 @@ class UserController(
     @PutMapping("/image")
     @ResponseStatus(HttpStatus.OK)
     fun updateUserImage(
-        imageUpdateRequest: UserDto.ImageDto,
+        @RequestBody imageUpdateRequest: UserDto.ImageDto,
         @CurrentUser user: User
     ): UserDto.ImageDto {
         return userService.updateUserImage(imageUpdateRequest, user)
@@ -131,7 +131,7 @@ class UserController(
     @PutMapping("/profile")
     @ResponseStatus(HttpStatus.OK)
     fun updateUserProfile(
-        profileDto: UserDto.ProfileDto,
+        @RequestBody profileDto: UserDto.ProfileDto,
         @CurrentUser user: User
     ): UserDto.ProfileDto {
         return userService.updateUserProfile(profileDto, user)
@@ -140,7 +140,7 @@ class UserController(
     @PutMapping("/title")
     @ResponseStatus(HttpStatus.OK)
     fun updateUserPageTitle(
-        titleDto: UserDto.TitleDto,
+        @RequestBody titleDto: UserDto.TitleDto,
         @CurrentUser user: User
     ): UserDto.TitleDto {
         return userService.updateUserPageTitle(titleDto, user)
@@ -149,7 +149,7 @@ class UserController(
     @PutMapping("/social")
     @ResponseStatus(HttpStatus.OK)
     fun updateUserSocialInfo(
-        socialInfoDto: UserDto.SocialInfoDto,
+        @RequestBody socialInfoDto: UserDto.SocialInfoDto,
         @CurrentUser user: User
     ): UserDto.SocialInfoDto {
         return userService.updateUserSocialInfo(socialInfoDto, user)

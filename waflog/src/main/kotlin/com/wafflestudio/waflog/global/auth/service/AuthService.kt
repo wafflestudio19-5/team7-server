@@ -30,7 +30,7 @@ class AuthService(
             ?: return run {
                 val jwt = generateJWT(email)
                 val link = "https://waflog-web.kro.kr/register?email=$email&token=$jwt"
-                val message = mailContentBuilder.build(link)
+                val message = mailContentBuilder.build(link, "register")
                 val mail = MailDto.Email(email, "Waflog 회원가입", message, false)
                 mailService.sendMail(mail)
                 false // new user
@@ -45,7 +45,7 @@ class AuthService(
         return run {
             val jwt = generateJWT(email)
             val link = "https://waflog-web.kro.kr/email-login?email=$email&token=$jwt"
-            val message = mailContentBuilder.build(link)
+            val message = mailContentBuilder.build(link, "email-login")
             val mail = MailDto.Email(email, "Waflog 로그인", message, false)
             mailService.sendMail(mail)
             true // exist user

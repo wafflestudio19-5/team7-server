@@ -56,7 +56,7 @@ class User(
     var images: MutableList<Image> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")
-    @OrderBy("id")
+    @OrderBy("id DESC")
     var posts: MutableList<Post> = mutableListOf(),
 
     @OneToMany(mappedBy = "user")

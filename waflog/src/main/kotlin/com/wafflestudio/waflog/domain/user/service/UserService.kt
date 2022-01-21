@@ -1,15 +1,23 @@
 package com.wafflestudio.waflog.domain.user.service
 
+import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.dto.PostDto
 import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
+import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
+import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
+import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.exception.*
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
+import com.wafflestudio.waflog.domain.user.repository.LikesRepository
+import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
+import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -19,7 +27,15 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val seriesRepository: SeriesRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val imageService: ImageService,
+    private val postTokenRepository: PostTokenRepository,
+    private val readsRepository: ReadsRepository,
+    private val postTagRepository: PostTagRepository,
+    private val tagRepository: TagRepository,
+    private val likesRepository: LikesRepository,
+    private val verificationTokenRepository: VerificationTokenRepository,
+    private val commentRepository: CommentRepository
 ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
@@ -183,5 +199,24 @@ class UserService(
             pageable,
             contents.size.toLong()
         )
+    }
+
+    fun withdrawUser(user: User) {
+        // delete user's post
+        postTokenRepository.deleteAllMappingByUserId(user.id)
+        likesRepository.deleteMappingByUserId(user.id)
+        readsRepository.deleteMappingByUserId(user.id)
+        commentRepository.deleteAllCommentMappingByUserId(user.id)
+        postTagRepository.deleteMappingByUserId(user.id)
+        postRepository.deleteAllUserPosts(user.id)
+        tagRepository.deleteUnusedTags()
+
+        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
+        imageService.removeAllUserImages(user) // delete all image in user's info
+        likesRepository.deleteMappingByUserId(user.id) // delete all likes by user
+        verificationTokenRepository.findByEmail(user.email)?.let {
+            verificationTokenRepository.deleteById(it.id) // delete user token
+        }
+        userRepository.deleteById(user.id) // delete user
     }
 }

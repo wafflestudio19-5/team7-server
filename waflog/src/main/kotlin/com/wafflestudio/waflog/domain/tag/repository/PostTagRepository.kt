@@ -21,4 +21,9 @@ interface PostTagRepository : JpaRepository<PostTag, Long?> {
     @Modifying
     @Query("DELETE FROM PostTag pt WHERE pt.post.id = :postId")
     fun deleteMappingByPostId(@Param("postId") postId: Long)
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM PostTag pt WHERE pt.post.user.id = :userId")
+    fun deleteMappingByUserId(@Param("userId") userId: Long)
 }

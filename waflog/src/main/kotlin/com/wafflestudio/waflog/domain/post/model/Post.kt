@@ -75,10 +75,10 @@ class Post(
 ) : BaseTimeEntity() {
 
     fun getPrevPost(user: User?): Post? {
-        return this.user.posts.filter { p -> !p.private || this.user == user }.lastOrNull { it.id < this.id }
+        return this.user.posts.filter { p -> !p.private || this.user == user }.firstOrNull { it.id < this.id }
     }
 
     fun getNextPost(user: User?): Post? {
-        return this.user.posts.filter { p -> !p.private || this.user == user }.firstOrNull { it.id > this.id }
+        return this.user.posts.filter { p -> !p.private || this.user == user }.lastOrNull { it.id > this.id }
     }
 }

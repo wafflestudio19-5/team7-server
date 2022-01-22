@@ -398,7 +398,7 @@ class PostService(
             .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
     }
 
-    private fun formatImageList(images: List<ImageDto.S3Token>, user: User): List<Image> {
+    fun formatImageList(images: List<ImageDto.S3Token>, user: User): List<Image> {
         val removeImageNotExistInContent = { token: String ->
             imageService.removeImage(ImageDto.RemoveRequest(token), user)
             null
@@ -418,7 +418,7 @@ class PostService(
         return formatImageList(images, user)
     }
 
-    private fun formatTagNameUrl(name: String): Pair<String, String> {
+    fun formatTagNameUrl(name: String): Pair<String, String> {
         val formattedName = if (name.contains("-")) """"$name"""" else name
 
         val blacklist = """[?!]""".toRegex()

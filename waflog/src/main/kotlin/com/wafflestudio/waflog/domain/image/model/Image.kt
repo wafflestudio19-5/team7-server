@@ -2,6 +2,7 @@ package com.wafflestudio.waflog.domain.image.model
 
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.post.model.Post
+import com.wafflestudio.waflog.domain.save.model.Save
 import com.wafflestudio.waflog.domain.user.model.User
 import javax.validation.constraints.NotNull
 import javax.persistence.*
@@ -19,6 +20,10 @@ class Image(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     var post: Post?,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "save_id", referencedColumnName = "id")
+    var save: Save?,
 
     @field:NotBlank
     val token: String,

@@ -8,9 +8,13 @@ import org.thymeleaf.context.Context
 class MailContentBuilder(
     private val templateEngine: TemplateEngine
 ) {
-    fun build(message: String): String {
+    fun build(message: String, type: String): String {
         val context = Context()
         context.setVariable("link", message)
-        return templateEngine.process("mailTemplate", context)
+        return when (type) {
+            "register" -> templateEngine.process("registerMailTemplate", context)
+            "email-login" -> templateEngine.process("loginMailTemplate", context)
+            else -> ""
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.wafflestudio.waflog.domain.save.model
 
 import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
-import com.wafflestudio.waflog.domain.tag.model.SaveTag
 import com.wafflestudio.waflog.domain.user.model.User
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -24,7 +23,7 @@ class Save(
     @OneToMany(mappedBy = "save")
     val images: MutableList<Image>,
 
-    @OneToMany(mappedBy = "save")
-    val saveTags: MutableList<SaveTag> = mutableListOf()
+    @ElementCollection
+    val saveTags: List<String>
 
 ) : BaseTimeEntity()

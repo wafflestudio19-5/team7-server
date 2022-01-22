@@ -14,7 +14,13 @@ class SaveController(
 ) {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun savePost(@RequestBody createRequest: SaveDto.CreateRequest, @CurrentUser user: User) {
-        saveService.savePost(createRequest, user)
+    fun writeSave(@RequestBody createRequest: SaveDto.CreateRequest, @CurrentUser user: User) {
+        saveService.writeSave(createRequest, user)
+    }
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun putSave(@RequestParam("id") token: String, @CurrentUser user: User): SaveDto.Response {
+        return SaveDto.Response(saveService.getSave(token, user))
     }
 }

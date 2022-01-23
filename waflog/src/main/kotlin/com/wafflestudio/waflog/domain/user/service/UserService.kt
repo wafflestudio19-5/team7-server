@@ -7,6 +7,7 @@ import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
 import com.wafflestudio.waflog.domain.tag.dto.UserTagDto
+import com.wafflestudio.waflog.domain.tag.exception.TagNotFoundException
 import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
 import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
@@ -158,6 +159,31 @@ class UserService(
                 postTagRepository.getUserTag(targetUser.userId)
             }
         )
+    }
+
+    fun getUserTagPosts(
+        pageable: Pageable,
+        userId: String,
+        tagUrl: String,
+        user: User?
+    ): Page<PostDto.PostInUserPostsResponse> {
+        val targetUser = userRepository.findByUserId(userId)
+            ?: throw UserNotFoundException("User with id $userId does not exist")
+
+        val tag = tagRepository.findByUrl(tagUrl)
+            ?: throw TagNotFoundException("Tag with url $tagUrl does not exist")
+
+        val posts = user?.let {
+            if (user.id == targetUser.id) {
+                postRepository.searchByMyTag(pageable, tag.id, targetUser.userId)
+            } else {
+                postRepository.searchByUserTag(pageable, tag.id, targetUser.userId)
+            }
+        } ?: run {
+            postRepository.searchByUserTag(pageable, tag.id, targetUser.userId)
+        }
+
+        return posts.map { PostDto.PostInUserPostsResponse(it) }
     }
 
     fun updateUserImage(

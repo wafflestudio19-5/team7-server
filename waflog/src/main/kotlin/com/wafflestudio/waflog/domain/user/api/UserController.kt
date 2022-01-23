@@ -131,6 +131,19 @@ class UserController(
         return userService.getUserTags(userId, user)
     }
 
+    @GetMapping("/@{user_id}/tag/{tag_url}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserPostWithTag(
+        @PageableDefault(
+            size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @PathVariable("user_id") userId: String,
+        @PathVariable("tag_url") tagUrl: String,
+        @CurrentUser user: User?
+    ): Page<PostDto.PostInUserPostsResponse> {
+        return userService.getUserTagPosts(pageable, userId, tagUrl, user)
+    }
+
     @GetMapping("/setting")
     @ResponseStatus(HttpStatus.OK)
     fun getUserSetting(

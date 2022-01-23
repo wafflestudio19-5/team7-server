@@ -52,6 +52,30 @@ interface PostRepository : JpaRepository<Post, Long?> {
         @Param("tagId") tagId: Long
     ): Page<Post>
 
+    @Query(
+        "SELECT p FROM PostTag pt left join Post p ON pt.post.id = p.id " +
+            "WHERE (pt.tag.id = :tagId) AND (p.user.userId = :userId) " +
+            "ORDER BY p.createdAt DESC"
+    )
+    fun searchByMyTag(
+        pageable: Pageable,
+        @Param("tagId") tagId: Long,
+        @Param("userId") userId: String
+    ): Page<Post>
+
+    @Query(
+        "SELECT p FROM PostTag pt left join Post p ON pt.post.id = p.id " +
+            "WHERE (pt.tag.id = :tagId) AND " +
+            "(p.user.userId = :userId) AND " +
+            "(p.private = false) " +
+            "ORDER BY p.createdAt DESC"
+    )
+    fun searchByUserTag(
+        pageable: Pageable,
+        @Param("tagId") tagId: Long,
+        @Param("userId") userId: String
+    ): Page<Post>
+
     @Transactional
     @Modifying
     @Query("UPDATE Post p SET p.views = p.views + 1 WHERE p.id = :postId")

@@ -1,6 +1,9 @@
 package com.wafflestudio.waflog.domain.save.service
 
+import com.wafflestudio.waflog.domain.image.dto.ImageDto
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.image.repository.ImageRepository
+import com.wafflestudio.waflog.domain.image.service.ImageService
 import com.wafflestudio.waflog.domain.post.service.PostService
 import com.wafflestudio.waflog.domain.save.dto.SaveDto
 import com.wafflestudio.waflog.domain.save.exception.InvalidSaveContentException
@@ -19,7 +22,8 @@ class SaveService(
     private val postService: PostService,
     private val saveRepository: SaveRepository,
     private val imageRepository: ImageRepository,
-    private val saveTokenRepository: SaveTokenRepository
+    private val saveTokenRepository: SaveTokenRepository,
+    private val imageService: ImageService
 ) {
     fun writeSave(createRequest: SaveDto.CreateRequest, user: User) {
         val title = createRequest.title
@@ -49,5 +53,35 @@ class SaveService(
     fun getSave(token: String, user: User): Save {
         return saveTokenRepository.findByTokenAndSave_User(token, user)?.save
             ?: throw SaveNotFoundException("There is no save with token <$token>")
+    }
+
+    fun putSave(putRequest: SaveDto.PutRequest, user: User) {
+        val token = putRequest.token
+        val title = putRequest.title
+        if (title.isBlank()) throw InvalidSaveTitleException("제목 또는 내용이 비어있습니다.")
+        val content = putRequest.content
+        if (content.isBlank()) throw InvalidSaveContentException("제목 또는 내용이 비어있습니다.")
+
+        saveTokenRepository.findByTokenAndSave_User(token, user)?.save
+            ?.apply {
+                this.title = title
+                this.content = putRequest.content
+                this.saveTags = putRequest.tags
+            }
+            ?.also {
+                modifyImageList(putRequest.images, it, user)
+                    .map { image ->
+                        image.save = it
+                        imageRepository.save(image)
+                    }
+            }
+    }
+
+    private fun modifyImageList(images: List<ImageDto.S3Token>, save: Save, user: User): List<Image> {
+        save.images.map {
+            if (!images.contains(ImageDto.S3Token(it.token)))
+                imageService.removeImage(ImageDto.RemoveRequest(it.token), user)
+        }
+        return postService.formatImageList(images, user)
     }
 }

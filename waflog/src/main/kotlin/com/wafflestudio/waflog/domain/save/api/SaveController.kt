@@ -20,7 +20,13 @@ class SaveController(
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    fun putSave(@RequestParam("id") token: String, @CurrentUser user: User): SaveDto.Response {
+    fun getSave(@RequestParam("id") token: String, @CurrentUser user: User): SaveDto.Response {
         return SaveDto.Response(saveService.getSave(token, user))
+    }
+
+    @PutMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun putSave(@RequestBody putRequest: SaveDto.PutRequest, @CurrentUser user: User) {
+        saveService.putSave(putRequest, user)
     }
 }

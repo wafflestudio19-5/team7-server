@@ -11,6 +11,14 @@ class SaveDto {
         val tags: List<String>
     )
 
+    data class PutRequest(
+        val token: String,
+        val title: String,
+        val content: String,
+        val images: List<ImageDto.S3Token>,
+        val tags: List<String>
+    )
+
     data class Response(
         val title: String,
         val content: String,

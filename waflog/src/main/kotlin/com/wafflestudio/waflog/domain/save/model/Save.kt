@@ -15,15 +15,15 @@ class Save(
     val user: User,
 
     @field:NotBlank
-    val title: String,
+    var title: String,
 
     @field:NotBlank
-    val content: String,
+    var content: String,
 
     @OneToMany(mappedBy = "save")
-    val images: MutableList<Image>,
+    var images: MutableList<Image>,
 
     @ElementCollection
-    val saveTags: List<String>
+    var saveTags: List<String>
 
 ) : BaseTimeEntity()

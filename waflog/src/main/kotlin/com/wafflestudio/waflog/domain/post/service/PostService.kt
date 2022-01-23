@@ -85,7 +85,6 @@ class PostService(
         } else {
             postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
                 ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
-
         }
         applyUserReadPost(user, post)
         return PostDto.PageDetailResponse(post, user)

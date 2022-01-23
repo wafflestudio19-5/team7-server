@@ -79,8 +79,14 @@ class PostService(
     }
 
     fun getPostDetailWithURL(userId: String, postURL: String, user: User?): PostDto.PageDetailResponse {
-        val post = postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
-            ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+        val post = if (user?.userId == userId) {
+            postRepository.findByUser_UserIdAndUrl(userId, postURL)
+                ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+        } else {
+            postRepository.findByPrivateIsFalseAndUser_UserIdAndUrl(userId, postURL)
+                ?: throw PostNotFoundException("There is no post with url '@$userId/$postURL'")
+
+        }
         applyUserReadPost(user, post)
         return PostDto.PageDetailResponse(post, user)
     }

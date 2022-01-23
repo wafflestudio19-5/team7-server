@@ -12,7 +12,12 @@ import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
 import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
-import com.wafflestudio.waflog.domain.user.exception.*
+import com.wafflestudio.waflog.domain.user.exception.InvalidPublicEmailException
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
+import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
+import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
+import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
+import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
 import com.wafflestudio.waflog.domain.user.model.Series
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
@@ -24,6 +29,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.TransactionSystemException
 
 @Service
 class UserService(
@@ -66,7 +72,7 @@ class UserService(
     ): Page<PostDto.PostInUserPostsResponse> {
         val targetUser = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
-        var searchedPosts: List<Post> = targetUser.posts.filter {
+        val searchedPosts: List<Post> = targetUser.posts.filter {
             postFilter(it, keyword) && (!it.private || it.user == user)
         }
         val searchedPostsResponse = searchedPosts.map { post -> PostDto.PostInUserPostsResponse(post) }
@@ -192,7 +198,15 @@ class UserService(
         user.twitterId = socialInfoDto.twitterId
         user.homepage = socialInfoDto.homepage
 
-        return UserDto.SocialInfoDto(userRepository.save(user))
+        val updatedUser: User
+
+        try {
+            updatedUser = userRepository.save(user)
+        } catch (e: TransactionSystemException) {
+            throw InvalidPublicEmailException("Public email is invalid")
+        }
+
+        return UserDto.SocialInfoDto(updatedUser)
     }
 
     private fun <T> makePage(pageable: Pageable, contents: List<T>): Page<T> {

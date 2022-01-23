@@ -29,4 +29,10 @@ class SaveController(
     fun putSave(@RequestBody putRequest: SaveDto.PutRequest, @CurrentUser user: User) {
         saveService.putSave(putRequest, user)
     }
+
+    @DeleteMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteSave(@RequestParam("id") token: String, @CurrentUser user: User) {
+        saveService.deleteSave(token, user)
+    }
 }

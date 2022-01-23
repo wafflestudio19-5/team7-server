@@ -77,11 +77,25 @@ class SaveService(
             }
     }
 
+    fun deleteSave(token: String, user: User) {
+        saveTokenRepository.findByTokenAndSave_User(token, user)
+            ?.let {
+                deleteSaveImage(it.save, user)
+                saveTokenRepository.deleteById(it.id)
+                saveRepository.deleteById(it.save.id)
+            }
+    }
+
     private fun modifyImageList(images: List<ImageDto.S3Token>, save: Save, user: User): List<Image> {
         save.images.map {
             if (!images.contains(ImageDto.S3Token(it.token)))
                 imageService.removeImage(ImageDto.RemoveRequest(it.token), user)
         }
         return postService.formatImageList(images, user)
+    }
+
+    private fun deleteSaveImage(save: Save, user: User) {
+        imageRepository.findAllByUser_UserIdAndSave_Id(user.userId, save.id)
+            .map { imageService.removeImage(ImageDto.RemoveRequest(it.token), user) }
     }
 }

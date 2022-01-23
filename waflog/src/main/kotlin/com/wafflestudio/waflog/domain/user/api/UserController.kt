@@ -1,17 +1,28 @@
 package com.wafflestudio.waflog.domain.user.api
 
 import com.wafflestudio.waflog.domain.post.dto.PostDto
+import com.wafflestudio.waflog.domain.tag.dto.UserTagDto
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
 import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.service.UserService
 import com.wafflestudio.waflog.global.auth.CurrentUser
+import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -109,6 +120,15 @@ class UserController(
         @CurrentUser user: User
     ) {
         return userService.putUserSeries(seriesName, putRequest, user)
+    }
+
+    @GetMapping("/@{user_id}/tags")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserTags(
+        @PathVariable("user_id") userId: String,
+        @CurrentUser user: User?
+    ): ListResponse<UserTagDto> {
+        return userService.getUserTags(userId, user)
     }
 
     @GetMapping("/setting")

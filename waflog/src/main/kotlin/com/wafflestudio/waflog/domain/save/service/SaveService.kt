@@ -75,6 +75,7 @@ class SaveService(
                         imageRepository.save(image)
                     }
             }
+            ?: throw SaveNotFoundException("There is no save with id <$token>")
     }
 
     fun deleteSave(token: String, user: User) {

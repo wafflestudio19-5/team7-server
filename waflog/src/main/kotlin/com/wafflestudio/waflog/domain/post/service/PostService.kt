@@ -204,8 +204,8 @@ class PostService(
                         image.post = it
                         imageRepository.save(image)
                     }
-                    ?: throw PostNotFoundException("There is no post with token <$token>")
             }
+            ?: throw PostNotFoundException("There is no post with id <$token>")
     }
 
     fun generatePostToken(url: String, user: User): String {

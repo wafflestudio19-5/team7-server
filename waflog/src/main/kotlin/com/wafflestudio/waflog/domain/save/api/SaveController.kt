@@ -4,6 +4,10 @@ import com.wafflestudio.waflog.domain.save.dto.SaveDto
 import com.wafflestudio.waflog.domain.save.service.SaveService
 import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.global.auth.CurrentUser
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -22,6 +26,17 @@ class SaveController(
     @ResponseStatus(HttpStatus.OK)
     fun getSave(@RequestParam("id") token: String, @CurrentUser user: User): SaveDto.Response {
         return SaveDto.Response(saveService.getSave(token, user))
+    }
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    fun getSaves(
+        @PageableDefault(
+            size = 30, sort = ["createdAt"], direction = Sort.Direction.DESC
+        ) pageable: Pageable,
+        @CurrentUser user: User
+    ): Page<SaveDto.SimpleResponse> {
+        return saveService.getSaves(pageable, user)
     }
 
     @PutMapping("")

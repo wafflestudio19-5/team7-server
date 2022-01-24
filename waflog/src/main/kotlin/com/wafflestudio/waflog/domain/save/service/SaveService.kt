@@ -14,6 +14,8 @@ import com.wafflestudio.waflog.domain.save.model.SaveToken
 import com.wafflestudio.waflog.domain.save.repository.SaveRepository
 import com.wafflestudio.waflog.domain.save.repository.SaveTokenRepository
 import com.wafflestudio.waflog.domain.user.model.User
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -25,6 +27,11 @@ class SaveService(
     private val saveTokenRepository: SaveTokenRepository,
     private val imageService: ImageService
 ) {
+    fun getSaves(pageable: Pageable, user: User): Page<SaveDto.SimpleResponse> {
+        return saveTokenRepository.findAllBySave_User_Id(pageable, user.id)
+            .map { SaveDto.SimpleResponse(it) }
+    }
+
     fun writeSave(createRequest: SaveDto.CreateRequest, user: User) {
         val title = createRequest.title
         if (title.isBlank()) throw InvalidSaveTitleException("제목 또는 내용이 비어있습니다.")

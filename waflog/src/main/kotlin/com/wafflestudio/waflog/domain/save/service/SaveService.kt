@@ -57,9 +57,11 @@ class SaveService(
             }
     }
 
-    fun getSave(token: String, user: User): Save {
-        return saveTokenRepository.findByTokenAndSave_User(token, user)?.save
-            ?: throw SaveNotFoundException("There is no save with token <$token>")
+    fun getSave(token: String, user: User): SaveDto.Response {
+        return SaveDto.Response(
+            saveTokenRepository.findByTokenAndSave_User(token, user)?.save
+                ?: throw SaveNotFoundException("There is no save with token <$token>")
+        )
     }
 
     fun putSave(putRequest: SaveDto.PutRequest, user: User) {

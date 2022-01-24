@@ -8,6 +8,8 @@ import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
 import com.wafflestudio.waflog.domain.save.repository.SaveRepository
 import com.wafflestudio.waflog.domain.save.repository.SaveTokenRepository
+import com.wafflestudio.waflog.domain.tag.dto.UserTagDto
+import com.wafflestudio.waflog.domain.tag.exception.TagNotFoundException
 import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
 import com.wafflestudio.waflog.domain.tag.repository.TagRepository
 import com.wafflestudio.waflog.domain.user.dto.SeriesDto
@@ -25,6 +27,7 @@ import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
 import com.wafflestudio.waflog.domain.user.repository.UserRepository
 import com.wafflestudio.waflog.global.auth.repository.VerificationTokenRepository
+import com.wafflestudio.waflog.global.common.dto.ListResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -91,12 +94,6 @@ class UserService(
             .let { makePage(pageable, it) }
     }
 
-    private fun postFilter(post: Post, keyword: String?): Boolean {
-        return keyword?.let {
-            post.title.contains(it) || post.content.contains(it)
-        } ?: true
-    }
-
     fun getUserLongIntro(userId: String): UserDto.UserLongIntroResponse {
         val user = userRepository.findByUserId(userId)
             ?: throw UserNotFoundException("There is no user id $userId")
@@ -146,6 +143,51 @@ class UserService(
                 postRepository.save(it.first)
             }
             ?: throw SeriesNotFoundException("There is no series with user id <${user.userId}> and name <$seriesName>")
+    }
+
+    fun getUserTags(
+        userId: String,
+        user: User?
+    ): ListResponse<UserTagDto> {
+        val targetUser = userRepository.findByUserId(userId)
+            ?: throw UserNotFoundException("User with id $userId does not exist")
+
+        return ListResponse(
+            user?.let {
+                if (user.id == targetUser.id) {
+                    postTagRepository.getMyTag(targetUser.userId)
+                } else {
+                    postTagRepository.getUserTag(targetUser.userId)
+                }
+            } ?: run {
+                postTagRepository.getUserTag(targetUser.userId)
+            }
+        )
+    }
+
+    fun getUserTagPosts(
+        pageable: Pageable,
+        userId: String,
+        tagUrl: String,
+        user: User?
+    ): Page<PostDto.PostInUserPostsResponse> {
+        val targetUser = userRepository.findByUserId(userId)
+            ?: throw UserNotFoundException("User with id $userId does not exist")
+
+        val tag = tagRepository.findByUrl(tagUrl)
+            ?: throw TagNotFoundException("Tag with url $tagUrl does not exist")
+
+        val posts = user?.let {
+            if (user.id == targetUser.id) {
+                postRepository.searchByMyTag(pageable, tag.id, targetUser.userId)
+            } else {
+                postRepository.searchByUserTag(pageable, tag.id, targetUser.userId)
+            }
+        } ?: run {
+            postRepository.searchByUserTag(pageable, tag.id, targetUser.userId)
+        }
+
+        return posts.map { PostDto.PostInUserPostsResponse(it) }
     }
 
     fun updateUserImage(
@@ -207,6 +249,12 @@ class UserService(
         }
 
         return UserDto.SocialInfoDto(updatedUser)
+    }
+
+    private fun postFilter(post: Post, keyword: String?): Boolean {
+        return keyword?.let {
+            post.title.contains(it) || post.content.contains(it)
+        } ?: true
     }
 
     private fun <T> makePage(pageable: Pageable, contents: List<T>): Page<T> {

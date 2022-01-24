@@ -35,7 +35,7 @@ class TagController(
         ) pageable: Pageable,
         @PathVariable("tag_url") tagUrl: String,
         @CurrentUser user: User?
-    ): Page<PostDto.MainPageResponse> {
+    ): Page<PostDto.SearchResultResponse> {
         return tagService.getPostsWithTag(pageable, tagUrl, user)
     }
 }

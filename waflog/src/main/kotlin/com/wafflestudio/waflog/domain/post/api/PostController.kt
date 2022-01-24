@@ -81,7 +81,7 @@ class PostController(
             size = 30, sort = ["trending"], direction = Sort.Direction.DESC
         ) pageable: Pageable,
         @RequestParam("keyword", required = true) keyword: String
-    ): Page<PostDto.MainPageResponse> {
+    ): Page<PostDto.SearchResultResponse> {
         return postService.searchPosts(pageable, keyword)
     }
 

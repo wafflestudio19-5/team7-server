@@ -34,6 +34,32 @@ class PostDto {
         )
     }
 
+    data class SearchResultResponse(
+        val id: Long,
+        val user: UserDto.SimpleResponse,
+        val title: String,
+        val url: String,
+        val tags: List<TagDto.TagResponse>,
+        val thumbnail: String, // thumbnail file url
+        val summary: String,
+        val createAt: LocalDateTime?,
+        val likes: Int, // num of likes
+        val comments: Int // num of comments
+    ) {
+        constructor(post: Post) : this(
+            id = post.id,
+            user = UserDto.SimpleResponse(post.user),
+            title = post.title,
+            url = post.url,
+            tags = post.postTags.map { TagDto.TagResponse(it.tag) },
+            thumbnail = post.thumbnail,
+            summary = post.summary,
+            createAt = post.createdAt,
+            likes = post.likedUser.size,
+            comments = post.comments.size
+        )
+    }
+
     data class PageDetailResponse(
         val id: Long,
         val user: UserDto.UserInPostDetailResponse,

@@ -62,10 +62,10 @@ class PostService(
         return posts.map { post -> PostDto.MainPageResponse(post) }
     }
 
-    fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.MainPageResponse> {
+    fun searchPosts(pageable: Pageable, keyword: String): Page<PostDto.SearchResultResponse> {
         return if (keyword != "") {
             val posts = postRepository.searchByKeyword(pageable, keyword, keyword, keyword)
-            posts.map { post -> PostDto.MainPageResponse(post) }
+            posts.map { post -> PostDto.SearchResultResponse(post) }
         } else {
             Page.empty()
         }

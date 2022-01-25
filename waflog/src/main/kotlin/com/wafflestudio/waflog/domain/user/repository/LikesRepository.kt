@@ -20,6 +20,9 @@ interface LikesRepository : JpaRepository<Likes, Long?> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Likes l WHERE l.likedPost.user.id = :userId")
+    @Query(
+        "DELETE FROM Likes l WHERE l.likedPost.id in " +
+            "(SELECT p.id FROM Post p WHERE (p.user.id = :userId))"
+    )
     fun deleteMappingByUserId(@Param("userId") userId: Long)
 }

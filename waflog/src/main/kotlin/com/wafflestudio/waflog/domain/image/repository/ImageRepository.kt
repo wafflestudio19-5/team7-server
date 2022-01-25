@@ -10,4 +10,6 @@ interface ImageRepository : JpaRepository<Image, Long?> {
     fun findAllByUser_UserIdAndPost_Id(userId: String, id: Long): List<Image>
 
     fun findAllByUser_Id(userId: Long): List<Image>
+
+    fun findAllByUser_UserIdAndSave_Id(userId: String, id: Long): List<Image>
 }

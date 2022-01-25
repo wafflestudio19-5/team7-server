@@ -24,7 +24,7 @@ class ImageService(
         val fileName = image.originalFilename!!
         if (listOf("jpg", "JPG", "jpeg", "JPEG", "gif", "GIF", "png", "PNG").none { it == fileName.split(".").last() })
             throw InvalidImageFormException("this format is not allowed to upload")
-        val uploadImage = Image(user, null, fileToken, fileName)
+        val uploadImage = Image(user, null, null, fileToken, fileName)
         val folderName = user.userId
         return s3Service.uploadTo(image, folderName, fileToken, fileName)
             .also { imageRepository.save(uploadImage) }

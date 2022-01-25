@@ -6,6 +6,8 @@ import com.wafflestudio.waflog.domain.post.model.Post
 import com.wafflestudio.waflog.domain.post.repository.CommentRepository
 import com.wafflestudio.waflog.domain.post.repository.PostRepository
 import com.wafflestudio.waflog.domain.post.repository.PostTokenRepository
+import com.wafflestudio.waflog.domain.save.repository.SaveRepository
+import com.wafflestudio.waflog.domain.save.repository.SaveTokenRepository
 import com.wafflestudio.waflog.domain.tag.dto.UserTagDto
 import com.wafflestudio.waflog.domain.tag.exception.TagNotFoundException
 import com.wafflestudio.waflog.domain.tag.repository.PostTagRepository
@@ -44,7 +46,9 @@ class UserService(
     private val tagRepository: TagRepository,
     private val likesRepository: LikesRepository,
     private val verificationTokenRepository: VerificationTokenRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val saveTokenRepository: SaveTokenRepository,
+    private val saveRepository: SaveRepository
 ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
@@ -264,6 +268,7 @@ class UserService(
     }
 
     fun withdrawUser(user: User) {
+        // delete user's images
         imageService.removeAllUserImages(user)
 
         // delete user's post
@@ -274,6 +279,10 @@ class UserService(
         postTagRepository.deleteMappingByUserId(user.id)
         postRepository.deleteAllUserPosts(user.id)
         tagRepository.deleteUnusedTags()
+
+        // delete user's saves
+        saveTokenRepository.deleteAllMappingByUserId(user.id)
+        saveRepository.deleteAllUserSaves(user.id)
 
         commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
         likesRepository.deleteAllByUserId(user.id) // delete all likes by user

@@ -1,11 +1,9 @@
 package com.wafflestudio.waflog.domain.save.model
 
+import com.wafflestudio.waflog.domain.image.model.Image
 import com.wafflestudio.waflog.domain.model.BaseTimeEntity
 import com.wafflestudio.waflog.domain.user.model.User
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -17,9 +15,15 @@ class Save(
     val user: User,
 
     @field:NotBlank
-    val title: String,
+    var title: String,
 
     @field:NotBlank
-    val content: String,
+    var content: String,
+
+    @OneToMany(mappedBy = "save")
+    var images: MutableList<Image>,
+
+    @ElementCollection
+    var saveTags: List<String>
 
 ) : BaseTimeEntity()

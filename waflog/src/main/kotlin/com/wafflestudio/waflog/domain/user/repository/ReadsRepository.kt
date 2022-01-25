@@ -17,6 +17,9 @@ interface ReadsRepository : JpaRepository<Reads, Long?> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Reads r WHERE r.readPost.user.id = :userId")
+    @Query(
+        "DELETE FROM Reads r WHERE r.readPost.id in " +
+            "(SELECT rp.id FROM Post rp WHERE (rp.user.id = :userId))"
+    )
     fun deleteMappingByUserId(@Param("userId") userId: Long)
 }

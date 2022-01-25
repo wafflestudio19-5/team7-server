@@ -264,6 +264,8 @@ class UserService(
     }
 
     fun withdrawUser(user: User) {
+        imageService.removeAllUserImages(user)
+
         // delete user's post
         postTokenRepository.deleteAllMappingByUserId(user.id)
         likesRepository.deleteMappingByUserId(user.id)
@@ -274,8 +276,7 @@ class UserService(
         tagRepository.deleteUnusedTags()
 
         commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
-        imageService.removeAllUserImages(user) // delete all image in user's info
-        likesRepository.deleteMappingByUserId(user.id) // delete all likes by user
+        likesRepository.deleteAllByUserId(user.id) // delete all likes by user
         verificationTokenRepository.findByEmail(user.email)?.let {
             verificationTokenRepository.deleteById(it.id) // delete user token
         }

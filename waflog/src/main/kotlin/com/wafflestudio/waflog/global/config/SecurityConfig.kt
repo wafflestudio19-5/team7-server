@@ -71,7 +71,7 @@ class SecurityConfig(
             .antMatchers(
                 HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/user/login", "/api/v1/auth/user/info"
             ).permitAll()
-            .antMatchers(HttpMethod.GET, "/api/v1/auth/verify").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/v1/auth/verify").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/verify/login").permitAll()
             .antMatchers(HttpMethod.POST, "/api/v1/auth/verify/logout").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/recent", "/api/v1/post/trend").permitAll()

@@ -44,6 +44,9 @@ interface CommentRepository : JpaRepository<Comment, Long?> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Comment c WHERE (c.post.user.id = :userId)")
+    @Query(
+        "DELETE FROM Comment c WHERE c.post.id in " +
+            "(SELECT p.id FROM Post p WHERE (p.user.id = :userId))"
+    )
     fun deleteAllCommentMappingByUserId(@Param("userId") userId: Long)
 }

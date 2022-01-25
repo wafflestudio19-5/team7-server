@@ -14,7 +14,8 @@ interface PostTokenRepository : JpaRepository<PostToken, Long?> {
     @Transactional
     @Modifying
     @Query(
-        "DELETE FROM PostToken pt WHERE (pt.post.user.id = :userId)"
+        "DELETE FROM PostToken pt WHERE pt.post.id in " +
+            "(SELECT p.id FROM Post p WHERE (p.user.id = :userId))"
     )
     fun deleteAllMappingByUserId(@Param("userId") userId: Long)
 }

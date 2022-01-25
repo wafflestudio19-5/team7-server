@@ -84,7 +84,7 @@ interface PostRepository : JpaRepository<Post, Long?> {
     @Transactional
     @Modifying
     @Query(
-        "DELETE FROM Post p WHERE (p.user.id = :user_id)"
+        "DELETE FROM Post p WHERE (p.user.id = :userId)"
     )
-    fun deleteAllUserPosts(@Param("user_id") userId: Long)
+    fun deleteAllUserPosts(@Param("userId") userId: Long)
 }

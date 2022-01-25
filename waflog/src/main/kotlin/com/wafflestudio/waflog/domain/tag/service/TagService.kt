@@ -24,7 +24,7 @@ class TagService(
         pageable: Pageable,
         tagUrl: String,
         user: User?
-    ): Page<PostDto.MainPageResponse> {
+    ): Page<PostDto.SearchResultResponse> {
         val tag = tagRepository.findByUrl(tagUrl)
             ?: throw TagNotFoundException("Tag with url <$tagUrl> does not exist")
 
@@ -34,6 +34,6 @@ class TagService(
             postRepository.searchByTagOnLoggedOut(pageable, tag.id)
         }
 
-        return posts.map { PostDto.MainPageResponse(it) }
+        return posts.map { PostDto.SearchResultResponse(it) }
     }
 }

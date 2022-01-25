@@ -78,7 +78,12 @@ class SecurityConfig(
             .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}", "/api/v1/post/search").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/@**/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/post/{\\d+}/like/current").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/v1/user/@**", "/api/v1/user/@**/search").permitAll()
+            .antMatchers(
+                HttpMethod.GET, "/api/v1/user/@**", "/api/v1/user/@**/search"
+            ).permitAll()
+            .antMatchers(
+                HttpMethod.GET, "/api/v1/user/@**/tags", "/api/v1/user/@**/tag/**"
+            ).permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/user/@**/about", "/api/v1/user/@**/series").permitAll()
             .antMatchers(HttpMethod.GET, "/").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/tag", "/api/v1/tag/**").permitAll()

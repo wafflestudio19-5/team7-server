@@ -111,7 +111,7 @@ class PostService(
             ?.also { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
-            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+            seriesRepository.findByNameAndUser(it, user) ?: throw SeriesNotFoundException("series not found")
         }
         val seriesOrder = series?.let { series.posts.size + 1 }
         val tags = createRequest.tags.map { formatTagNameUrl(it) }.map { (name, url) ->
@@ -154,7 +154,7 @@ class PostService(
         var url = formatUrl(putRequest.url, title)
         val seriesName = putRequest.seriesName
         val series = seriesName?.let {
-            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+            seriesRepository.findByNameAndUser(it, user) ?: throw SeriesNotFoundException("series not found")
         }
         var seriesOrder = series?.let { series.posts.size + 1 }
 

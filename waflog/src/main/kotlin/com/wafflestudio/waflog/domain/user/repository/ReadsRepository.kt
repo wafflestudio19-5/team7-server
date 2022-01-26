@@ -29,5 +29,4 @@ interface ReadsRepository : JpaRepository<Reads, Long?> {
         "DELETE FROM Reads r WHERE r.user.id = :userId"
     )
     fun deleteMappingByUserId(@Param("userId") userId: Long)
-
 }

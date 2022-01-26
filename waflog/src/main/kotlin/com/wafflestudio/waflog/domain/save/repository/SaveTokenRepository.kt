@@ -19,7 +19,8 @@ interface SaveTokenRepository : JpaRepository<SaveToken, Long?> {
     @Transactional
     @Modifying
     @Query(
-        "DELETE FROM SaveToken st WHERE (st.save.user.id = :user_id)"
+        "DELETE FROM SaveToken st WHERE st.save.id in " +
+            "(SELECT s.id FROM Save s WHERE (s.user.id = :userId))"
     )
-    fun deleteAllMappingByUserId(@Param("user_id") id: Long)
+    fun deleteAllMappingByUserId(@Param("userId") id: Long)
 }

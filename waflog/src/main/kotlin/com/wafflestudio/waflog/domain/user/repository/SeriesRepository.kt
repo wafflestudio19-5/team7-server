@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface SeriesRepository : JpaRepository<Series, Long?> {
-    fun findByName(name: String): Series?
 
     @Query("SELECT s FROM Series s WHERE s.name = :name AND s.user = :user")
     fun findByNameAndUser(@Param("name") name: String, @Param("user") user: User): Series?

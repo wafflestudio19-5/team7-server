@@ -161,4 +161,12 @@ class UserDto {
             homepage = user.homepage
         )
     }
+
+    data class CommentNotificationDto(
+        val commentNotification: Boolean
+    ) {
+        constructor(user: User) : this(
+            commentNotification = user.commentNotification
+        )
+    }
 }

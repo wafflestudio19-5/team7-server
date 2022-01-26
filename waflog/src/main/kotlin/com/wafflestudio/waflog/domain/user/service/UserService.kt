@@ -251,6 +251,15 @@ class UserService(
         return UserDto.SocialInfoDto(updatedUser)
     }
 
+    fun updateCommentNotification(
+        commentNotificationDto: UserDto.CommentNotificationDto,
+        user: User
+    ): UserDto.CommentNotificationDto {
+        user.commentNotification = commentNotificationDto.commentNotification
+
+        return UserDto.CommentNotificationDto(userRepository.save(user))
+    }
+
     private fun postFilter(post: Post, keyword: String?): Boolean {
         return keyword?.let {
             post.title.contains(it) || post.content.contains(it)

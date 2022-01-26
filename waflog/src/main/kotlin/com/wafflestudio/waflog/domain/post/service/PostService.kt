@@ -27,13 +27,18 @@ import com.wafflestudio.waflog.domain.user.model.User
 import com.wafflestudio.waflog.domain.user.repository.LikesRepository
 import com.wafflestudio.waflog.domain.user.repository.ReadsRepository
 import com.wafflestudio.waflog.domain.user.repository.SeriesRepository
+import com.wafflestudio.waflog.global.auth.JwtTokenProvider
 import com.wafflestudio.waflog.global.common.dto.ListResponse
+import com.wafflestudio.waflog.global.mail.dto.MailDto
+import com.wafflestudio.waflog.global.mail.service.MailContentBuilder
+import com.wafflestudio.waflog.global.mail.service.MailService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -47,7 +52,10 @@ class PostService(
     private val imageRepository: ImageRepository,
     private val imageService: ImageService,
     private val tagRepository: TagRepository,
-    private val postTagRepository: PostTagRepository
+    private val postTagRepository: PostTagRepository,
+    private val mailContentBuilder: MailContentBuilder,
+    private val mailService: MailService,
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
     fun getRecentPosts(pageable: Pageable, user: User?): Page<PostDto.MainPageResponse> {
         val posts: Page<Post> =
@@ -291,6 +299,28 @@ class PostService(
         return PostDto.getCommentListResponse(post.comments)
     }
 
+    fun emailNotification(postId: Long, commentId: Long, user: User) {
+
+        val (post, comment) = returnPostAndComment(postId, commentId, user)
+
+        val jwt = jwtTokenProvider.generateToken(post.user.email)
+        val link1 = "https://waflog-web.kro.kr/@${post.user.userId}/${post.url}"
+        val link2 = "https://waflog-web.kro.kr/common/email/unsubscribe?token=$jwt"
+        val var1 = post.title
+        val var2 = comment.user!!.userId
+        val var3 = comment.user!!.image
+        val var4 = comment.content
+        val var5 = comment.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+
+        val message = mailContentBuilder.build(
+            listOf(link1, link2),
+            listOf(var1, var2, var3, var4, var5),
+            "comment-notification"
+        )
+        val mail = MailDto.Email(post.user.email, "Re:  ${post.title} | 댓글 알림", message, false)
+        mailService.sendMail(mail)
+    }
+
     fun modifyComment(
         postId: Long,
         commentId: Long,
@@ -298,17 +328,7 @@ class PostService(
         user: User
     ): ListResponse<CommentDto.RootCommentResponse> {
 
-        val post = postRepository.findByIdOrNull(postId)
-            ?: throw PostNotFoundException("Post with id $postId does not exist")
-
-        val comment = commentRepository.findByIdOrNull(commentId)
-            ?: throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
-
-        if (comment.post.id != post.id)
-            throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
-
-        if (comment.user?.id != user.id)
-            throw CommentNotWrittenByUserException("You did not write this comment")
+        val (post, comment) = returnPostAndComment(postId, commentId, user)
 
         comment.content = modifyRequest.content
 
@@ -323,17 +343,7 @@ class PostService(
         user: User
     ): ListResponse<CommentDto.RootCommentResponse> {
 
-        val post = postRepository.findByIdOrNull(postId)
-            ?: throw PostNotFoundException("Post with id $postId does not exist")
-
-        val comment = commentRepository.findByIdOrNull(commentId)
-            ?: throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
-
-        if (comment.post.id != post.id)
-            throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
-
-        if (comment.user?.id != user.id)
-            throw CommentNotWrittenByUserException("You did not write this comment")
+        val (post, comment) = returnPostAndComment(postId, commentId, user)
 
         if (comment.depth == 0) { // if comment to delete is root
             if (post.comments.any { it.depth > 0 && it.rootComment == comment.id }) {
@@ -430,5 +440,21 @@ class PostService(
         val url = name.replace(" ", "-").replace(blacklist, "")
 
         return Pair(formattedName, url)
+    }
+
+    private fun returnPostAndComment(postId: Long, commentId: Long, user: User): Pair<Post, Comment> {
+        val post = postRepository.findByIdOrNull(postId)
+            ?: throw PostNotFoundException("Post with id $postId does not exist")
+
+        val comment = commentRepository.findByIdOrNull(commentId)
+            ?: throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
+
+        if (comment.post.id != post.id)
+            throw CommentNotFoundException("Comment with id $commentId does not exist in the post")
+
+        if (comment.user?.id != user.id)
+            throw CommentNotWrittenByUserException("You did not write this comment")
+
+        return Pair(post, comment)
     }
 }

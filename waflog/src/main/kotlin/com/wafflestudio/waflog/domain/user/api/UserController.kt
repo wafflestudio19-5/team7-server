@@ -193,4 +193,13 @@ class UserController(
     ): UserDto.SocialInfoDto {
         return userService.updateUserSocialInfo(socialInfoDto, user)
     }
+
+    @PutMapping("/commentNotification")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserCommentNotification(
+        @RequestBody commentNotificationDto: UserDto.CommentNotificationDto,
+        @CurrentUser user: User
+    ): UserDto.CommentNotificationDto {
+        return userService.updateCommentNotification(commentNotificationDto, user)
+    }
 }

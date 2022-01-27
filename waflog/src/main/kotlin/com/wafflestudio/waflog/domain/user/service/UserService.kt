@@ -49,7 +49,7 @@ class UserService(
     private val commentRepository: CommentRepository,
     private val saveTokenRepository: SaveTokenRepository,
     private val saveRepository: SaveRepository
-    ) {
+) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
         seriesRepository.findByNameAndUser(seriesName, user)

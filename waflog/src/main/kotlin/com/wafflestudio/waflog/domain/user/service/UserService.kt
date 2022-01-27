@@ -49,7 +49,7 @@ class UserService(
     private val commentRepository: CommentRepository,
     private val saveTokenRepository: SaveTokenRepository,
     private val saveRepository: SaveRepository
-) {
+    ) {
     fun addSeries(createRequest: SeriesDto.CreateRequest, user: User) {
         val seriesName = createRequest.name
         seriesRepository.findByNameAndUser(seriesName, user)
@@ -291,6 +291,8 @@ class UserService(
         // delete user's saves
         saveTokenRepository.deleteAllMappingByUserId(user.id)
         saveRepository.deleteAllUserSaves(user.id)
+
+        seriesRepository.deleteMappingByUserId(user.id)
 
         verificationTokenRepository.findByEmail(user.email)?.let {
             verificationTokenRepository.deleteById(it.id) // delete user token

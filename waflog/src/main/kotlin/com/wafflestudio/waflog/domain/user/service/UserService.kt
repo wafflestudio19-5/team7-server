@@ -273,19 +273,25 @@ class UserService(
 
         // delete user's post
         postTokenRepository.deleteAllMappingByUserId(user.id)
+
         likesRepository.deleteMappingByUserId(user.id)
+        likesRepository.deleteMappingByUserIdOfPost(user.id)
+
         readsRepository.deleteMappingByUserId(user.id)
+        readsRepository.deleteMappingByUserIdOfPost(user.id)
+
         commentRepository.deleteAllCommentMappingByUserId(user.id)
+        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
+
         postTagRepository.deleteMappingByUserId(user.id)
-        postRepository.deleteAllUserPosts(user.id)
         tagRepository.deleteUnusedTags()
+
+        postRepository.deleteAllUserPosts(user.id)
 
         // delete user's saves
         saveTokenRepository.deleteAllMappingByUserId(user.id)
         saveRepository.deleteAllUserSaves(user.id)
 
-        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
-        likesRepository.deleteAllByUserId(user.id) // delete all likes by user
         verificationTokenRepository.findByEmail(user.email)?.let {
             verificationTokenRepository.deleteById(it.id) // delete user token
         }

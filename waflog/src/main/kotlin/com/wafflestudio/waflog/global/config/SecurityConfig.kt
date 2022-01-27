@@ -84,7 +84,8 @@ class SecurityConfig(
             .antMatchers(
                 HttpMethod.GET, "/api/v1/user/@**/tags", "/api/v1/user/@**/tag/**"
             ).permitAll()
-            .antMatchers(HttpMethod.GET, "/api/v1/user/@**/about", "/api/v1/user/@**/series").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/user/@**/about").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/user/@**/series", "/api/v1/user/@**/series/**").permitAll()
             .antMatchers(HttpMethod.GET, "/").permitAll()
             .antMatchers(HttpMethod.GET, "/api/v1/tag", "/api/v1/tag/**").permitAll()
             .anyRequest().authenticated()

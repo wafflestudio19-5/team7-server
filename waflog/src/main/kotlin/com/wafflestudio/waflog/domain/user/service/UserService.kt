@@ -292,6 +292,8 @@ class UserService(
         saveTokenRepository.deleteAllMappingByUserId(user.id)
         saveRepository.deleteAllUserSaves(user.id)
 
+        seriesRepository.deleteMappingByUserId(user.id)
+
         verificationTokenRepository.findByEmail(user.email)?.let {
             verificationTokenRepository.deleteById(it.id) // delete user token
         }

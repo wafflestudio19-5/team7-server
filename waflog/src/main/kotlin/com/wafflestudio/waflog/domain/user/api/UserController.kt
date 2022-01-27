@@ -101,7 +101,7 @@ class UserController(
         return userService.getUserSeries(userId, pageable)
     }
 
-    @GetMapping("/@{user_id}/series/@{series_name}")
+    @GetMapping("/@{user_id}/series/{series_name}")
     @ResponseStatus(HttpStatus.OK)
     fun getUserSeriesPosts(
         @PageableDefault(size = 30, sort = ["order"]) pageable: Pageable,
@@ -112,7 +112,7 @@ class UserController(
         return userService.getUserSeriesPosts(userId, seriesName, pageable, user)
     }
 
-    @PutMapping("/series/@{series_name}")
+    @PutMapping("/series/{series_name}")
     @ResponseStatus(HttpStatus.OK)
     fun putUserSeries(
         @PathVariable("series_name") seriesName: String,

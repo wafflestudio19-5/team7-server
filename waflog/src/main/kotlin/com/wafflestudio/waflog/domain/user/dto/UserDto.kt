@@ -89,6 +89,10 @@ class UserDto {
         )
     }
 
+    data class LongIntroModifyRequest(
+        val longIntro: String
+    )
+
     data class VerifyRequest(
         val email: String,
         val token: String

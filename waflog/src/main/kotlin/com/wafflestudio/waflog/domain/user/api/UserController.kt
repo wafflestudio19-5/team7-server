@@ -90,6 +90,15 @@ class UserController(
         return userService.getUserLongIntro(userId)
     }
 
+    @PutMapping("/about")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateUserLongIntro(
+        @RequestBody longIntroModifyRequest: UserDto.LongIntroModifyRequest,
+        @CurrentUser user: User
+    ): UserDto.UserLongIntroResponse {
+        return userService.updateUserLongIntro(longIntroModifyRequest, user)
+    }
+
     @GetMapping("/@{user_id}/series")
     @ResponseStatus(HttpStatus.OK)
     fun getUserSeries(

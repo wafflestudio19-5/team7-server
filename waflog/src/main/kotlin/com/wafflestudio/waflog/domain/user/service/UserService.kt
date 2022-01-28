@@ -17,6 +17,7 @@ import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.exception.InvalidPublicEmailException
 import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
 import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
+import com.wafflestudio.waflog.domain.user.exception.LongIntroExceedMaxLengthException
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
 import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
@@ -188,6 +189,20 @@ class UserService(
         }
 
         return posts.map { PostDto.PostInUserPostsResponse(it) }
+    }
+
+    fun updateUserLongIntro(
+        longIntroModifyRequest: UserDto.LongIntroModifyRequest,
+        user: User
+    ): UserDto.UserLongIntroResponse {
+        val longIntro = longIntroModifyRequest.longIntro
+
+        if (longIntro.length > 255)
+            throw LongIntroExceedMaxLengthException("Long intro must be less than 256 letters")
+
+        user.longIntro = longIntro
+
+        return UserDto.UserLongIntroResponse(userRepository.save(user))
     }
 
     fun updateUserImage(

@@ -120,6 +120,10 @@ class UserService(
                     ?: throw SeriesNotFoundException("There is no series with user id <$userId> and name <$seriesName>")
             }
             ?.filter { !it.private || it.user == user }
+            ?.mapIndexed { index, post ->
+                post.shownSeriesOrder = index + 1
+                postRepository.save(post)
+            }
             ?.map { PostDto.SeriesResponse(it) }
             ?: throw UserNotFoundException("There is no user id $userId")
         return makePage(pageable, seriesPosts)

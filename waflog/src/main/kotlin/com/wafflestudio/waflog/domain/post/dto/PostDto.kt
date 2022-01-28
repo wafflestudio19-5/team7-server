@@ -195,7 +195,7 @@ class PostDto {
         val createAt: LocalDateTime?
     ) {
         constructor(post: Post) : this(
-            order = post.seriesOrder!!,
+            order = post.shownSeriesOrder,
             title = post.title,
             thumbnail = post.thumbnail,
             url = post.url,

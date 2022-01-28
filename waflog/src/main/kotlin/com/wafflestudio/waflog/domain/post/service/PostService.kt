@@ -34,6 +34,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -92,9 +93,19 @@ class PostService(
 
     private fun applyUserReadPost(user: User?, post: Post) {
         user?.also {
-            postRepository.increaseViews(post.id)
             readsRepository.findByUser_UserIdAndReadPost_Id(user.userId, post.id)
-                ?: run { readsRepository.save(Reads(user, post)) }
+                ?.also {
+                    val now = LocalDateTime.now()
+                    if (it.lastRead.isBefore(now.minusDays(1))) {
+                        postRepository.increaseViews(post.id)
+                    }
+                    it.lastRead = now
+                    readsRepository.save(it)
+                }
+                ?: run {
+                    postRepository.increaseViews(post.id)
+                    readsRepository.save(Reads(user, post, LocalDateTime.now()))
+                }
         }
     }
 

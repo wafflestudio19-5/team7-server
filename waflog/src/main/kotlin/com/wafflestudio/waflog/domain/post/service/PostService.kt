@@ -247,10 +247,13 @@ class PostService(
                 postTagRepository.deleteMappingByPostId(post.id)
                 deletePostImage(post.id, user)
                 post.series?.let {
+                    val deletedSeriesOrder = post.seriesOrder!!
                     postRepository.deleteById(post.id)
-                    it.posts.forEachIndexed { i, p ->
-                        p.seriesOrder = i + 1
-                        postRepository.save(p)
+                    it.posts.forEach { p ->
+                        if (p.seriesOrder!! > deletedSeriesOrder) {
+                            p.seriesOrder = p.seriesOrder!! - 1
+                            postRepository.save(p)
+                        }
                     }
                 } ?: run { postRepository.deleteById(post.id) }
                 tagRepository.deleteUnusedTags()

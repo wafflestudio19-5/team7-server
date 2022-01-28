@@ -246,7 +246,16 @@ class PostService(
                 commentRepository.deleteCommentsByPostId(post.id)
                 postTagRepository.deleteMappingByPostId(post.id)
                 deletePostImage(post.id, user)
-                postRepository.deleteById(post.id)
+                post.series?.let {
+                    val deletedSeriesOrder = post.seriesOrder!!
+                    postRepository.deleteById(post.id)
+                    it.posts.forEach { p ->
+                        if (p.seriesOrder!! > deletedSeriesOrder) {
+                            p.seriesOrder = p.seriesOrder!! - 1
+                            postRepository.save(p)
+                        }
+                    }
+                } ?: run { postRepository.deleteById(post.id) }
                 tagRepository.deleteUnusedTags()
             }
             ?: throw PostNotFoundException("post not found with url '$url'")

@@ -78,6 +78,7 @@ class SaveService(
                 this.saveTags = putRequest.tags
             }
             ?.also {
+                saveRepository.save(it)
                 modifyImageList(putRequest.images, it, user)
                     .map { image ->
                         image.save = it

@@ -70,8 +70,6 @@ class Post(
 
     var seriesOrder: Int?,
 
-    var shownSeriesOrder: Int = 0,
-
     @OneToMany(mappedBy = "post")
     @OrderBy("root_comment ASC, lft ASC")
     var comments: MutableList<Comment> = mutableListOf(),

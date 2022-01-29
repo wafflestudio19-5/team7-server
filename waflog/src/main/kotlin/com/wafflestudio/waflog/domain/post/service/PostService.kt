@@ -276,7 +276,7 @@ class PostService(
     ): ListResponse<CommentDto.RootCommentResponse> {
         val post = postRepository.findByIdOrNull(postId)
             ?: throw PostNotFoundException("Post with id $postId does not exist")
-
+        var commentId: Long = 0
         createRequest.parentComment?.also { // if the comment is a reply
             val parentId = createRequest.parentComment
 
@@ -303,6 +303,7 @@ class PostService(
             )
 
             commentRepository.save(comment)
+                .also { commentId = it.id }
         } ?: run { // if the comment is a root
             val comment = commentRepository.save(
                 Comment(
@@ -314,9 +315,10 @@ class PostService(
 
             comment.rootComment = comment.id // set root comment of the comment to itself
             commentRepository.save(comment)
+                .also { commentId = it.id }
         }
 
-        return PostDto.getCommentListResponse(post.comments)
+        return PostDto.getCommentListResponse(post.comments, commentId)
     }
 
     fun emailNotification(postId: Long, commentId: Long, user: User) {

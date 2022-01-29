@@ -144,7 +144,7 @@ class PostDto {
     }
 
     companion object {
-        fun getCommentListResponse(comments: List<Comment>):
+        fun getCommentListResponse(comments: List<Comment>, commentId: Long? = 0):
             ListResponse<CommentDto.RootCommentResponse> {
 
             val rootComments = comments.filter { it.depth == 0 }
@@ -152,6 +152,7 @@ class PostDto {
 
             return ListResponse(
                 comments.size,
+                commentId,
                 rootComments
                     .map { root ->
                         CommentDto.RootCommentResponse(

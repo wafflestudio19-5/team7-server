@@ -22,7 +22,7 @@ class User(
 
     var shortIntro: String = "",
 
-    val longIntro: String = "",
+    var longIntro: String = "",
 
     var image: String =
         "https://wafflestudio.com/_next/image?url=%2Fimages%2Ficon_intro.svg&w=640&q=75", // image file url

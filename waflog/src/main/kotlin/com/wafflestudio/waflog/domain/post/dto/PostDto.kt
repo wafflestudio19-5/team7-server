@@ -64,6 +64,7 @@ class PostDto {
         val id: Long,
         val user: UserDto.UserInPostDetailResponse,
         val url: String,
+        val seriesName: String?,
         val seriesPosts: List<IdAndTitleResponse>?,
         val title: String,
         val content: String,
@@ -79,6 +80,7 @@ class PostDto {
             id = post.id,
             user = UserDto.UserInPostDetailResponse(post.user),
             url = post.url,
+            seriesName = post.series?.name,
             seriesPosts = post.series?.posts?.map { p -> IdAndTitleResponse(p) },
             title = post.title,
             content = post.content,
@@ -189,12 +191,14 @@ class PostDto {
         val order: Int,
         val title: String,
         val thumbnail: String,
+        val url: String,
         val createAt: LocalDateTime?
     ) {
         constructor(post: Post) : this(
-            order = post.seriesOrder!!,
+            order = post.shownSeriesOrder,
             title = post.title,
             thumbnail = post.thumbnail,
+            url = post.url,
             createAt = post.createdAt
         )
     }

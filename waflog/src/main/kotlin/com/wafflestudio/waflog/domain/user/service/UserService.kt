@@ -17,6 +17,7 @@ import com.wafflestudio.waflog.domain.user.dto.UserDto
 import com.wafflestudio.waflog.domain.user.exception.InvalidPublicEmailException
 import com.wafflestudio.waflog.domain.user.exception.InvalidUserNameException
 import com.wafflestudio.waflog.domain.user.exception.InvalidUserPageTitleException
+import com.wafflestudio.waflog.domain.user.exception.LongIntroExceedMaxLengthException
 import com.wafflestudio.waflog.domain.user.exception.SeriesNotFoundException
 import com.wafflestudio.waflog.domain.user.exception.SeriesUrlExistException
 import com.wafflestudio.waflog.domain.user.exception.UserNotFoundException
@@ -119,6 +120,10 @@ class UserService(
                     ?: throw SeriesNotFoundException("There is no series with user id <$userId> and name <$seriesName>")
             }
             ?.filter { !it.private || it.user == user }
+            ?.mapIndexed { index, post ->
+                post.shownSeriesOrder = index + 1
+                postRepository.save(post)
+            }
             ?.map { PostDto.SeriesResponse(it) }
             ?: throw UserNotFoundException("There is no user id $userId")
         return makePage(pageable, seriesPosts)
@@ -188,6 +193,20 @@ class UserService(
         }
 
         return posts.map { PostDto.PostInUserPostsResponse(it) }
+    }
+
+    fun updateUserLongIntro(
+        longIntroModifyRequest: UserDto.LongIntroModifyRequest,
+        user: User
+    ): UserDto.UserLongIntroResponse {
+        val longIntro = longIntroModifyRequest.longIntro
+
+        if (longIntro.length > 255)
+            throw LongIntroExceedMaxLengthException("Long intro must be less than 256 letters")
+
+        user.longIntro = longIntro
+
+        return UserDto.UserLongIntroResponse(userRepository.save(user))
     }
 
     fun updateUserImage(
@@ -282,19 +301,27 @@ class UserService(
 
         // delete user's post
         postTokenRepository.deleteAllMappingByUserId(user.id)
+
         likesRepository.deleteMappingByUserId(user.id)
+        likesRepository.deleteMappingByUserIdOfPost(user.id)
+
         readsRepository.deleteMappingByUserId(user.id)
+        readsRepository.deleteMappingByUserIdOfPost(user.id)
+
         commentRepository.deleteAllCommentMappingByUserId(user.id)
+        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
+
         postTagRepository.deleteMappingByUserId(user.id)
-        postRepository.deleteAllUserPosts(user.id)
         tagRepository.deleteUnusedTags()
+
+        postRepository.deleteAllUserPosts(user.id)
 
         // delete user's saves
         saveTokenRepository.deleteAllMappingByUserId(user.id)
         saveRepository.deleteAllUserSaves(user.id)
 
-        commentRepository.updateCommentWriterByNull(user.id) // update user's comment to null's comment
-        likesRepository.deleteAllByUserId(user.id) // delete all likes by user
+        seriesRepository.deleteMappingByUserId(user.id)
+
         verificationTokenRepository.findByEmail(user.email)?.let {
             verificationTokenRepository.deleteById(it.id) // delete user token
         }

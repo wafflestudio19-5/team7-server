@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -100,9 +101,19 @@ class PostService(
 
     private fun applyUserReadPost(user: User?, post: Post) {
         user?.also {
-            postRepository.increaseViews(post.id)
             readsRepository.findByUser_UserIdAndReadPost_Id(user.userId, post.id)
-                ?: run { readsRepository.save(Reads(user, post)) }
+                ?.also {
+                    val now = LocalDateTime.now()
+                    if (it.lastRead.isBefore(now.minusDays(1))) {
+                        postRepository.increaseViews(post.id)
+                    }
+                    it.lastRead = now
+                    readsRepository.save(it)
+                }
+                ?: run {
+                    postRepository.increaseViews(post.id)
+                    readsRepository.save(Reads(user, post, LocalDateTime.now()))
+                }
         }
     }
 
@@ -119,7 +130,7 @@ class PostService(
             ?.also { url += "-" + getRandomString(8) }
         val seriesName = createRequest.seriesName
         val series = seriesName?.let {
-            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+            seriesRepository.findByNameAndUser(it, user) ?: throw SeriesNotFoundException("series not found")
         }
         val seriesOrder = series?.let { series.posts.size + 1 }
         val tags = createRequest.tags.map { formatTagNameUrl(it) }.map { (name, url) ->
@@ -162,7 +173,7 @@ class PostService(
         var url = formatUrl(putRequest.url, title)
         val seriesName = putRequest.seriesName
         val series = seriesName?.let {
-            seriesRepository.findByName(it) ?: throw SeriesNotFoundException("series not found")
+            seriesRepository.findByNameAndUser(it, user) ?: throw SeriesNotFoundException("series not found")
         }
         var seriesOrder = series?.let { series.posts.size + 1 }
 
@@ -243,7 +254,16 @@ class PostService(
                 commentRepository.deleteCommentsByPostId(post.id)
                 postTagRepository.deleteMappingByPostId(post.id)
                 deletePostImage(post.id, user)
-                postRepository.deleteById(post.id)
+                post.series?.let {
+                    val deletedSeriesOrder = post.seriesOrder!!
+                    postRepository.deleteById(post.id)
+                    it.posts.forEach { p ->
+                        if (p.seriesOrder!! > deletedSeriesOrder) {
+                            p.seriesOrder = p.seriesOrder!! - 1
+                            postRepository.save(p)
+                        }
+                    }
+                } ?: run { postRepository.deleteById(post.id) }
                 tagRepository.deleteUnusedTags()
             }
             ?: throw PostNotFoundException("post not found with url '$url'")

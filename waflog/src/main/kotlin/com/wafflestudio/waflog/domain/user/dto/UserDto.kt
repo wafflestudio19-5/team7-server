@@ -115,7 +115,8 @@ class UserDto {
         val githubId: String,
         val facebookId: String,
         val twitterId: String,
-        val homepage: String
+        val homepage: String,
+        val commentNotification: Boolean
     ) {
         constructor(user: User) : this(
             id = user.id,
@@ -128,7 +129,8 @@ class UserDto {
             githubId = user.githubId,
             facebookId = user.facebookId,
             twitterId = user.twitterId,
-            homepage = user.homepage
+            homepage = user.homepage,
+            commentNotification = user.commentNotification
         )
     }
 

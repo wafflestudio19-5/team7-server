@@ -152,7 +152,7 @@ class PostDto {
 
             return ListResponse(
                 comments.size,
-                commentId!!,
+                commentId,
                 rootComments
                     .map { root ->
                         CommentDto.RootCommentResponse(

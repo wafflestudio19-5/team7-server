@@ -191,12 +191,14 @@ class PostDto {
         val order: Int,
         val title: String,
         val thumbnail: String,
+        val summary: String,
         val url: String,
         val createAt: LocalDateTime?
     ) {
         constructor(post: Post, seriesOrder: Int) : this(
             order = seriesOrder,
             title = post.title,
+            summary = post.summary,
             thumbnail = post.thumbnail,
             url = post.url,
             createAt = post.createdAt

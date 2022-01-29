@@ -300,7 +300,7 @@ class PostService(
     }
 
     fun emailNotification(postId: Long, commentId: Long, user: User) {
-
+        if (!user.commentNotification) return
         val (post, comment) = returnPostAndComment(postId, commentId, user)
 
         val jwt = jwtTokenProvider.generateToken(post.user.email)

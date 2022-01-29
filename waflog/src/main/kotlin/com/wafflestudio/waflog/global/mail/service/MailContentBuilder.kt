@@ -24,7 +24,7 @@ class MailContentBuilder(
         vars.mapIndexed { index, v -> context.setVariable("var${index + 1}", v) }
 
         return when (type) {
-            "comment-notification" -> templateEngine.process("registerMailTemplate", context)
+            "comment-notification" -> templateEngine.process("commentNotificationMailTemplate", context)
             else -> ""
         }
     }

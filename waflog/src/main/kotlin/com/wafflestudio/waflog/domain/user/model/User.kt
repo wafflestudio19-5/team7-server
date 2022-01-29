@@ -47,7 +47,7 @@ class User(
     var homepage: String = "",
 
     @Column(name = "comment_noti")
-    val commentNotification: Boolean = false,
+    var commentNotification: Boolean = false,
 
     @Column(name = "update_noti")
     val updateNotification: Boolean = false,

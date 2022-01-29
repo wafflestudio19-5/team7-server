@@ -152,4 +152,14 @@ class PostController(
     ): Boolean {
         return user?.let { postService.isLikedPost(postId, it) } ?: false
     }
+
+    @PostMapping("/commentNotification")
+    @ResponseStatus(HttpStatus.OK)
+    fun commentNotification(
+        @RequestParam("post_id") postId: Long,
+        @RequestParam("comment_id") commentId: Long,
+        @CurrentUser user: User
+    ) {
+        postService.emailNotification(postId, commentId, user)
+    }
 }

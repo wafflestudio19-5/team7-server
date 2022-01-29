@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <title>포스트 새 댓글 알림</title>
+        <style>
+            a:visited { color: black; text-decoration: none; }
+        </style>
+    </head>
+    <body>
+        <div class="header" style="margin-top: 30px; margin-left: -10px;">
+            <a href="https://waflog-web.kro.kr" style="color: black; text-decoration: none; text-align: center;">
+                <h1>waflog</h1>
+            </a>
+        </div>
+        <div class="body">
+            <div class="body-header" style="margin-left: 15px;">
+                <text style="color: gray;">포스트에 새 댓글이 달렸습니다.</text>
+                <p th:href="${var1}" style="font-weight: bold;">as</p>
+            </div>
+            <hr width="95%" color="lightgray">
+            <div class="user" style="margin-left: 15px; display: flex; margin-top: 30px;">
+                <div class="user-image" style="border-radius: 80%; overflow: hidden; width: 15%; height: 15%;">
+                    <img th:src="${var3}" alt="" width="100%" height="100%">
+                </div>
+                <div class="user-profile" style="margin-left: 10px; width: 75%; padding: 10px;">
+                    <div th:text="${var2}" style="font-weight: bold;"></div>
+                    <div th:text="${var4}" style="margin-top: 5px; color: gray;"></div>
+                    <div th:text="${var5}" style="margin-top: 10px; margin-bottom: 5px; color: lightgray;"></div>
+                    <a th:href="${link1}" style="text-decoration: none; width: 70px; height: 30px; border-radius: 4px; background-color: rgb(127, 96, 239); display: table-cell; text-align: center; color: white; vertical-align: middle; font-size: 13px; font-weight: bold;">답글 달기</a>
+                </div>
+            </div>
+            <hr width="95%" color="lightgray">
+        </div>
+    </body>
+</html>

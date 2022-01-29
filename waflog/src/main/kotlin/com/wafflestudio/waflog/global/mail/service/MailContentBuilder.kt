@@ -17,4 +17,15 @@ class MailContentBuilder(
             else -> ""
         }
     }
+
+    fun build(links: List<String>, vars: List<String>, type: String): String {
+        val context = Context()
+        links.mapIndexed { index, link -> context.setVariable("link${index + 1}", link) }
+        vars.mapIndexed { index, v -> context.setVariable("var${index + 1}", v) }
+
+        return when (type) {
+            "comment-notification" -> templateEngine.process("commentNotificationMailTemplate", context)
+            else -> ""
+        }
+    }
 }
